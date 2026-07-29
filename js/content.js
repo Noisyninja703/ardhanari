@@ -10,7 +10,7 @@
 export const HER = {
   name: 'Maniksha',
   /* What you actually call her. Falls back to her name until you set it. */
-  petName: '',
+  petName: 'Meri jaan',
 };
 
 /* Prefer the pet name where there is one — it's warmer than the formal one. */

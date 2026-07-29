@@ -19,10 +19,28 @@ need a real HTTP origin, so opening `index.html` by double-clicking will *not*
 work. Serve it instead:
 
 ```sh
-python -m http.server 8000
+python serve.py          # port 8000
+python serve.py 3000     # or any other port
 ```
 
-Then open <http://localhost:8000>. Any static server does the same job.
+It prints two URLs:
+
+```text
+  This machine   http://localhost:8000
+  Your phone     http://192.168.1.158:8000
+```
+
+**Test on the phone URL, not just localhost.** The puzzles behave differently
+with a finger than a cursor — the void section uses press-and-hold instead of
+hover-proximity, and the ash wipe uses a bigger brush. Same wifi required.
+
+If your phone won't connect, Windows Firewall is blocking Python. It usually
+prompts the first time; if you dismissed that, allow Python on private
+networks in Windows Defender Firewall settings.
+
+`serve.py` sends no-cache headers on everything, so a hard-reload is never
+needed — which matters more than it sounds, because phone browsers cache
+aggressively and you'll otherwise waste time convinced a change didn't apply.
 
 **Reset your progress** (solved puzzles are remembered) — in the browser console:
 
@@ -36,6 +54,13 @@ localStorage.removeItem('ardh:unlocked'); location.reload();
 
 Pages serves static files straight from the repo. There's no build step and no
 Action needed for the site itself — what's in the repo is what gets served.
+
+**The repo has to be public** for Pages to work on a free account, and once
+it's public the site is on the open internet. That's why it stays private
+until it's finished — test locally with `serve.py` until then. `noindex` is
+set in `index.html` so search engines won't list it, but that's politeness,
+not privacy: anyone with the URL can open it. Don't put anything in here you
+wouldn't want a stranger reading.
 
 1. Push to `main`.
 2. Repo → **Settings** → **Pages**.
@@ -60,7 +85,7 @@ it will work locally and break on Pages.
 
 No framework, no npm, no build. The code you read is the code the browser runs.
 
-```
+```text
 index.html          the shell: atmosphere layers + an empty <main>
 css/
   tokens.css        every colour, font, size and duration. Start here.

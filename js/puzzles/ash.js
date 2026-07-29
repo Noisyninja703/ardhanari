@@ -18,7 +18,7 @@
 
 import { prefersReducedMotion } from '../scroll.js';
 
-const SOLVE_AT = 0.52;      /* fraction of cells cleared before the gate opens */
+const SOLVE_AT = 0.9;      /* fraction of cells cleared before the gate opens */
 const GRID = 16;            /* progress sampling resolution, per axis */
 const BRUSH_MIN = 46;
 const BRUSH_MAX = 86;
