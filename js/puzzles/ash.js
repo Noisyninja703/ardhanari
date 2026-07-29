@@ -15,8 +15,11 @@
    - The ash has soft, irregular edges: it's drawn as a field of overlapping
      blobs and then feathered at the border, so it reads as a drift of dust
      rather than a grey rectangle.
-   - touch-action is pan-y (set in CSS), so vertical scrolling keeps working
-     with a finger anywhere over the panel while sideways movement wipes.
+   - touch-action is none while there's ash left (set in CSS), so the panel
+     owns the whole gesture — wiping is diagonal and scribbly, and letting the
+     scroller take the vertical component made it feel like it was fighting
+     her. It's released to auto the moment the section is solved, so the area
+     never blocks scrolling afterwards.
    ========================================================================== */
 
 const SOLVE_AT = 0.9;      /* fraction of cells cleared before the gate opens */

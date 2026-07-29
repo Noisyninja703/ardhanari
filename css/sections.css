@@ -296,15 +296,17 @@
      and pushing the section past one screen. */
   height: 100%;
   margin-inline: auto;
-  /* pan-y, not none. `none` meant the ash panel swallowed every gesture and
-     she couldn't scroll the page with a finger anywhere over it. This lets
-     the browser keep vertical scrolling while side-to-side movement wipes. */
-  touch-action: pan-y;
-  /* No overscroll-behavior here. On a non-scrollable element it doesn't stop
+  /* The panel owns every gesture while there's still ash on it. Wiping dust
+     off is a diagonal, scribbly motion, and pan-y kept handing the vertical
+     component to the scroller mid-wipe, which felt like it was fighting her.
+     Released the moment it's solved, below.
+
+     No overscroll-behavior here. On a non-scrollable element it doesn't stop
      pull-to-refresh — it stops the scroll from *chaining* out to the page, so
      a finger starting anywhere on this panel couldn't scroll at all, even
-     after the puzzle was solved and touch-action was back to auto. Body-level
-     overscroll-behavior-y already handles pull-to-refresh. */
+     after the puzzle was solved and touch-action was back to auto. It belongs
+     on the root element, where base.css sets it. */
+  touch-action: none;
   cursor: grab;
   /* No border. It read as a grey box; the ash's own soft edge is the frame. */
   overflow: hidden;

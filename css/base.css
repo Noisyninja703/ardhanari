@@ -16,6 +16,16 @@ html {
      a trackpad. Every section is exactly 100dvh, so nothing can be trapped
      out of reach. */
   scroll-snap-type: y mandatory;
+
+  /* Must be on the ROOT element, not body: overscroll-behavior only
+     propagates to the viewport from the root, so setting it on body did
+     nothing at all.
+       y: stops pull-to-refresh firing when a drag starts near the top.
+       x: stops a sideways wipe from triggering the browser's
+          swipe-to-go-back. Losing the page mid-puzzle because a finger
+          started near the screen edge is a miserable way to read a love
+          letter. */
+  overscroll-behavior: none;
 }
 
 body {
@@ -28,8 +38,6 @@ body {
   line-height: var(--lh-body);
   font-optical-sizing: auto;
   overflow-x: hidden;
-  /* Kills pull-to-refresh firing when a puzzle drag starts near the top. */
-  overscroll-behavior-y: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
 }
