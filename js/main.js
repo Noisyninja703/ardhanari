@@ -34,6 +34,7 @@ const PARTICLE_BY_SECTION = {
   amavasya: 'stars',
   bhasma: 'ash',
   ardhanarishvara: 'embers',
+  tapasya: 'embers',
 };
 
 /* --- Unlock state --------------------------------------------------------
@@ -165,6 +166,7 @@ const puzzleModules = {
   spark: () => import('./puzzles/spark.js'),
   ash: () => import('./puzzles/ash.js'),
   halves: () => import('./puzzles/halves.js'),
+  flame: () => import('./puzzles/flame.js'),
 };
 
 async function mountPuzzle(section) {

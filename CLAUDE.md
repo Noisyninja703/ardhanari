@@ -26,15 +26,15 @@ layout and gesture traps, and they are all written down there.
 
 ## Current state
 
-Three of seven sections are built and feel good. Sivan has reviewed them and
-is happy.
+Four of seven sections are built. The first three are reviewed and Sivan is
+happy with them; the fourth is new and unreviewed.
 
 | Phase | Section | Interaction | Status |
 | --- | --- | --- | --- |
 | ● Amavasya | Before Light | Hold still near the spark | Done |
 | ◖ Bhasma | The Ash Years | Wipe ash off the buried verse | Done |
 | ◐ Ardhanarishvara | One Body, Divided | Drag the two torn halves together | Done |
-| ◑ Tapasya | — | Cup a flame to keep the verse typing | Not started |
+| ◑ Tapasya | She Did the Waiting | Tend a flame to keep the verse writing itself | Done, awaiting review |
 | ◒ Trinetra | — | Drag a lens that reveals hidden text | Not started |
 | ◓ Nakshatra | — | Photo constellation, no puzzle | Not started |
 | ○ Purnima | — | Write and read love letters | Not started |

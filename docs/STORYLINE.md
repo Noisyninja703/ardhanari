@@ -78,17 +78,28 @@ They snap together, the seam flares gold and dissolves, and the page's own seam
 stays gold from then on: the site is visibly less divided for the rest of the
 scroll.
 
-### ◑ Tapasya — not built
+### ◑ Tapasya — "She Did the Waiting" · built
 
-Parvati's austerity. Cold, still, one small flame. **She's** the one who
-refuses to give up in this story, and this section is where that lands.
+Parvati's austerity. Cold, still, one small flame guttering. **She's** the one
+who refuses to give up in this story, and this section is where that lands.
 
-Puzzle: **cup the flame.** The verse types itself only while her pointer or
-finger stays near it; drift away and the flame dims and the text pauses. The
-interaction forces stillness — the mechanic is the devotion.
+> She did not wait to be chosen.
+> She stood in the snow until the snow gave up,
+> and kept one flame alive for a hundred years,
+> until even a god had to open his eyes and look.
 
-Needs: a verse about waiting, and about Maniksha's own persistence rather than
-his. Avoid making her passive; she is the active party in this myth.
+Puzzle: **tend the flame.** The verse types itself only while her pointer or
+finger stays near it; drift away and the flame gutters and the words stop. The
+interaction forces stillness, so the mechanic *is* the devotion. The caret
+blinks while the flame is out, so a paused verse reads as waiting for her
+rather than broken.
+
+Deliberate: Parvati is the active party here and the verse says so plainly.
+"She did not wait to be chosen" is the line that keeps this section from making
+her passive, which would break the whole myth.
+
+The turn toward Maniksha is held back to the lens secret, so it lands later:
+*"You did the waiting. I have never once forgotten what that cost you."*
 
 ### ◒ Trinetra — not built
 

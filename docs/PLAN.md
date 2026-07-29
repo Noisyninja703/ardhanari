@@ -11,20 +11,23 @@ so progress never blocks on waiting for content.
 
 ## Phase 3 — the remaining poem
 
-### 1. ◑ Tapasya — cup the flame
+### 1. ◑ Tapasya — tend the flame · BUILT, awaiting review
 
-Parvati's austerity. The verse types itself only while her pointer or finger
-stays near a small flame; drift away and the flame dims and the text pauses.
+`js/puzzles/flame.js`. Types into the existing verse paragraphs so the copy
+stays in `content.js`. Proximity on a pointer, press-and-hold on touch, focus
+on a keyboard. Click finishes it outright. `destroy()` fills in whatever is
+unwritten, which is what makes the skip link land on a whole verse.
 
-- New `js/puzzles/flame.js`, new entry in `SECTIONS`, `PARTICLE_BY_SECTION`
-  entry (`embers`), register in `puzzleModules`.
-- **Touch needs a different mechanic:** there's no idle cursor on a phone. Use
-  press-and-hold anywhere near the flame rather than hover-proximity.
-- Reduced motion: reveal the whole verse, no typing.
-- Keyboard: hold a key, or a focusable button that types on focus.
+Two things worth knowing if it needs changing:
 
-Risk: a typing effect that pauses can feel broken rather than intentional.
-Make the flame's dimming immediate and obvious so cause and effect are legible.
+- Line heights are **measured and reserved** before anything is typed, and
+  re-measured on `document.fonts.ready` and on resize. Without that the
+  vertically-centred band shoves each line upward as the next arrives and the
+  verse jitters onto the screen.
+- The caret blinks only while the flame is out. That's what stops a paused
+  verse reading as broken, which was the main risk with this mechanic.
+
+Tuning knobs: `NEAR_PX` (190) and `CHARS_PER_S` (26) at the top of the module.
 
 ### 2. ◒ Trinetra — the lens
 
@@ -64,7 +67,7 @@ alone is a complete, giftable section.
 - Firestore for the instant write. Rules do the security work, not secrecy —
   the web config is public by design:
 
-  ```
+  ```text
   allow read: if true;
   allow create: if request.resource.data.keys().hasOnly(['author','body','createdAt'])
                 && request.resource.data.body.size() < 4000

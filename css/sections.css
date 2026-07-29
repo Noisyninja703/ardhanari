@@ -555,6 +555,115 @@
 /* The completed verse is withheld until they meet. */
 .verses--withheld { display: none; }
 
+/* --- 4. Tapasya / the flame -----------------------------------------------
+   A small flame she has to stay near. Cold by default and obviously alive, so
+   there's something to approach before she works out the rule. */
+
+.flame {
+  position: relative;
+  justify-self: center;   /* the poem band stretches its children */
+  width: 54px;
+  height: 74px;
+  margin-bottom: var(--s-4);
+}
+
+/* The teardrop. Asymmetric border-radius is what stops it reading as a
+   lozenge: wide and round at the base, drawn to a point at the top. */
+.flame__body {
+  position: absolute;
+  left: 50%;
+  bottom: 6px;
+  width: 20px;
+  height: 30px;
+  margin-left: -10px;
+  border-radius: 50% 50% 50% 50% / 62% 62% 38% 38%;
+  background: linear-gradient(to top, var(--kumkum), var(--gold) 55%, #FFF3D2);
+  transform-origin: 50% 100%;
+  animation: flame-flicker 2.6s ease-in-out infinite;
+  box-shadow:
+    0 0 10px 2px rgba(201, 162, 75, 0.5),
+    0 0 26px 8px rgba(193, 51, 43, 0.22);
+  transition:
+    height var(--d-mid) var(--ease-out),
+    width var(--d-mid) var(--ease-out),
+    box-shadow var(--d-mid) var(--ease-out),
+    opacity var(--d-mid) var(--ease-out);
+}
+
+/* Halo, so the flame lights the air around it rather than sitting on black. */
+.flame::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -14px;
+  width: 130px;
+  height: 130px;
+  margin-left: -65px;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(
+    circle,
+    rgba(201, 162, 75, 0.20) 0%,
+    rgba(193, 51, 43, 0.09) 40%,
+    transparent 70%
+  );
+  opacity: 0.55;
+  transition: opacity var(--d-mid) var(--ease-out);
+}
+
+/* Guttering: small, dim, barely holding on. This is the resting state. */
+.flame:not(.is-warm):not(.is-lit) .flame__body {
+  height: 20px;
+  width: 15px;
+  margin-left: -7.5px;
+  opacity: 0.6;
+}
+
+/* Tended: it stands up and burns properly, and the verse writes itself. */
+.flame.is-warm .flame__body,
+.flame.is-lit .flame__body {
+  height: 34px;
+  box-shadow:
+    0 0 16px 3px rgba(201, 162, 75, 0.75),
+    0 0 44px 14px rgba(193, 51, 43, 0.32),
+    0 0 90px 30px rgba(201, 162, 75, 0.14);
+}
+.flame.is-warm::after,
+.flame.is-lit::after { opacity: 1; }
+
+/* Flicker leans and squashes rather than changing size, so it reads as a
+   flame in a draught instead of a pulsing dot. */
+@keyframes flame-flicker {
+  0%, 100% { transform: scale(1, 1) skewX(0deg); }
+  20%      { transform: scale(0.94, 1.05) skewX(2.5deg); }
+  45%      { transform: scale(1.05, 0.96) skewX(-2deg); }
+  70%      { transform: scale(0.97, 1.03) skewX(1.5deg); }
+}
+
+/* --- Typing caret --------------------------------------------------------
+   Solid while the words are arriving; blinking when the flame is out, so a
+   paused verse reads as waiting for her rather than broken. */
+.caret {
+  display: inline-block;
+  width: 1px;
+  height: 1em;
+  margin-left: 0.12em;
+  vertical-align: -0.12em;
+  background: var(--gold);
+  box-shadow: 0 0 8px 1px rgba(201, 162, 75, 0.7);
+}
+.caret.is-waiting { animation: caret-blink 1.15s steps(1) infinite; }
+
+@keyframes caret-blink {
+  0%, 49%   { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flame__body { animation: none; }
+  .caret { display: none; }
+}
+
 /* --- Puzzle hint and skip ------------------------------------------------
    She never gets stuck. Hint glows at 8s idle, skip appears at 25s. */
 .hint {

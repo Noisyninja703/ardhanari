@@ -103,6 +103,29 @@ export const SECTIONS = [
     skipLabel: 'Make them one',
     lensSecret: 'Ardhanarishvara: not two halves of a couple. One being, remembering itself.',
   },
+
+  {
+    id: 'tapasya',
+    phase: '◑',            // ◑ waxing: the light she earned back
+    tithi: 'Tapasya',
+    devanagari: 'तपस्या',
+    puzzle: 'flame',
+    heading: 'She Did the Waiting',
+
+    /* Typed out, one character at a time, and only while she keeps her hand
+       near the flame. Parvati is the active party in this myth and the verse
+       has to say so. */
+    verses: [
+      'She did not wait to be chosen.',
+      'She stood in the snow until the snow gave up,',
+      'and kept one flame alive for a hundred years,',
+      'until even a god had to open his eyes and look.',
+    ],
+
+    hint: 'Keep your hand near the flame.',
+    skipLabel: 'Let it burn',
+    lensSecret: 'You did the waiting. I have never once forgotten what that cost you.',
+  },
 ];
 
 /* --- Chrome and interface copy -------------------------------------------
