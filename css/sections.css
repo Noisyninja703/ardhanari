@@ -393,28 +393,39 @@
   transition: color var(--d-mid) var(--ease-soft);
   /* Each half drifts on its own, so they read as two pieces adrift rather
      than two blocks parked on a grid. The drift lives on the fragment, not
-     the panel, because the panel's transform is the gap. */
-  animation: half-drift-a 11s var(--ease-soft) infinite alternate;
+     the panel, because the panel's transform is the gap.
+
+     A closed four-point loop at linear speed, not an eased two-point
+     alternate. The first attempt moved about 2px per second and read as
+     completely static: easing spends most of the cycle nearly stopped, and
+     alternate makes it a pendulum rather than a drift. */
+  animation: half-drift-a 15s linear infinite;
   will-change: transform;
 }
 /* Left/top half is Shiva's: ash. Right/bottom is Parvati's: gold. */
 .halves__panel--a .halves__fragment { color: var(--ash); }
 .halves__panel--b .halves__fragment {
   color: var(--gold);
-  /* A different rhythm and a slower period, so the two never move in
-     lockstep. Nothing kills "floating" faster than synchronised motion. */
-  animation: half-drift-b 14.5s var(--ease-soft) infinite alternate;
+  /* A different path and a longer period, so the two never move in lockstep.
+     Nothing kills "floating" faster than synchronised motion. */
+  animation: half-drift-b 19s linear infinite;
 }
 
+/* Both paths return to their start so the loop is seamless. Amplitude is large
+   enough to actually see: roughly 30px of travel across a circuit. */
 @keyframes half-drift-a {
-  0%   { transform: translate3d(-7px, -5px, 0) rotate(-0.5deg); }
-  50%  { transform: translate3d(4px, 3px, 0) rotate(0.35deg); }
-  100% { transform: translate3d(8px, -2px, 0) rotate(0.6deg); }
+  0%   { transform: translate3d(-15px, -10px, 0) rotate(-1deg); }
+  25%  { transform: translate3d(12px, -14px, 0) rotate(0.8deg); }
+  50%  { transform: translate3d(17px, 9px, 0) rotate(1.2deg); }
+  75%  { transform: translate3d(-10px, 13px, 0) rotate(-0.7deg); }
+  100% { transform: translate3d(-15px, -10px, 0) rotate(-1deg); }
 }
 @keyframes half-drift-b {
-  0%   { transform: translate3d(6px, 4px, 0) rotate(0.45deg); }
-  50%  { transform: translate3d(-5px, -3px, 0) rotate(-0.4deg); }
-  100% { transform: translate3d(-8px, 3px, 0) rotate(-0.55deg); }
+  0%   { transform: translate3d(14px, 11px, 0) rotate(1.1deg); }
+  25%  { transform: translate3d(-13px, 8px, 0) rotate(-0.9deg); }
+  50%  { transform: translate3d(-16px, -12px, 0) rotate(-1.2deg); }
+  75%  { transform: translate3d(9px, -13px, 0) rotate(0.6deg); }
+  100% { transform: translate3d(14px, 11px, 0) rotate(1.1deg); }
 }
 
 /* The second half is too far away to read, and comes into focus as she closes
@@ -424,22 +435,38 @@
    --gap runs 1 (apart) to 0 (joined), so blur and dimming fall out of it for
    free and track her finger exactly. */
 .halves__panel--b .halves__fragment {
-  filter: blur(calc(var(--gap, 1) * 7px));
-  opacity: calc(1 - var(--gap, 1) * 0.8);
+  /* Legibly text, illegibly words. The first attempt used 7px of blur at 0.2
+     opacity and disappeared into the background, so there was nothing to be
+     curious about. Less blur and much more presence: she should be able to
+     tell there are words there, and count them, without being able to read
+     them. The glow is what keeps it reading as light rather than smudge. */
+  filter: blur(calc(var(--gap, 1) * 4.5px));
+  opacity: calc(1 - var(--gap, 1) * 0.42);
+  text-shadow:
+    0 0 calc(6px + var(--gap, 1) * 14px) rgba(201, 162, 75, calc(0.25 + var(--gap, 1) * 0.4)),
+    0 0 calc(2px + var(--gap, 1) * 6px) rgba(239, 233, 220, 0.3);
 }
 
 /* Joined: both halves settle onto one shared, much slower drift, so the
    completed line breathes as a single piece instead of pulling apart again. */
 .halves.is-joined .halves__fragment,
 .halves.is-joined .halves__panel--b .halves__fragment {
-  animation: half-drift-joined 18s var(--ease-soft) infinite alternate;
+  /* Identical animation, duration and delay on both halves, so their
+     transforms stay in step and the rejoined line never pulls apart. */
+  animation: half-drift-joined 24s linear infinite;
   filter: none;
   opacity: 1;
+  text-shadow:
+    0 0 18px rgba(239, 233, 220, 0.2),
+    0 0 44px rgba(201, 162, 75, 0.18);
 }
 
 @keyframes half-drift-joined {
-  from { transform: translate3d(-3px, -2px, 0); }
-  to   { transform: translate3d(3px, 2px, 0); }
+  0%   { transform: translate3d(-8px, -5px, 0); }
+  25%  { transform: translate3d(6px, -7px, 0); }
+  50%  { transform: translate3d(9px, 5px, 0); }
+  75%  { transform: translate3d(-5px, 7px, 0); }
+  100% { transform: translate3d(-8px, -5px, 0); }
 }
 
 /* Reduced motion: no drift, and the withheld half is simply legible. */
