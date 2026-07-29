@@ -714,6 +714,12 @@
   width: 184px;         /* twice RADIUS in js/puzzles/lens.js */
   height: 184px;
   border-radius: 50%;
+  /* Not hers until she reaches Trinetra. The module adds .is-available when
+     that section is properly on screen; until then the glass does not exist as
+     far as she's concerned. */
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
   /* It owns its gesture: dragging glass across the page must not scroll it. */
   touch-action: none;
   cursor: grab;
@@ -725,8 +731,17 @@
     inset 0 1px 0 0 rgba(255, 255, 255, 0.16),
     0 0 22px 2px rgba(169, 140, 224, 0.16),
     0 18px 44px -14px rgba(0, 0, 0, 0.7);
-  transition: box-shadow var(--d-mid) var(--ease-soft);
+  transition:
+    box-shadow var(--d-mid) var(--ease-soft),
+    opacity var(--d-slow) var(--ease-out);
 }
+
+.lens.is-available {
+  opacity: 1;
+  pointer-events: auto;
+  visibility: visible;
+}
+
 .lens:active,
 .lens.is-held { cursor: grabbing; }
 
@@ -821,6 +836,29 @@
 @keyframes hint-breathe {
   from { opacity: 0.45; }
   to   { opacity: 1; }
+}
+
+/* --- Start over ----------------------------------------------------------
+   Last section only, and only once she's finished it. Quiet by default: it's an
+   offer, not a call to action. */
+.reset {
+  opacity: 0;
+  pointer-events: none;
+  padding: var(--s-2) 0;
+  border-bottom: 1px solid var(--moon-ghost);
+  transition: opacity var(--d-bloom) var(--ease-out), color var(--d-fast) var(--ease-out);
+}
+.is-solved .reset {
+  opacity: 1;
+  pointer-events: auto;
+  transition-delay: var(--d-slow);   /* let the verse land first */
+}
+.reset:hover { color: var(--moon); border-bottom-color: var(--moon-faint); }
+
+/* Armed: the second tap is the one that wipes it, so it should look different. */
+.reset.is-armed {
+  color: var(--kumkum);
+  border-bottom-color: var(--kumkum);
 }
 
 .skip {

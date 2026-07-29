@@ -60,6 +60,24 @@ function save() {
   }
 }
 
+/* Wipe the visit and start over from the void.
+
+   A full reload rather than resetting state in place: half a dozen things are
+   set up once and only once, from the seam's birth to the lens she's carrying,
+   and unpicking all of that by hand is a much better way to introduce a bug
+   than letting the browser do it. Replacing the URL rather than reloading it
+   also drops the scroll position, so she genuinely starts at the top. */
+function forgetEverything() {
+  try {
+    localStorage.removeItem(STORE_KEY);
+  } catch {
+    /* nothing to clear, or storage is blocked. Reload anyway. */
+  }
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  window.scrollTo(0, 0);
+  location.replace(location.pathname + location.search);
+}
+
 /* --- Building the DOM ---------------------------------------------------- */
 
 function el(tag, className, text) {
@@ -142,6 +160,31 @@ function buildSection(data, index) {
   cue.hidden = index === SECTIONS.length - 1;
   prompt.append(cue);
 
+  /* The last section offers a way back to the beginning, so she can walk the
+     whole thing again from the dark. Only after she's finished it, so it never
+     competes with the puzzle in front of her. */
+  if (index === SECTIONS.length - 1) {
+    const reset = el('button', 'reset t-util', UI.resetOffer);
+    reset.type = 'button';
+    reset.addEventListener('click', () => {
+      if (reset.dataset.armed !== 'true') {
+        /* Two steps: this wipes every puzzle she solved. */
+        reset.dataset.armed = 'true';
+        reset.textContent = UI.resetConfirm;
+        reset.classList.add('is-armed');
+        setTimeout(() => {
+          if (reset.dataset.armed !== 'true') return;
+          reset.dataset.armed = 'false';
+          reset.textContent = UI.resetOffer;
+          reset.classList.remove('is-armed');
+        }, 5000);
+        return;
+      }
+      forgetEverything();
+    });
+    prompt.append(reset);
+  }
+
   /* Devanagari footer. Sweeps in when the section reaches full view, so it
      doubles as the signal that she's arrived — it sits at the very bottom of
      the section, so seeing it means the section fills the screen.
@@ -185,9 +228,12 @@ const puzzleModules = {
   lens: () => import('./puzzles/lens.js'),
 };
 
+const mounted = new WeakSet();
+
 async function mountPuzzle(section) {
   const name = section.dataset.puzzle;
-  if (!name) return;
+  if (!name || mounted.has(section)) return;
+  mounted.add(section);
 
   /* Already solved on a previous visit, or she's asked for less motion.
      The puzzle still mounts — it owns visuals like the ash-section photo
@@ -255,8 +301,10 @@ function updateSeals() {
 
   for (const section of allSections) {
     section.classList.toggle('section--sealed', frontierPassed);
-    /* Everything after the first unsolved section is sealed. */
-    if (!frontierPassed && !section.classList.contains('is-solved')) frontierPassed = true;
+    /* Everything after the first unsolved section is sealed. Read from the
+       unlock set rather than the DOM, so this is correct before any puzzle has
+       mounted and doesn't depend on the order things happen in. */
+    if (!frontierPassed && !unlocked.has(section.id)) frontierPassed = true;
   }
 
   /* Deliberately no scrolling here. Solving used to jump her straight to the
@@ -278,7 +326,12 @@ function updateExposure() {
    explicit way out at 15s. Timers only run while it's actually in view. */
 
 function startTimers(section) {
+  /* The unlock set is checked as well as the class, because puzzles mount
+     lazily: a section solved on a previous visit hasn't had .is-solved applied
+     yet if its module hasn't loaded, and she shouldn't be prompted to solve
+     something she already has. */
   if (!section._hint || section.classList.contains('is-solved')) return;
+  if (unlocked.has(section.id)) return;
   clearTimers(section);
   section._hintTimer = setTimeout(() => section._hint.classList.add('is-showing'), HINT_DELAY);
   section._skipTimer = setTimeout(() => section._skip.classList.add('is-showing'), SKIP_DELAY);
@@ -428,12 +481,30 @@ function boot() {
 
   sections.forEach((section) => {
     section._skip?.addEventListener('click', () => markSolved(section));
-    mountPuzzle(section);
   });
 
-  /* Seal after mounting, so sections already solved on a previous visit are
-     open from the first paint. */
   updateSeals();
+
+  /* Puzzles mount as she approaches their section, not all at once on load.
+     Eager mounting leaked: the lens is a fixed, page-wide object, so building
+     Trinetra's puzzle at boot handed her the glass on the very first screen,
+     five sections before she earns it. Sealed sections are display:none and
+     never intersect, so this also means a puzzle can't mount before its
+     section is reachable.
+
+     The rootMargin mounts it just before it scrolls into view, which keeps the
+     dynamic import from landing a frame late and flashing un-withheld verse. */
+  const mountIO = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        mountPuzzle(entry.target);
+        mountIO.unobserve(entry.target);
+      }
+    },
+    { rootMargin: '60% 0px' }
+  );
+  sections.forEach((s) => mountIO.observe(s));
 
   /* The seam is invisible in the void and appears once she's through it —
      one being, before division. */

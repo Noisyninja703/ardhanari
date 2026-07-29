@@ -161,4 +161,9 @@ export const UI = {
   soundOff: 'Turn sound off',
   locked: 'Not yet reached',
   scrollCue: 'Keep going',
+
+  /* On the last section only, once she's finished. Two steps, because it wipes
+     every puzzle she solved and it should take more than one stray tap. */
+  resetOffer: 'Walk it again',
+  resetConfirm: 'Yes, start from the dark',
 };

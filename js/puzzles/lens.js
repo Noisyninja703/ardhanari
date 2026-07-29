@@ -99,6 +99,13 @@ export default function create({ section, body, solved: preSolved = false, solve
     const dt = lastTs ? Math.min(ts - lastTs, 100) : 16;
     lastTs = ts;
 
+    /* Before she arrives, write nothing. The hidden lines' masks stay parked
+       off screen, so nothing anywhere on the page can be read early. */
+    if (!arrived) {
+      raf = requestAnimationFrame(tick);
+      return;
+    }
+
     writePosition();
     updateSecrets();
 
@@ -168,6 +175,38 @@ export default function create({ section, body, solved: preSolved = false, solve
   raf = requestAnimationFrame(tick);
 
   if (preSolved) lens.classList.add('is-found');
+
+  /* The glass only appears once this section is actually on screen, and it
+     fades in when it does. main.js already mounts puzzles lazily, but the lens
+     is a page-wide object and this section is the only place it can be earned,
+     so it gets a second guard: she must never see it before she arrives.
+
+     After that first arrival it stays available everywhere, which is the whole
+     point of it. */
+  let arrived = false;
+  const arrivalIO = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (entry.intersectionRatio < 0.55) continue;
+        arrived = true;
+        lens.classList.add('is-available');
+        /* Re-centre on the section she's actually looking at now. */
+        centreOnSection();
+        clampToViewport();
+        arrivalIO.disconnect();
+      }
+    },
+    { threshold: [0, 0.55, 1] }
+  );
+  arrivalIO.observe(section);
+
+  /* If she reloads with this section already solved, the glass is hers
+     immediately: she has earned it and may be anywhere on the page. */
+  if (preSolved) {
+    arrived = true;
+    lens.classList.add('is-available');
+    arrivalIO.disconnect();
+  }
 
   return {
     /* Deliberately empty. Every other puzzle tears itself down when its
