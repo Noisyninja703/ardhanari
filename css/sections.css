@@ -17,48 +17,69 @@
 /* --- Section shell -------------------------------------------------------
    dvh, not vh. Mobile browser chrome collapses as you scroll and 100vh
    causes the classic jumping-gap bug. */
+/* Every section is exactly one screen tall and divides that screen into five
+   proportional bands. Because the rows are percentages of the device's own
+   height, a segment fits on any screen without tuning — which is what the
+   previous content-driven layout could not guarantee.
+
+           10%   tithi
+           15%   heading
+           50%   poem / puzzle
+           10%   prompt (hint, skip, or "keep going")
+           15%   Devanagari footer
+
+   The percentages resolve against the content box, so reserving the meter's
+   height as bottom padding keeps the five bands adding up to the screen. */
 .section {
   position: relative;
-  min-height: 100dvh;
-  /* Two rows: the poem takes the space it needs and centres in what's left,
-     the Devanagari sits as a footer at the bottom. Because both are in flow,
-     nothing can be pushed off screen — which is what used to happen when the
-     script was absolutely positioned and the section was a fixed height. */
+  height: 100dvh;
   display: grid;
-  /* minmax(0, 1fr), not 1fr: a bare 1fr track has an automatic min-content
-     floor, so tall content grows the section past 100dvh. That extra height
-     pushed the section's reserved bottom strip down past the fixed moon
-     meter, and the Devanagari footer ended up underneath it. */
-  grid-template-rows: minmax(0, 1fr) auto;
-  align-items: center;
-  /* Bottom padding is exactly the meter's reserve. Every value in this
-     section's vertical rhythm is tuned so the poem plus the footer fit inside
-     100dvh at the sizes that matter — if the section grows past the viewport,
-     its reserved strip slides under the fixed meter and the footer hides
-     behind it. */
-  padding: var(--s-5) var(--gutter) var(--chrome-h);
+  grid-template-rows: 10% 15% 50% 10% 15%;
+  padding: 0 var(--gutter) var(--chrome-h);
+  /* The mist layers are deliberately oversized (inset: -20%); without this
+     they extend the document sideways. They're masked to fade before the top
+     and bottom edges so this clip never shows as a seam. */
   overflow: clip;
   isolation: isolate;
+  /* One segment per screen: scrolling settles on a section rather than
+     stopping halfway between two. */
+  scroll-snap-align: start;
 }
 
-/* One centred portrait column, at every width. Everything is centred and
-   scales via --column; there are no side-by-side or orientation-specific
-   layouts anywhere in this file. */
-.section__inner {
-  /* Explicit row: puzzles add elements to the section, and without this an
-     extra child could push the poem below the Devanagari footer. */
-  grid-row: 1;
+/* Each band centres its own content inside the column. min-height: 0 lets a
+   band stay the size the grid gave it instead of being forced open by its
+   contents. */
+.section__row {
   position: relative;
   z-index: var(--z-content);
   display: grid;
-  gap: var(--s-5);
+  /* An explicit full-width column. Without it the single column is sized to
+     its content, and anything using width: 100% — every puzzle surface —
+     resolves against zero and collapses. */
+  grid-template-columns: minmax(0, 1fr);
+  place-content: center;
   justify-items: center;
-  text-align: center;
+  /* Tight: the bands themselves provide the rhythm now, so generous gaps here
+     just add negative space between a title and the poem under it. */
+  gap: var(--s-2);
   width: var(--column);
+  min-height: 0;
   margin-inline: auto;
+  text-align: center;
 }
 
-.section__inner .t-verse { margin-inline: auto; }
+.section__row .t-verse { margin-inline: auto; }
+
+/* The poem band stretches in both axes so a puzzle can fill it.
+
+   justify-items must be stretch, not the inherited centre: puzzles size
+   themselves with width/height 100%, and against a content-sized column that
+   resolves to zero — the halves panel came out 0px wide. */
+.section__body {
+  align-content: stretch;
+  justify-items: stretch;
+  grid-auto-rows: minmax(0, auto);
+}
 
 /* The tithi label: lunar phase glyph plus its name. This is the structural
    device — the moon encodes the progression, so we never number sections. */
@@ -81,18 +102,7 @@
 
    scale-down on overflow: a long compound like अर्धनारीश्वर must shrink to fit
    the column rather than run off the edge. */
-.section__footer {
-  grid-row: 2;
-  display: grid;
-  justify-items: center;
-  width: 100%;
-  padding-top: var(--s-4);
-}
-
-.section__sanskrit {
-  max-width: 100%;
-  overflow: clip;
-}
+.section__sanskrit { max-width: 100%; }
 
 /* Sized against the column, and capped so the longest word still fits.
    Tight leading: as a footer it's a single line, and the default 1.4 was
@@ -118,11 +128,10 @@
 
 .amavasya {
   /* The void is the only section with no mist at all. Absolute black is
-     the point: there is nothing here until she finds it. */
+     the point: there is nothing here until she finds it.
+
+     No place-content here: it would collapse the section's five-band grid. */
   background: var(--void);
-  place-content: center;
-  justify-items: center;
-  text-align: center;
 }
 
 /* The point of light she has to hold still near.
@@ -133,6 +142,9 @@
    still near it — not finding it in the dark. */
 .spark {
   position: relative;
+  /* The poem band stretches its children so puzzle surfaces can fill it; the
+     spark is a fixed size, so it has to centre itself. */
+  justify-self: center;
   /* Comfortably past the 44px touch minimum, and it's the only target here. */
   width: 56px;
   height: 56px;
@@ -227,15 +239,24 @@
   opacity: 0;
 }
 
+/* "Keep going": appears once a section is solved, telling her the next one is
+   open. Every section gets one, not just the first — it's the reward signal
+   that replaced auto-scrolling her onward. */
 .scroll-cue {
   display: grid;
   justify-items: center;
-  gap: var(--s-2);
-  margin-top: var(--s-4);
+  gap: var(--s-1);
+  opacity: 0;
+  transition: opacity var(--d-bloom) var(--ease-out);
 }
+.is-solved .scroll-cue { opacity: 1; }
+
+/* Nothing below the last section, so nothing to keep going to. */
+.scroll-cue[hidden] { display: none; }
+
 .scroll-cue__line {
   width: 1px;
-  height: 2.25rem;
+  height: 1.75rem;
   background: linear-gradient(to bottom, var(--moon-faint), transparent);
   animation: cue-fall 3.4s var(--ease-soft) infinite;
   transform-origin: top;
@@ -267,10 +288,10 @@
 .wipe {
   position: relative;
   width: 100%;
-  /* Height is driven by the verse inside, with a floor so a short verse
-     still gets a decent field of ash. A fixed aspect-ratio clipped longer
-     verses on desktop. */
-  min-height: 20rem;
+  /* Fills the poem band. The band is a fixed share of the screen, so the ash
+     field scales with the device instead of imposing its own minimum height
+     and pushing the section past one screen. */
+  height: 100%;
   margin-inline: auto;
   /* pan-y, not none. `none` meant the ash panel swallowed every gesture and
      she couldn't scroll the page with a finger anywhere over it. This lets
@@ -286,13 +307,14 @@
 /* Nothing left to wipe: hand every gesture back to the browser. */
 .is-solved .wipe { touch-action: auto; cursor: default; }
 
+/* The wipe now has a definite height from its band, so this can fill it. */
 .wipe__beneath {
-  position: relative;   /* in flow: this is what gives .wipe its height */
+  position: absolute;
+  inset: 0;
   display: grid;
   place-content: center;
-  gap: var(--s-4);
-  min-height: 20rem;
-  padding: var(--s-7) var(--s-6);
+  gap: var(--s-3);
+  padding: var(--s-4);
   text-align: center;
 }
 .wipe__photo {
@@ -327,7 +349,7 @@
 .halves {
   position: relative;
   width: 100%;
-  min-height: 16rem;
+  height: 100%;
   /* Load-bearing while unsolved: the drag is vertical, so without this the
      browser claims it and scrolls instead of moving the panels. Released the
      moment it's solved, below, so it can never block scrolling afterwards. */
@@ -480,50 +502,6 @@
   background: linear-gradient(to top, rgba(10, 6, 18, 0.92), transparent);
 }
 
-/* The track and its fill. --progress is written by main.js and is monotonic:
-   it never runs backwards when she scrolls up through solved sections. */
-.moon-meter__track {
-  position: relative;
-  width: 100%;
-  height: 1px;
-  background: var(--moon-ghost);
-}
-
-.moon-meter__fill {
-  position: absolute;
-  inset: 0 auto 0 0;
-  width: calc(var(--progress, 0) * 100%);
-  background: linear-gradient(90deg, var(--ash), var(--gold));
-  transition: width var(--d-mid) var(--ease-out), box-shadow var(--d-mid) var(--ease-soft);
-  /* Glow strengthens as she approaches the next milestone. */
-  box-shadow:
-    0 0 8px 1px rgba(201, 162, 75, calc(0.15 + var(--nearness, 0) * 0.45)),
-    0 0 26px 5px rgba(201, 162, 75, calc(var(--nearness, 0) * 0.28));
-}
-
-/* Milestone reached: a pop of light, then a settle back to baseline. */
-.moon-meter.is-popping .moon-meter__fill {
-  animation: meter-pop 1.5s var(--ease-out);
-}
-@keyframes meter-pop {
-  0% {
-    box-shadow:
-      0 0 8px 1px rgba(201, 162, 75, 0.5),
-      0 0 26px 5px rgba(201, 162, 75, 0.3);
-  }
-  18% {
-    box-shadow:
-      0 0 16px 3px rgba(239, 233, 220, 0.9),
-      0 0 54px 14px rgba(201, 162, 75, 0.6),
-      0 0 120px 40px rgba(201, 162, 75, 0.3);
-  }
-  100% {
-    box-shadow:
-      0 0 8px 1px rgba(201, 162, 75, 0.15),
-      0 0 26px 5px rgba(201, 162, 75, 0);
-  }
-}
-
 .moon-meter__dots {
   display: flex;
   justify-content: space-around;
@@ -551,6 +529,31 @@
   opacity: 1;
   color: var(--gold);
   text-shadow: 0 0 18px rgba(201, 162, 75, 0.6);
+}
+
+/* Solved: the moon it belongs to flares, then settles to its lit state. The
+   glow lives on the symbol itself rather than on a progress bar. */
+.moon-meter__dot.is-popping {
+  animation: moon-pop 1.6s var(--ease-out);
+}
+@keyframes moon-pop {
+  0% {
+    color: var(--moon);
+    text-shadow: 0 0 10px rgba(239, 233, 220, 0.5);
+    transform: scale(1);
+  }
+  22% {
+    color: var(--moon);
+    text-shadow:
+      0 0 14px rgba(239, 233, 220, 0.95),
+      0 0 40px rgba(201, 162, 75, 0.7),
+      0 0 90px rgba(201, 162, 75, 0.35);
+    transform: scale(1.45);
+  }
+  100% {
+    text-shadow: 0 0 14px rgba(239, 233, 220, 0.35);
+    transform: scale(1);
+  }
 }
 
 

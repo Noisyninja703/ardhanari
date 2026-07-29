@@ -15,23 +15,18 @@ const HOLD_MS = 1600;
 const NEAR_PX = 160;   /* how close the pointer must be to count as "near" */
 const JITTER_PX = 14;  /* movement under this still counts as holding still */
 
-export default function create({ section, solved = false, solve }) {
+export default function create({ section, body, solved = false, solve }) {
   /* The section's content starts hidden via CSS (see sections.css) and is
      revealed by .is-solved, so there's nothing to hide here. */
-  const inner = section.querySelector('.section__inner');
 
-  /* The spark is a button so it's focusable and announced.
-
-     It goes inside .section__inner, not beside it: the section is a two-row
-     grid (content, then the Devanagari footer), so an extra direct child here
-     would take a row of its own and shove the footer and the poem out of
-     order. The CSS hides inner's other children rather than inner itself, so
-     the spark stays visible while the poem waits. */
+  /* The spark is a button so it's focusable and announced. It goes in the poem
+     band, which is where the light belongs — the section's own rows are fixed
+     proportions of the screen and must not gain extra children. */
   const spark = document.createElement('button');
   spark.type = 'button';
   spark.className = 'spark';
   spark.setAttribute('aria-label', 'Light the first star');
-  inner.prepend(spark);
+  body.prepend(spark);
 
   /* Already lit on a previous visit, or reduced motion is on: show the star
      burning and wire up nothing. */

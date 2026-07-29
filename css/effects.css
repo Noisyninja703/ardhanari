@@ -244,37 +244,41 @@
    top breaks the edge up so it reads as imperfect rather than mechanical.
 
    Implemented with mask-position on an oversized mask so it animates without
-   needing @property support. */
+   needing @property support.
+
+   The mask is 300% wide and travels from one end to the other, so the final
+   state is the fully opaque third — text ends at full opacity everywhere and
+   stays completely legible. The previous version finished mid-gradient, which
+   left part of every line permanently dimmed and hard to read. */
 .sweep {
   --sweep-mask: linear-gradient(
-    100deg,
+    90deg,
     transparent 0%,
-    rgba(0, 0, 0, 0.15) 14%,
-    rgba(0, 0, 0, 0.6) 26%,
-    rgba(0, 0, 0, 0.92) 36%,
-    #000 46%
+    transparent 26%,
+    rgba(0, 0, 0, 0.5) 38%,
+    #000 52%,
+    #000 100%
   );
   -webkit-mask-image: var(--sweep-mask);
   mask-image: var(--sweep-mask);
-  -webkit-mask-size: 260% 100%;
-  mask-size: 260% 100%;
+  -webkit-mask-size: 300% 100%;
+  mask-size: 300% 100%;
   -webkit-mask-repeat: no-repeat;
   mask-repeat: no-repeat;
-  -webkit-mask-position: 130% 0;
-  mask-position: 130% 0;
-  opacity: 0;
-  transition: opacity var(--d-mid) var(--ease-soft);
+  /* 0% shows the transparent third: hidden. */
+  -webkit-mask-position: 0% 0;
+  mask-position: 0% 0;
 }
 
 .sweep.is-swept {
-  opacity: 1;
-  animation: sweep-in var(--d-bloom) var(--ease-out) forwards;
-  animation-delay: calc(var(--i, 0) * 180ms);
+  animation: sweep-in 1s var(--ease-soft) forwards;
+  animation-delay: calc(var(--i, 0) * 140ms);
 }
 
 @keyframes sweep-in {
-  from { mask-position: 130% 0; -webkit-mask-position: 130% 0; }
-  to   { mask-position: 0% 0;   -webkit-mask-position: 0% 0; }
+  from { mask-position: 0% 0;   -webkit-mask-position: 0% 0; }
+  /* 100% shows the fully opaque third: revealed, at full strength. */
+  to   { mask-position: 100% 0; -webkit-mask-position: 100% 0; }
 }
 
 /* --- Text haze -----------------------------------------------------------

@@ -24,9 +24,8 @@ const GRID = 16;            /* progress sampling resolution, per axis */
 const BRUSH_MIN = 46;
 const BRUSH_MAX = 86;
 
-export default function create({ section, data, solved: preSolved = false, solve }) {
-  const inner = section.querySelector('.section__inner');
-  const verses = inner.querySelector('.verses');
+export default function create({ body, data, solved: preSolved = false, solve }) {
+  const verses = body.querySelector('.verses');
 
   /* --- Build the wipe surface, moving the existing verse into it so the
          copy is never duplicated between here and content.js. ------------ */
@@ -57,7 +56,7 @@ export default function create({ section, data, solved: preSolved = false, solve
   canvas.setAttribute('aria-hidden', 'true');
 
   wipe.append(beneath, canvas);
-  inner.insertBefore(wipe, inner.querySelector('.hint'));
+  body.append(wipe);
 
   const ctx = canvas.getContext('2d');
 

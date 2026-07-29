@@ -9,6 +9,13 @@ html {
      and every phone. Parallax rides on top of real scrolling instead. */
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
+
+  /* One segment per screen. Snapping is the browser's job here rather than a
+     scroll listener firing scrollIntoView — the native version follows the
+     gesture, can be overridden by a deliberate long scroll, and never fights
+     a trackpad. Every section is exactly 100dvh, so nothing can be trapped
+     out of reach. */
+  scroll-snap-type: y mandatory;
 }
 
 body {

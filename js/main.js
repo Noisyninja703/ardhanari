@@ -85,21 +85,28 @@ function buildSection(data, index) {
     registerLayer(warm, -0.1, section);
   }
 
-  const inner = el('div', 'section__inner');
+  /* Five proportional bands, sized in css/sections.css as percentages of the
+     screen. Order here is the order down the screen. */
+  const tithiRow = el('div', 'section__row section__tithi');
+  const headRow = el('div', 'section__row section__head');
+  const body = el('div', 'section__row section__body');
+  const prompt = el('div', 'section__row section__prompt');
+  const footer = el('div', 'section__row section__footer');
 
   /* Tithi label: the moon glyph plus the phase name. This is the structural
-     device — the moon carries the progression, so nothing is numbered. */
-  /* Tithi label and heading sweep in together, once she's a little way into
-     the section rather than the instant it appears. */
+     device — the moon carries the progression, so nothing is numbered. It and
+     the heading sweep in once she's a little way into the section. */
   const tithi = el('div', 'tithi sweep');
   tithi.style.setProperty('--i', '0');
   const phase = el('span', 'tithi__phase', data.phase);
   phase.setAttribute('aria-hidden', 'true');
   tithi.append(phase, el('span', 't-util', data.tithi));
+  tithiRow.append(tithi);
 
   const heading = el('h2', 't-title sweep', data.heading);
   heading.id = `${data.id}-heading`;
   heading.style.setProperty('--i', '1');
+  headRow.append(heading);
 
   const verses = el('div', 'verses');
   data.verses.forEach((line, i) => {
@@ -107,11 +114,10 @@ function buildSection(data, index) {
     p.style.setProperty('--i', String(i + 2));
     verses.append(p);
   });
+  body.append(verses);
 
-  inner.append(tithi, heading, verses);
-  section.append(inner);
-
-  /* Hint and skip live in the section but are driven by the timers below. */
+  /* Hint, skip and the onward cue all share the prompt band — none of them is
+     ever wanted at the same moment as another. */
   if (data.puzzle) {
     const hint = el('p', 'hint t-util', data.hint || '');
     hint.setAttribute('aria-live', 'polite');
@@ -119,34 +125,34 @@ function buildSection(data, index) {
     const skip = el('button', 'skip t-util', data.skipLabel || 'Show me');
     skip.type = 'button';
 
-    inner.append(hint, skip);
+    prompt.append(hint, skip);
     section._hint = hint;
     section._skip = skip;
   }
 
-  /* The first section needs to tell her there's more below it. Without this
-     the void reads as the whole site. Later sections don't need it — by then
-     scrolling is established. */
-  if (index === 0) {
-    const cue = el('div', 'scroll-cue');
-    const line = el('div', 'scroll-cue__line');
-    line.setAttribute('aria-hidden', 'true');
-    cue.append(line, el('span', 't-util', UI.scrollCue));
-    inner.append(cue);
-  }
+  /* Every section says "keep going" once it's solved. That's how she learns
+     the next one has opened, now that solving doesn't scroll her onward.
+     Hidden on the last section, where there is nothing below. */
+  const cue = el('div', 'scroll-cue');
+  const cueLine = el('div', 'scroll-cue__line');
+  cueLine.setAttribute('aria-hidden', 'true');
+  cue.append(cueLine, el('span', 't-util', UI.scrollCue));
+  cue.hidden = index === SECTIONS.length - 1;
+  prompt.append(cue);
 
   /* Devanagari footer. Sweeps in when the section reaches full view, so it
      doubles as the signal that she's arrived — it sits at the very bottom of
      the section, so seeing it means the section fills the screen.
      aria-hidden: a screen reader should not try to pronounce ornament. */
   if (data.devanagari) {
-    const footer = el('div', 'section__footer');
     const sanskrit = el('div', 'section__sanskrit t-sanskrit sweep', data.devanagari);
     sanskrit.setAttribute('aria-hidden', 'true');
     footer.append(sanskrit);
-    section.append(footer);
     section._sanskrit = sanskrit;
   }
+
+  section.append(tithiRow, headRow, body, prompt, footer);
+  section._body = body;
 
   section._data = data;
   section._index = index;
@@ -182,6 +188,8 @@ async function mountPuzzle(section) {
     const mod = await loader();
     const instance = mod.default({
       section,
+      /* The band a puzzle builds into: the 50% poem row, not the section. */
+      body: section._body,
       data: section._data,
       solved: preSolved,
       solve: () => markSolved(section),
@@ -207,9 +215,9 @@ function markSolved(section, { silent = false } = {}) {
   section._puzzle?.destroy?.();
   section._puzzle = null;
 
-  updateSeals({ animate: !silent });
+  updateSeals();
   updateExposure();
-  updateMoonMeter({ pop: !silent });
+  updateMoonMeter({ popId: silent ? null : section.id });
 
   if (!silent) section.dispatchEvent(new CustomEvent('ardh:solved', { bubbles: true }));
 }
@@ -224,30 +232,19 @@ function markSolved(section, { silent = false } = {}) {
 
 let allSections = [];
 
-function updateSeals({ animate = false } = {}) {
+function updateSeals() {
   let frontierPassed = false;
-  let firstRevealed = null;
 
   for (const section of allSections) {
-    const seal = frontierPassed;
-    const wasSealed = section.classList.contains('section--sealed');
-    section.classList.toggle('section--sealed', seal);
-    if (wasSealed && !seal) firstRevealed = section;
-
+    section.classList.toggle('section--sealed', frontierPassed);
     /* Everything after the first unsolved section is sealed. */
     if (!frontierPassed && !section.classList.contains('is-solved')) frontierPassed = true;
   }
 
-  /* Nudge her into the section that just opened up, so the reward for solving
-     is the next thing arriving rather than a hunt for it. */
-  if (animate && firstRevealed) {
-    requestAnimationFrame(() => {
-      firstRevealed.scrollIntoView({
-        behavior: prefersReducedMotion() ? 'auto' : 'smooth',
-        block: 'start',
-      });
-    });
-  }
+  /* Deliberately no scrolling here. Solving used to jump her straight to the
+     next section, which yanked the page out from under the moment she'd just
+     earned. She stays where she is, the poem fades in, and the "keep going"
+     cue tells her the next one is open. */
 }
 
 /* --- Exposure ------------------------------------------------------------
@@ -277,21 +274,11 @@ function clearTimers(section) {
 /* --- Moon meter ---------------------------------------------------------- */
 
 let meterDots = [];
-let meterEl = null;
-let meterFill = null;
 let currentId = SECTIONS[0].id;
 
-/* The fill only ever grows. Scrolling back up through solved sections must
-   not wind the bar backwards — progress she's earned stays earned. */
-let progressHighWater = 0;
-
 function buildMoonMeter() {
-  meterEl = el('nav', 'moon-meter');
-  meterEl.setAttribute('aria-label', UI.moonMeterLabel);
-
-  const track = el('div', 'moon-meter__track');
-  meterFill = el('div', 'moon-meter__fill');
-  track.append(meterFill);
+  const nav = el('nav', 'moon-meter');
+  nav.setAttribute('aria-label', UI.moonMeterLabel);
 
   const dots = el('div', 'moon-meter__dots');
   meterDots = SECTIONS.map((data) => {
@@ -303,15 +290,15 @@ function buildMoonMeter() {
     return dot;
   });
 
-  meterEl.append(dots, track);
-  return meterEl;
+  nav.append(dots);
+  return nav;
 }
 
 /**
- * @param {object}  [opts]
- * @param {boolean} [opts.pop]  flash the milestone glow, then settle back
+ * @param {object} [opts]
+ * @param {string|null} [opts.popId]  section whose moon should flare
  */
-function updateMoonMeter({ pop = false } = {}) {
+function updateMoonMeter({ popId = null } = {}) {
   SECTIONS.forEach((data, i) => {
     const dot = meterDots[i];
     if (!dot) return;
@@ -321,42 +308,15 @@ function updateMoonMeter({ pop = false } = {}) {
     dot.setAttribute('aria-current', data.id === currentId ? 'true' : 'false');
     /* Sealed sections aren't reachable, so their dots shouldn't pretend. */
     dot.setAttribute('aria-disabled', isUnlocked || data.id === currentId ? 'false' : 'true');
+
+    /* The glow lands on the moon she just earned, rather than on a bar. */
+    if (popId && data.id === popId) {
+      dot.classList.remove('is-popping');
+      void dot.offsetWidth; /* reflow, so it replays on consecutive solves */
+      dot.classList.add('is-popping');
+      setTimeout(() => dot.classList.remove('is-popping'), 1700);
+    }
   });
-
-  const solved = unlocked.size;
-  const total = Math.max(1, SECTIONS.length);
-  progressHighWater = Math.max(progressHighWater, solved / total);
-  meterFill?.style.setProperty('--progress', progressHighWater.toFixed(4));
-
-  if (pop && meterEl) {
-    meterEl.classList.remove('is-popping');
-    /* Reflow so the animation restarts even on consecutive milestones. */
-    void meterEl.offsetWidth;
-    meterEl.classList.add('is-popping');
-    setTimeout(() => meterEl.classList.remove('is-popping'), 1600);
-  }
-}
-
-/* Between milestones the bar creeps forward as she scrolls into the current
-   section, and the glow strengthens as the next dot approaches.
-
-   The fill is strictly monotonic: the creep feeds the same high-water mark as
-   the milestones do, so scrolling back up never winds it backwards. Only the
-   glow follows her position, because that's ambience rather than progress. */
-function updateMeterNearness(section, ratio) {
-  if (!meterFill || section.classList.contains('is-solved')) return;
-
-  const clamped = Math.min(1, Math.max(0, ratio));
-  const total = Math.max(1, SECTIONS.length);
-  const solved = unlocked.size;
-
-  /* Never let the creep spill past the next milestone — that's earned by
-     solving, not by scrolling. */
-  const capped = Math.min((solved + clamped) / total, (solved + 1) / total);
-
-  progressHighWater = Math.max(progressHighWater, capped);
-  meterFill.style.setProperty('--progress', progressHighWater.toFixed(4));
-  meterFill.style.setProperty('--nearness', clamped.toFixed(3));
 }
 
 /* --- Observers ----------------------------------------------------------- */
@@ -418,8 +378,6 @@ function observeSections(sections) {
         } else if (ratio < IN_VIEW) {
           clearTimers(section);
         }
-
-        if (entry.isIntersecting) updateMeterNearness(section, ratio);
       }
     },
     { threshold: steps }

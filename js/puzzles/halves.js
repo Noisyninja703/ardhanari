@@ -18,9 +18,8 @@
 const SNAP_PX = 40;      /* magnetic pull distance, as planned */
 const KEY_STEP = 0.28;   /* how much one arrow press closes the gap */
 
-export default function create({ section, data, solved: preSolved = false, solve }) {
-  const inner = section.querySelector('.section__inner');
-  const verses = inner.querySelector('.verses');
+export default function create({ body, data, solved: preSolved = false, solve }) {
+  const verses = body.querySelector('.verses');
 
   /* The completed verse is hidden until the halves meet. */
   verses.classList.add('verses--withheld');
@@ -56,7 +55,7 @@ export default function create({ section, data, solved: preSolved = false, solve
   stage.append(panelA, seam, panelB);
   /* Above the completed verse, not below it: she joins the torn line first,
      and the rest of the verse blooms underneath as the reward. */
-  inner.insertBefore(stage, verses);
+  body.insertBefore(stage, verses);
 
   /* --- State ------------------------------------------------------------- */
 
@@ -104,24 +103,35 @@ export default function create({ section, data, solved: preSolved = false, solve
     return { destroy() {} };
   }
 
-  /* --- Pointer ----------------------------------------------------------- */
+  /* --- Pointer ------------------------------------------------------------
+     The whole band is the drag surface, not just the two panels. When the
+     halves are fully apart there's a wide gap of empty stage between them,
+     and requiring her to land on the text itself meant a touch in that gap
+     did nothing at all. Anywhere in the band now works.
 
-  let dragging = null;   /* { pointerId, start, startGap } */
+     Which way the drag closes comes from where it started: begin above the
+     middle and you're pulling the top half down, begin below it and you're
+     pulling the bottom half up. */
+
+  let dragging = null;   /* { pointerId, start, startGap, fromTop } */
 
   function onDown(e) {
     if (joined) return;
-    const panel = e.currentTarget;
-    panel.setPointerCapture?.(e.pointerId);
-    dragging = { pointerId: e.pointerId, start: e.clientY, startGap: gap, panel };
+    const mid = stage.getBoundingClientRect().top + stage.clientHeight / 2;
+    stage.setPointerCapture?.(e.pointerId);
+    dragging = {
+      pointerId: e.pointerId,
+      start: e.clientY,
+      startGap: gap,
+      fromTop: e.clientY <= mid,
+    };
     stage.classList.add('is-dragging');
   }
 
   function onMove(e) {
     if (!dragging || joined || e.pointerId !== dragging.pointerId) return;
 
-    /* The top half closes the gap by moving down, the bottom half by moving
-       up. Normalising the direction here means one formula below. */
-    const direction = dragging.panel === panelA ? 1 : -1;
+    const direction = dragging.fromTop ? 1 : -1;
     const travelled = (e.clientY - dragging.start) * direction;
 
     setGap(dragging.startGap - travelled / maxOffset());
@@ -139,12 +149,10 @@ export default function create({ section, data, solved: preSolved = false, solve
     if (gap * maxOffset() * 2 <= SNAP_PX) join();
   }
 
-  for (const panel of [panelA, panelB]) {
-    panel.addEventListener('pointerdown', onDown);
-    panel.addEventListener('pointermove', onMove);
-    panel.addEventListener('pointerup', onUp);
-    panel.addEventListener('pointercancel', onUp);
-  }
+  stage.addEventListener('pointerdown', onDown);
+  stage.addEventListener('pointermove', onMove);
+  stage.addEventListener('pointerup', onUp);
+  stage.addEventListener('pointercancel', onUp);
 
   /* --- Keyboard ----------------------------------------------------------
      Arrow keys close the gap; Enter or Space finishes it outright. Without
@@ -169,13 +177,12 @@ export default function create({ section, data, solved: preSolved = false, solve
 
   return {
     destroy() {
-      for (const panel of [panelA, panelB]) {
-        panel.removeEventListener('pointerdown', onDown);
-        panel.removeEventListener('pointermove', onMove);
-        panel.removeEventListener('pointerup', onUp);
-        panel.removeEventListener('pointercancel', onUp);
-        panel.removeEventListener('keydown', onKey);
-      }
+      stage.removeEventListener('pointerdown', onDown);
+      stage.removeEventListener('pointermove', onMove);
+      stage.removeEventListener('pointerup', onUp);
+      stage.removeEventListener('pointercancel', onUp);
+      panelA.removeEventListener('keydown', onKey);
+      panelB.removeEventListener('keydown', onKey);
     },
   };
 }
