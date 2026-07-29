@@ -20,8 +20,14 @@ import { initScroll, registerLayer, attachPointerGlow, prefersReducedMotion } fr
 import { initParticles, setPreset } from './particles.js';
 
 const STORE_KEY = 'ardh:unlocked';
-const HINT_DELAY = 8000;
-const SKIP_DELAY = 25000;
+
+/* Timers start when the section fills most of the screen, not when a sliver
+   of it appears — so 3s means 3s of actually looking at it. */
+const HINT_DELAY = 3000;
+const SKIP_DELAY = 15000;
+
+/* How much of a section must be on screen to count as "she's here". */
+const IN_VIEW = 0.75;
 
 /** Which particle preset each section runs. */
 const PARTICLE_BY_SECTION = {
@@ -67,14 +73,6 @@ function buildSection(data, index) {
   section.dataset.puzzle = data.puzzle || '';
   section.setAttribute('aria-labelledby', `${data.id}-heading`);
 
-  /* Decorative Devanagari as background texture. aria-hidden: a screen
-     reader should not attempt to pronounce ornament. */
-  if (data.devanagari) {
-    const sanskrit = el('div', 'section__sanskrit t-sanskrit', data.devanagari);
-    sanskrit.setAttribute('aria-hidden', 'true');
-    section.append(sanskrit);
-  }
-
   /* Two mist layers at different parallax speeds. The void gets none —
      absolute black is the whole point of that section. */
   if (data.id !== 'amavasya') {
@@ -91,13 +89,15 @@ function buildSection(data, index) {
 
   /* Tithi label: the moon glyph plus the phase name. This is the structural
      device — the moon carries the progression, so nothing is numbered. */
-  const tithi = el('div', 'tithi reveal');
+  /* Tithi label and heading sweep in together, once she's a little way into
+     the section rather than the instant it appears. */
+  const tithi = el('div', 'tithi sweep');
   tithi.style.setProperty('--i', '0');
   const phase = el('span', 'tithi__phase', data.phase);
   phase.setAttribute('aria-hidden', 'true');
   tithi.append(phase, el('span', 't-util', data.tithi));
 
-  const heading = el('h2', 't-title reveal', data.heading);
+  const heading = el('h2', 't-title sweep', data.heading);
   heading.id = `${data.id}-heading`;
   heading.style.setProperty('--i', '1');
 
@@ -135,6 +135,19 @@ function buildSection(data, index) {
     inner.append(cue);
   }
 
+  /* Devanagari footer. Sweeps in when the section reaches full view, so it
+     doubles as the signal that she's arrived — it sits at the very bottom of
+     the section, so seeing it means the section fills the screen.
+     aria-hidden: a screen reader should not try to pronounce ornament. */
+  if (data.devanagari) {
+    const footer = el('div', 'section__footer');
+    const sanskrit = el('div', 'section__sanskrit t-sanskrit sweep', data.devanagari);
+    sanskrit.setAttribute('aria-hidden', 'true');
+    footer.append(sanskrit);
+    section.append(footer);
+    section._sanskrit = sanskrit;
+  }
+
   section._data = data;
   section._index = index;
   return section;
@@ -143,7 +156,7 @@ function buildSection(data, index) {
 /* --- Puzzles ------------------------------------------------------------- */
 
 const puzzleModules = {
-  void: () => import('./puzzles/void.js'),
+  spark: () => import('./puzzles/spark.js'),
   ash: () => import('./puzzles/ash.js'),
   halves: () => import('./puzzles/halves.js'),
 };
@@ -194,14 +207,60 @@ function markSolved(section, { silent = false } = {}) {
   section._puzzle?.destroy?.();
   section._puzzle = null;
 
-  updateMoonMeter();
+  updateSeals({ animate: !silent });
+  updateExposure();
+  updateMoonMeter({ pop: !silent });
 
   if (!silent) section.dispatchEvent(new CustomEvent('ardh:solved', { bubbles: true }));
 }
 
+/* --- Sealing -------------------------------------------------------------
+   Everything past the first unsolved section is taken out of the document,
+   so the page literally ends there and she can't scroll past a puzzle she
+   hasn't finished. Scrolling back up is unaffected.
+
+   This is why there's no wheel-hijacking or scroll clamping anywhere: the
+   document is exactly as long as she's earned. */
+
+let allSections = [];
+
+function updateSeals({ animate = false } = {}) {
+  let frontierPassed = false;
+  let firstRevealed = null;
+
+  for (const section of allSections) {
+    const seal = frontierPassed;
+    const wasSealed = section.classList.contains('section--sealed');
+    section.classList.toggle('section--sealed', seal);
+    if (wasSealed && !seal) firstRevealed = section;
+
+    /* Everything after the first unsolved section is sealed. */
+    if (!frontierPassed && !section.classList.contains('is-solved')) frontierPassed = true;
+  }
+
+  /* Nudge her into the section that just opened up, so the reward for solving
+     is the next thing arriving rather than a hunt for it. */
+  if (animate && firstRevealed) {
+    requestAnimationFrame(() => {
+      firstRevealed.scrollIntoView({
+        behavior: prefersReducedMotion() ? 'auto' : 'smooth',
+        block: 'start',
+      });
+    });
+  }
+}
+
+/* --- Exposure ------------------------------------------------------------
+   The backdrop darkens as she progresses, so the poem becomes the only lit
+   thing on screen by the end. */
+function updateExposure() {
+  const ratio = unlocked.size / Math.max(1, SECTIONS.length);
+  document.documentElement.style.setProperty('--exposure', ratio.toFixed(3));
+}
+
 /* --- Hint / skip timers --------------------------------------------------
-   She never gets stuck. Hint at 8s of being in view, an explicit way out
-   at 25s. Timers only run while the section is actually on screen. */
+   She never gets stuck. Hint at 3s of the section filling the screen, an
+   explicit way out at 15s. Timers only run while it's actually in view. */
 
 function startTimers(section) {
   if (!section._hint || section.classList.contains('is-solved')) return;
@@ -218,32 +277,86 @@ function clearTimers(section) {
 /* --- Moon meter ---------------------------------------------------------- */
 
 let meterDots = [];
+let meterEl = null;
+let meterFill = null;
 let currentId = SECTIONS[0].id;
 
-function buildMoonMeter() {
-  const nav = el('nav', 'moon-meter');
-  nav.setAttribute('aria-label', UI.moonMeterLabel);
+/* The fill only ever grows. Scrolling back up through solved sections must
+   not wind the bar backwards — progress she's earned stays earned. */
+let progressHighWater = 0;
 
+function buildMoonMeter() {
+  meterEl = el('nav', 'moon-meter');
+  meterEl.setAttribute('aria-label', UI.moonMeterLabel);
+
+  const track = el('div', 'moon-meter__track');
+  meterFill = el('div', 'moon-meter__fill');
+  track.append(meterFill);
+
+  const dots = el('div', 'moon-meter__dots');
   meterDots = SECTIONS.map((data) => {
     const dot = el('a', 'moon-meter__dot');
     dot.href = `#${data.id}`;
     dot.innerHTML = `<span aria-hidden="true">${data.phase}</span>`;
     dot.append(el('span', 'visually-hidden', data.tithi));
-    nav.append(dot);
+    dots.append(dot);
     return dot;
   });
 
-  return nav;
+  meterEl.append(dots, track);
+  return meterEl;
 }
 
-function updateMoonMeter() {
+/**
+ * @param {object}  [opts]
+ * @param {boolean} [opts.pop]  flash the milestone glow, then settle back
+ */
+function updateMoonMeter({ pop = false } = {}) {
   SECTIONS.forEach((data, i) => {
     const dot = meterDots[i];
     if (!dot) return;
-    dot.classList.toggle('is-unlocked', unlocked.has(data.id));
+    const isUnlocked = unlocked.has(data.id);
+    dot.classList.toggle('is-unlocked', isUnlocked);
     dot.classList.toggle('is-current', data.id === currentId);
     dot.setAttribute('aria-current', data.id === currentId ? 'true' : 'false');
+    /* Sealed sections aren't reachable, so their dots shouldn't pretend. */
+    dot.setAttribute('aria-disabled', isUnlocked || data.id === currentId ? 'false' : 'true');
   });
+
+  const solved = unlocked.size;
+  const total = Math.max(1, SECTIONS.length);
+  progressHighWater = Math.max(progressHighWater, solved / total);
+  meterFill?.style.setProperty('--progress', progressHighWater.toFixed(4));
+
+  if (pop && meterEl) {
+    meterEl.classList.remove('is-popping');
+    /* Reflow so the animation restarts even on consecutive milestones. */
+    void meterEl.offsetWidth;
+    meterEl.classList.add('is-popping');
+    setTimeout(() => meterEl.classList.remove('is-popping'), 1600);
+  }
+}
+
+/* Between milestones the bar creeps forward as she scrolls into the current
+   section, and the glow strengthens as the next dot approaches.
+
+   The fill is strictly monotonic: the creep feeds the same high-water mark as
+   the milestones do, so scrolling back up never winds it backwards. Only the
+   glow follows her position, because that's ambience rather than progress. */
+function updateMeterNearness(section, ratio) {
+  if (!meterFill || section.classList.contains('is-solved')) return;
+
+  const clamped = Math.min(1, Math.max(0, ratio));
+  const total = Math.max(1, SECTIONS.length);
+  const solved = unlocked.size;
+
+  /* Never let the creep spill past the next milestone — that's earned by
+     solving, not by scrolling. */
+  const capped = Math.min((solved + clamped) / total, (solved + 1) / total);
+
+  progressHighWater = Math.max(progressHighWater, capped);
+  meterFill.style.setProperty('--progress', progressHighWater.toFixed(4));
+  meterFill.style.setProperty('--nearness', clamped.toFixed(3));
 }
 
 /* --- Observers ----------------------------------------------------------- */
@@ -262,22 +375,54 @@ function observeReveals(root) {
   root.querySelectorAll('.reveal').forEach((node) => io.observe(node));
 }
 
+/* Headings and tithi labels sweep in once she's a little way into the
+   section — past them, but before the bottom of it. The negative bottom
+   margin is what delays it until they've scrolled up the screen a bit. */
+function observeSweeps(root) {
+  const io = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        entry.target.classList.add('is-swept');
+        io.unobserve(entry.target);
+      }
+    },
+    { rootMargin: '0px 0px -28% 0px', threshold: 0.6 }
+  );
+  root.querySelectorAll('.tithi.sweep, .t-title.sweep').forEach((node) => io.observe(node));
+}
+
 function observeSections(sections) {
+  /* Fine-grained thresholds so the progress bar can track her scroll through
+     a section rather than jumping at a single trip point. */
+  const steps = Array.from({ length: 21 }, (_, i) => i / 20);
+
   const io = new IntersectionObserver(
     (entries) => {
       for (const entry of entries) {
         const section = entry.target;
-        if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
+        const ratio = entry.intersectionRatio;
+
+        if (entry.isIntersecting && ratio > 0.5) {
           currentId = section.id;
           setPreset(PARTICLE_BY_SECTION[section.id] || 'none');
           updateMoonMeter();
+        }
+
+        /* The Devanagari footer sits at the very bottom of the section, so it
+           arriving means the section fills the screen. That's the same moment
+           the hint timer should start. */
+        if (entry.isIntersecting && ratio >= IN_VIEW) {
+          section._sanskrit?.classList.add('is-swept');
           startTimers(section);
-        } else if (!entry.isIntersecting) {
+        } else if (ratio < IN_VIEW) {
           clearTimers(section);
         }
+
+        if (entry.isIntersecting) updateMeterNearness(section, ratio);
       }
     },
-    { threshold: [0, 0.5] }
+    { threshold: steps }
   );
   sections.forEach((s) => io.observe(s));
 }
@@ -291,6 +436,7 @@ function boot() {
   initScroll();
 
   const sections = SECTIONS.map(buildSection);
+  allSections = sections;
   app.append(...sections);
 
   document.body.append(buildMoonMeter());
@@ -299,13 +445,19 @@ function boot() {
   initParticles(document.getElementById('particles'));
 
   observeReveals(app);
+  observeSweeps(app);
   observeSections(sections);
   updateMoonMeter();
+  updateExposure();
 
   sections.forEach((section) => {
     section._skip?.addEventListener('click', () => markSolved(section));
     mountPuzzle(section);
   });
+
+  /* Seal after mounting, so sections already solved on a previous visit are
+     open from the first paint. */
+  updateSeals();
 
   /* The seam is invisible in the void and appears once she's through it —
      one being, before division. */

@@ -20,13 +20,18 @@ export default function create({ section, solved = false, solve }) {
      revealed by .is-solved, so there's nothing to hide here. */
   const inner = section.querySelector('.section__inner');
 
-  /* The spark is a button so it's focusable and announced. It sits above
-     the (currently invisible) content. */
+  /* The spark is a button so it's focusable and announced.
+
+     It goes inside .section__inner, not beside it: the section is a two-row
+     grid (content, then the Devanagari footer), so an extra direct child here
+     would take a row of its own and shove the footer and the poem out of
+     order. The CSS hides inner's other children rather than inner itself, so
+     the spark stays visible while the poem waits. */
   const spark = document.createElement('button');
   spark.type = 'button';
   spark.className = 'spark';
   spark.setAttribute('aria-label', 'Light the first star');
-  section.insertBefore(spark, inner);
+  inner.prepend(spark);
 
   /* Already lit on a previous visit, or reduced motion is on: show the star
      burning and wire up nothing. */

@@ -40,7 +40,7 @@ export const SECTIONS = [
     phase: '●',            // ● new moon: the dark one
     tithi: 'Amavasya',
     devanagari: 'अमावस्या',
-    puzzle: 'void',
+    puzzle: 'spark',
     heading: 'Before Light',
     verses: [
       'Before there was light, there was the wanting of it.',

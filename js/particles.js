@@ -55,6 +55,7 @@ let preset = PRESETS.none;
 let targetPreset = PRESETS.none;
 let running = false;
 let visible = true;
+let swapTimer = null;
 
 /* Budget scales to screen area and core count. A phone that thermal-throttles
    mid-poem is a worse outcome than fewer ash motes. */
@@ -166,8 +167,31 @@ export function initParticles(el) {
 export function setPreset(name) {
   const next = PRESETS[name] || PRESETS.none;
   if (next === targetPreset) return;
+
+  const first = targetPreset === PRESETS.none && particles.length === 0;
   targetPreset = next;
-  rebuild();
-  if (next.count > 0) start();
-  else stop();
+
+  /* Cross-fade rather than swapping instantly: ash becoming stars mid-scroll
+     used to pop, which added to the harshness at section boundaries. Fade the
+     canvas out, change the field while nobody can see it, fade back in. */
+  if (first || prefersReducedMotion()) {
+    rebuild();
+    next.count > 0 ? start() : stop();
+    return;
+  }
+
+  canvas.style.transition = 'opacity 620ms ease';
+  canvas.style.opacity = '0';
+
+  clearTimeout(swapTimer);
+  swapTimer = setTimeout(() => {
+    rebuild();
+    if (next.count > 0) {
+      start();
+      canvas.style.opacity = '1';
+    } else {
+      stop();
+    }
+  }, 620);
 }
+

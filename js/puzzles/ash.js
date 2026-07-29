@@ -12,17 +12,17 @@
    - Progress is measured by sampling a coarse grid of cells rather than
      reading every pixel. Reading full ImageData every frame on a phone is
      a stutter you can feel.
-   - touch-action: none on the surface (set in CSS) is load-bearing. Without
-     it the browser claims the gesture and scrolls the page mid-wipe.
+   - The ash has soft, irregular edges: it's drawn as a field of overlapping
+     blobs and then feathered at the border, so it reads as a drift of dust
+     rather than a grey rectangle.
+   - touch-action is pan-y (set in CSS), so vertical scrolling keeps working
+     with a finger anywhere over the panel while sideways movement wipes.
    ========================================================================== */
-
-import { prefersReducedMotion } from '../scroll.js';
 
 const SOLVE_AT = 0.9;      /* fraction of cells cleared before the gate opens */
 const GRID = 16;            /* progress sampling resolution, per axis */
 const BRUSH_MIN = 46;
 const BRUSH_MAX = 86;
-const REGROW_MS = 1400;     /* how often ash creeps back at the edges */
 
 export default function create({ section, data, solved: preSolved = false, solve }) {
   const inner = section.querySelector('.section__inner');
@@ -70,20 +70,53 @@ export default function create({ section, data, solved: preSolved = false, solve
   let cleared = new Array(GRID * GRID).fill(false);
   let solved = preSolved;
 
+  /* A soft blob of ash. Used both for the body of the field and, at the
+     edges, for the ragged outline. */
+  function blob(x, y, r, alpha) {
+    const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+    g.addColorStop(0, `rgba(24, 20, 30, ${alpha})`);
+    g.addColorStop(0.6, `rgba(22, 18, 28, ${alpha * 0.85})`);
+    g.addColorStop(1, 'rgba(20, 16, 26, 0)');
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
   function paintAsh() {
     ctx.globalCompositeOperation = 'source-over';
     ctx.clearRect(0, 0, w, h);
 
-    /* Base: near-void, slightly warmer than the page so the panel reads as
-       a layer of dust rather than a hole. */
+    /* The body: an opaque core inset from the edges, so the border is built
+       from blobs rather than being a straight cut. */
+    const inset = Math.min(w, h) * 0.14;
     const base = ctx.createLinearGradient(0, 0, w, h);
-    base.addColorStop(0, 'rgba(16, 12, 22, 0.97)');
+    base.addColorStop(0, 'rgba(18, 14, 24, 0.98)');
     base.addColorStop(0.5, 'rgba(26, 22, 32, 0.99)');
-    base.addColorStop(1, 'rgba(14, 10, 20, 0.97)');
+    base.addColorStop(1, 'rgba(16, 12, 22, 0.98)');
     ctx.fillStyle = base;
-    ctx.fillRect(0, 0, w, h);
+    ctx.fillRect(inset, inset, w - inset * 2, h - inset * 2);
 
-    /* Texture: soft grey blooms so the ash isn't a flat rectangle. */
+    /* The ragged outline: overlapping blobs walked around the perimeter, so
+       the ash has an uneven, drifted edge instead of four straight sides. */
+    const steps = 44;
+    for (let i = 0; i < steps; i++) {
+      const t = i / steps;
+      const jitter = 0.55 + Math.random() * 0.85;
+      const r = inset * jitter * 1.6;
+
+      /* Walk the rectangle perimeter. */
+      let x;
+      let y;
+      if (t < 0.25) { x = (t / 0.25) * w; y = inset * (0.5 + Math.random() * 0.5); }
+      else if (t < 0.5) { x = w - inset * (0.5 + Math.random() * 0.5); y = ((t - 0.25) / 0.25) * h; }
+      else if (t < 0.75) { x = (1 - (t - 0.5) / 0.25) * w; y = h - inset * (0.5 + Math.random() * 0.5); }
+      else { x = inset * (0.5 + Math.random() * 0.5); y = (1 - (t - 0.75) / 0.25) * h; }
+
+      blob(x, y, r, 0.9);
+    }
+
+    /* Interior texture: pale grey blooms so it isn't a flat field. */
     for (let i = 0; i < 90; i++) {
       const x = Math.random() * w;
       const y = Math.random() * h;
@@ -97,6 +130,26 @@ export default function create({ section, data, solved: preSolved = false, solve
       ctx.arc(x, y, r, 0, Math.PI * 2);
       ctx.fill();
     }
+
+    /* Feather the outermost band so the ash dissolves into the page instead
+       of ending on a hard line. */
+    ctx.globalCompositeOperation = 'destination-out';
+    const feather = inset * 1.15;
+    const edges = [
+      [0, 0, w, feather, 0, 0, 0, feather],                  /* top */
+      [0, h - feather, w, feather, 0, h, 0, h - feather],     /* bottom */
+      [0, 0, feather, h, 0, 0, feather, 0],                   /* left */
+      [w - feather, 0, feather, h, w, 0, w - feather, 0],     /* right */
+    ];
+    for (const [rx, ry, rw, rh, x0, y0, x1, y1] of edges) {
+      const g = ctx.createLinearGradient(x0, y0, x1, y1);
+      g.addColorStop(0, 'rgba(0,0,0,1)');
+      g.addColorStop(0.55, 'rgba(0,0,0,0.45)');
+      g.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = g;
+      ctx.fillRect(rx, ry, rw, rh);
+    }
+    ctx.globalCompositeOperation = 'source-over';
   }
 
   function resize() {
@@ -117,6 +170,26 @@ export default function create({ section, data, solved: preSolved = false, solve
       return;
     }
     paintAsh();
+    markFeatherCleared();
+  }
+
+  /* The feathered border has no ash on it, so those cells must not count
+     against her — otherwise the last of the progress is spent scrubbing
+     empty corners to reach the threshold. Progress should only measure ash
+     that's actually there. */
+  function markFeatherCleared() {
+    const inset = Math.min(w, h) * 0.14;
+    const cw = w / GRID;
+    const ch = h / GRID;
+
+    for (let r = 0; r < GRID; r++) {
+      for (let c = 0; c < GRID; c++) {
+        const cx = (c + 0.5) * cw;
+        const cy = (r + 0.5) * ch;
+        const inFeather = cx < inset || cx > w - inset || cy < inset || cy > h - inset;
+        if (inFeather) cleared[r * GRID + c] = true;
+      }
+    }
   }
 
   /* --- Erasing ---------------------------------------------------------- */
@@ -159,54 +232,21 @@ export default function create({ section, data, solved: preSolved = false, solve
   function checkSolved() {
     if (solved || progress() < SOLVE_AT) return;
     solved = true;
-    stopRegrow();
-    /* Clear the rest for her rather than making her scrub the corners. */
-    ctx.globalCompositeOperation = 'destination-out';
-    ctx.fillStyle = 'rgba(0,0,0,1)';
-    ctx.fillRect(0, 0, w, h);
-    canvas.style.transition = 'opacity var(--d-slow) var(--ease-out)';
+
+    /* Everything still on the canvas goes at once, as one slow fade. It used
+       to be erased instantly and in patches, which looked abrupt and made the
+       last of the ash vanish in pieces. Fading the whole layer keeps it calm
+       and means she never has to scrub the corners. */
+    canvas.style.transition = 'opacity 1.6s var(--ease-out)';
     canvas.style.opacity = '0';
     solve();
   }
 
-  /* --- Regrowth ---------------------------------------------------------
-     Ash creeps back in from the edges. Only ever at the perimeter, and
-     never once she's solved it. */
+  /* Ash used to creep back at the edges on a timer. It read as sporadic and
+     harsh — random dark patches appearing while she worked — so it's gone.
+     What she clears stays cleared.
 
-  let regrowTimer = null;
-
-  function regrow() {
-    if (solved) return;
-    ctx.globalCompositeOperation = 'source-over';
-
-    const edge = Math.min(w, h) * 0.16;
-    for (let i = 0; i < 5; i++) {
-      /* Pick a point on the perimeter band. */
-      const onVertical = Math.random() < 0.5;
-      const x = onVertical ? (Math.random() < 0.5 ? Math.random() * edge : w - Math.random() * edge) : Math.random() * w;
-      const y = onVertical ? Math.random() * h : (Math.random() < 0.5 ? Math.random() * edge : h - Math.random() * edge);
-      const r = 30 + Math.random() * 50;
-
-      const g = ctx.createRadialGradient(x, y, 0, x, y, r);
-      g.addColorStop(0, 'rgba(20, 16, 26, 0.55)');
-      g.addColorStop(1, 'rgba(20, 16, 26, 0)');
-      ctx.fillStyle = g;
-      ctx.beginPath();
-      ctx.arc(x, y, r, 0, Math.PI * 2);
-      ctx.fill();
-    }
-  }
-
-  function startRegrow() {
-    if (prefersReducedMotion() || regrowTimer) return;
-    regrowTimer = setInterval(regrow, REGROW_MS);
-  }
-  function stopRegrow() {
-    clearInterval(regrowTimer);
-    regrowTimer = null;
-  }
-
-  /* --- Input ------------------------------------------------------------
+     --- Input ------------------------------------------------------------
      One code path for mouse and touch via Pointer Events. Interpolating
      between the last point and this one matters: a fast swipe fires
      pointermove sparsely and you'd otherwise wipe a dotted line. */
@@ -283,11 +323,8 @@ export default function create({ section, data, solved: preSolved = false, solve
   window.addEventListener('pointerup', onUp);
   window.addEventListener('pointercancel', onUp);
 
-  startRegrow();
-
   return {
     destroy() {
-      stopRegrow();
       ro.disconnect();
       canvas.removeEventListener('pointerdown', onDown);
       canvas.removeEventListener('pointermove', onMove);

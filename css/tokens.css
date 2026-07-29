@@ -76,6 +76,14 @@
   --d-bloom: 2600ms;  /* title reveals, verse fades */
 
   /* --- Structure ---------------------------------------------------------- */
+
+  /* Height reserved at the bottom of every section for the fixed moon meter,
+     so nothing in a section ever sits underneath it. */
+  --chrome-h: 5.25rem;
+
+  /* How far the backdrop darkens as she solves more. Written by main.js. */
+  --exposure: 0;
+
   --seam-w: 1px;
   --z-bg: 0;
   --z-content: 10;

@@ -4,15 +4,39 @@
    enhancement, never a fix.
    ========================================================================== */
 
+/* --- Sealing -------------------------------------------------------------
+   A section stays out of the document until the one before it is solved.
+   Because the page simply ends at the frontier, she physically cannot scroll
+   past an unsolved puzzle — no scroll maths, no hijacking the wheel, and
+   scrolling back up through solved sections still works normally. */
+/* Two classes deliberately: `.section--sealed` alone has the same specificity
+   as `.section`, and since the shell rule below sets `display: grid` it would
+   win on source order and sealing would silently do nothing. */
+.section.section--sealed { display: none; }
+
 /* --- Section shell -------------------------------------------------------
    dvh, not vh. Mobile browser chrome collapses as you scroll and 100vh
    causes the classic jumping-gap bug. */
 .section {
   position: relative;
   min-height: 100dvh;
+  /* Two rows: the poem takes the space it needs and centres in what's left,
+     the Devanagari sits as a footer at the bottom. Because both are in flow,
+     nothing can be pushed off screen — which is what used to happen when the
+     script was absolutely positioned and the section was a fixed height. */
   display: grid;
-  align-content: center;
-  padding: var(--s-8) var(--gutter);
+  /* minmax(0, 1fr), not 1fr: a bare 1fr track has an automatic min-content
+     floor, so tall content grows the section past 100dvh. That extra height
+     pushed the section's reserved bottom strip down past the fixed moon
+     meter, and the Devanagari footer ended up underneath it. */
+  grid-template-rows: minmax(0, 1fr) auto;
+  align-items: center;
+  /* Bottom padding is exactly the meter's reserve. Every value in this
+     section's vertical rhythm is tuned so the poem plus the footer fit inside
+     100dvh at the sizes that matter — if the section grows past the viewport,
+     its reserved strip slides under the fixed meter and the footer hides
+     behind it. */
+  padding: var(--s-5) var(--gutter) var(--chrome-h);
   overflow: clip;
   isolation: isolate;
 }
@@ -21,6 +45,9 @@
    scales via --column; there are no side-by-side or orientation-specific
    layouts anywhere in this file. */
 .section__inner {
+  /* Explicit row: puzzles add elements to the section, and without this an
+     extra child could push the poem below the Devanagari footer. */
+  grid-row: 1;
   position: relative;
   z-index: var(--z-content);
   display: grid;
@@ -47,22 +74,33 @@
   color: var(--moon-faint);
 }
 
-/* Decorative Devanagari, absolutely placed so it never affects the flow. */
-.section__sanskrit {
-  position: absolute;
-  z-index: var(--z-bg);
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: max-content;
+/* Devanagari as a footer, one per section, in flow. It used to sit centred
+   behind the poem, where the text overlapped it and it read as mud; and it
+   was inconsistent (the void's was pinned to the bottom, the others centred).
+   As a footer it's consistent, never overlaps, and never gets clipped.
+
+   scale-down on overflow: a long compound like अर्धनारीश्वर must shrink to fit
+   the column rather than run off the edge. */
+.section__footer {
+  grid-row: 2;
+  display: grid;
+  justify-items: center;
+  width: 100%;
+  padding-top: var(--s-4);
 }
 
-/* Decorative Devanagari. Sized in proportion to the column so it reads as
-   texture behind the poem — too small and it's just noise, too large and it
-   sprawls past the column on a wide screen. */
+.section__sanskrit {
+  max-width: 100%;
+  overflow: clip;
+}
+
+/* Sized against the column, and capped so the longest word still fits.
+   Tight leading: as a footer it's a single line, and the default 1.4 was
+   spending 30-odd pixels of vertical space on nothing. */
 .t-sanskrit {
-  font-size: clamp(2.5rem, 16vw, 6rem);
-  opacity: 0.07;
+  font-size: clamp(1.75rem, 11vw, 3.5rem);
+  line-height: 1.1;
+  opacity: 0.16;
 }
 
 /* --- Parallax ------------------------------------------------------------
@@ -86,70 +124,137 @@
   justify-items: center;
   text-align: center;
 }
-/* The void's text is centred, so centred Devanagari would sit directly
-   behind the verse and read as mud. Drop it low and let it bleed off the
-   bottom edge instead — texture, not a collision. */
-.amavasya .section__sanskrit {
-  top: auto;
-  bottom: -4%;
-  transform: translate(-50%, 0);
-}
 
-/* The single point of light she has to find and hold still for. */
+/* The point of light she has to hold still near.
+
+   It breathes visibly from the start. The previous version was a 6px dot at
+   opacity 0 with a glow too faint to see, which on a phone made the section
+   look like an empty black screen with no way in. The puzzle is holding
+   still near it — not finding it in the dark. */
 .spark {
   position: relative;
-  width: 6px;
-  height: 6px;
+  /* Comfortably past the 44px touch minimum, and it's the only target here. */
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
-  background: var(--moon);
-  opacity: 0;
-  transform: scale(0.4);
-  transition:
-    opacity var(--d-slow) var(--ease-out),
-    transform var(--d-slow) var(--ease-out);
+  animation: spark-breathe 4.5s var(--ease-soft) infinite;
 }
-/* Breathing room so the lit star reads as its own thing floating above the
+
+/* Breathing room so the star reads as its own thing floating above the
    title, rather than crowding the tithi label. */
 .amavasya .spark { margin-bottom: var(--s-6); }
 
-.spark.is-near   { opacity: 0.5; transform: scale(1); }
-.spark.is-ignited {
-  opacity: 1;
-  transform: scale(1.6);
-  animation: spark-pulse 6s var(--ease-soft) infinite alternate;
+/* The dot itself, as a pseudo-element, so the button can stay a large touch
+   target without being a large circle of light. */
+.spark::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 9px;
+  height: 9px;
+  margin: -4.5px 0 0 -4.5px;
+  border-radius: 50%;
+  background: var(--moon);
+  box-shadow:
+    0 0 12px 2px rgba(239, 233, 220, 0.55),
+    0 0 34px 8px rgba(169, 140, 224, 0.40),
+    0 0 80px 24px rgba(169, 140, 224, 0.20);
+  transition:
+    box-shadow var(--d-slow) var(--ease-out),
+    transform var(--d-slow) var(--ease-out);
 }
 
-@keyframes spark-pulse {
-  from { transform: scale(1.5); }
-  to   { transform: scale(1.9); }
+/* A soft halo, large enough to read as an invitation on a small screen. */
+.spark::after {
+  content: '';
+  position: absolute;
+  inset: -80%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(169, 140, 224, 0.20) 0%,
+    rgba(169, 140, 224, 0.07) 42%,
+    transparent 70%
+  );
 }
 
-/* Everything in the void is hidden until the spark ignites.
-   Set in CSS rather than by JS: the puzzle module is a dynamic import, so
-   a JS-applied class arrives a frame or two late and the whole poem flashes
-   on screen before hiding. Hiding from the first paint avoids that. */
-.amavasya .section__inner {
-  opacity: 0;
+@keyframes spark-breathe {
+  0%, 100% { opacity: 0.6; transform: scale(0.94); }
+  50%      { opacity: 1;   transform: scale(1.06); }
+}
+
+/* Close enough to count: it brightens and quickens, which is the feedback
+   that being near it is the right idea. */
+.spark.is-near { animation-duration: 2.2s; }
+.spark.is-near::before {
+  transform: scale(1.35);
+  box-shadow:
+    0 0 18px 4px rgba(239, 233, 220, 0.8),
+    0 0 48px 14px rgba(169, 140, 224, 0.5),
+    0 0 110px 34px rgba(169, 140, 224, 0.26);
+}
+
+.spark.is-ignited { animation: none; opacity: 1; }
+.spark.is-ignited::before {
+  transform: scale(1.5);
+  box-shadow:
+    0 0 22px 5px rgba(239, 233, 220, 0.9),
+    0 0 60px 18px rgba(201, 162, 75, 0.45),
+    0 0 140px 44px rgba(201, 162, 75, 0.22);
+}
+
+/* The poem in the void is withheld until the spark ignites.
+
+   Listed explicitly rather than as "every child except the spark": the hint
+   and the skip link are also children, and they own their own visibility —
+   the hint has to be visible *while* unsolved, and both must disappear after.
+   A blanket rule fought both of those and left them on screen afterwards.
+
+   Set in CSS rather than by JS because the puzzle is a dynamic import, so a
+   JS-applied class lands a frame or two late and the poem flashes on screen
+   before it hides. */
+.amavasya .tithi,
+.amavasya .t-title,
+.amavasya .verses,
+.amavasya .scroll-cue {
   transition: opacity var(--d-bloom) var(--ease-out);
 }
-.amavasya.is-solved .section__inner { opacity: 1; }
+.amavasya:not(.is-solved) .tithi,
+.amavasya:not(.is-solved) .t-title,
+.amavasya:not(.is-solved) .verses,
+.amavasya:not(.is-solved) .scroll-cue {
+  opacity: 0;
+}
 
 .scroll-cue {
   display: grid;
   justify-items: center;
   gap: var(--s-2);
-  margin-top: var(--s-7);
+  margin-top: var(--s-4);
 }
 .scroll-cue__line {
   width: 1px;
-  height: 3.5rem;
+  height: 2.25rem;
   background: linear-gradient(to bottom, var(--moon-faint), transparent);
   animation: cue-fall 3.4s var(--ease-soft) infinite;
   transform-origin: top;
+  box-shadow: 0 0 10px 1px rgba(169, 140, 224, 0.35);
 }
 @keyframes cue-fall {
   0%, 100% { transform: scaleY(0.3); opacity: 0.3; }
   50%      { transform: scaleY(1);   opacity: 1; }
+}
+
+/* The label breathes with the same rhythm as the spark, so the two read as
+   the same kind of invitation. */
+.scroll-cue .t-util {
+  animation: cue-breathe 4.5s var(--ease-soft) infinite;
+  text-shadow: 0 0 16px rgba(169, 140, 224, 0.4);
+}
+@keyframes cue-breathe {
+  0%, 100% { opacity: 0.45; }
+  50%      { opacity: 1; }
 }
 
 /* --- 2. Bhasma / the ash years ------------------------------------------- */
@@ -167,18 +272,19 @@
      verses on desktop. */
   min-height: 20rem;
   margin-inline: auto;
-  touch-action: none;
+  /* pan-y, not none. `none` meant the ash panel swallowed every gesture and
+     she couldn't scroll the page with a finger anywhere over it. This lets
+     the browser keep vertical scrolling while side-to-side movement wipes. */
+  touch-action: pan-y;
   overscroll-behavior: none;
   cursor: grab;
-  border: 1px solid var(--moon-ghost);
+  /* No border. It read as a grey box; the ash's own soft edge is the frame. */
   overflow: hidden;
-  transition: border-color var(--d-slow) var(--ease-soft);
 }
 .wipe:active { cursor: grabbing; }
 
-/* Once the ash is gone the frame goes with it, so the verse floats on the
-   void instead of sitting in a visible box. */
-.is-solved .wipe { border-color: transparent; cursor: default; }
+/* Nothing left to wipe: hand every gesture back to the browser. */
+.is-solved .wipe { touch-action: auto; cursor: default; }
 
 .wipe__beneath {
   position: relative;   /* in flow: this is what gives .wipe its height */
@@ -222,11 +328,13 @@
   position: relative;
   width: 100%;
   min-height: 16rem;
-  /* Load-bearing: without this the browser claims the drag and scrolls the
-     page instead of moving the panels. */
+  /* Load-bearing while unsolved: the drag is vertical, so without this the
+     browser claims it and scrolls instead of moving the panels. Released the
+     moment it's solved, below, so it can never block scrolling afterwards. */
   touch-action: none;
   overscroll-behavior: none;
 }
+.is-solved .halves { touch-action: auto; }
 
 .halves__panel {
   position: absolute;
@@ -356,17 +464,70 @@
 /* --- Moon meter ----------------------------------------------------------
    Fixed chrome. Waxes as she unlocks sections and doubles as the nav.
    44px minimum hit target on every dot — non-negotiable on touch. */
+/* Horizontal, across the bottom, evenly spaced. It used to sit bottom-right
+   in a vertical stack, where in a portrait column it overlapped the poem and
+   the puzzles. Sections reserve --chrome-h at the bottom for it. */
 .moon-meter {
   position: fixed;
-  /* clamp rather than a breakpoint: it eases outward with the viewport
-     instead of jumping at an arbitrary width. */
-  right: clamp(var(--s-3), 2vw, var(--s-5));
-  bottom: clamp(var(--s-3), 2vw, var(--s-5));
+  left: 0;
+  right: 0;
+  bottom: 0;
   z-index: var(--z-chrome);
+  display: grid;
+  gap: var(--s-2);
+  padding: var(--s-3) var(--gutter) var(--s-4);
+  /* A soft rise out of the void so the bar doesn't sit on a hard edge. */
+  background: linear-gradient(to top, rgba(10, 6, 18, 0.92), transparent);
+}
+
+/* The track and its fill. --progress is written by main.js and is monotonic:
+   it never runs backwards when she scrolls up through solved sections. */
+.moon-meter__track {
+  position: relative;
+  width: 100%;
+  height: 1px;
+  background: var(--moon-ghost);
+}
+
+.moon-meter__fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: calc(var(--progress, 0) * 100%);
+  background: linear-gradient(90deg, var(--ash), var(--gold));
+  transition: width var(--d-mid) var(--ease-out), box-shadow var(--d-mid) var(--ease-soft);
+  /* Glow strengthens as she approaches the next milestone. */
+  box-shadow:
+    0 0 8px 1px rgba(201, 162, 75, calc(0.15 + var(--nearness, 0) * 0.45)),
+    0 0 26px 5px rgba(201, 162, 75, calc(var(--nearness, 0) * 0.28));
+}
+
+/* Milestone reached: a pop of light, then a settle back to baseline. */
+.moon-meter.is-popping .moon-meter__fill {
+  animation: meter-pop 1.5s var(--ease-out);
+}
+@keyframes meter-pop {
+  0% {
+    box-shadow:
+      0 0 8px 1px rgba(201, 162, 75, 0.5),
+      0 0 26px 5px rgba(201, 162, 75, 0.3);
+  }
+  18% {
+    box-shadow:
+      0 0 16px 3px rgba(239, 233, 220, 0.9),
+      0 0 54px 14px rgba(201, 162, 75, 0.6),
+      0 0 120px 40px rgba(201, 162, 75, 0.3);
+  }
+  100% {
+    box-shadow:
+      0 0 8px 1px rgba(201, 162, 75, 0.15),
+      0 0 26px 5px rgba(201, 162, 75, 0);
+  }
+}
+
+.moon-meter__dots {
   display: flex;
-  flex-direction: column;
-  gap: var(--s-1);
-  padding: var(--s-2);
+  justify-content: space-around;
+  align-items: center;
 }
 
 .moon-meter__dot {
@@ -377,12 +538,20 @@
   color: var(--moon-faint);
   font-size: 1.1rem;
   line-height: 1;
-  opacity: 0.4;
-  transition: opacity var(--d-fast) var(--ease-out), color var(--d-fast) var(--ease-out);
+  opacity: 0.35;
+  transition: opacity var(--d-mid) var(--ease-out), color var(--d-mid) var(--ease-out);
 }
 .moon-meter__dot[aria-disabled='true'] { cursor: default; }
-.moon-meter__dot.is-unlocked { opacity: 0.8; color: var(--moon-dim); }
-.moon-meter__dot.is-current  { opacity: 1; color: var(--gold); }
+.moon-meter__dot.is-unlocked {
+  opacity: 0.85;
+  color: var(--moon-dim);
+  text-shadow: 0 0 14px rgba(239, 233, 220, 0.35);
+}
+.moon-meter__dot.is-current {
+  opacity: 1;
+  color: var(--gold);
+  text-shadow: 0 0 18px rgba(201, 162, 75, 0.6);
+}
 
 
 /* --- Sound toggle -------------------------------------------------------- */

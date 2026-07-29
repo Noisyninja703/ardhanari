@@ -114,6 +114,22 @@
   pointer-events: none;
   z-index: var(--z-bg);
   will-change: transform, opacity;
+
+  /* The sections clip their overflow, which used to cut the mist off dead at
+     each boundary and leave a visible horizontal band — that was the harsh
+     seam between segments. Fading the mist out well before the edge means
+     adjacent sections blend into each other instead. */
+  --mist-fade: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(0, 0, 0, 0.4) 12%,
+    #000 30%,
+    #000 70%,
+    rgba(0, 0, 0, 0.4) 88%,
+    transparent 100%
+  );
+  -webkit-mask-image: var(--mist-fade);
+  mask-image: var(--mist-fade);
 }
 
 .mist--cool {
@@ -206,8 +222,8 @@
 }
 
 /* --- Reveal --------------------------------------------------------------
-   The shared entrance for every verse and heading. IntersectionObserver
-   adds .is-revealed; the stagger index is set inline as --i. */
+   The shared entrance for every verse. IntersectionObserver adds
+   .is-revealed; the stagger index is set inline as --i. */
 .reveal {
   opacity: 0;
   transform: translate3d(0, 1.25rem, 0);
@@ -221,6 +237,86 @@
   transform: none;
 }
 
+/* --- Sweep reveal --------------------------------------------------------
+   A wipe of light travelling left to right, used for the Devanagari footer,
+   the section headings and the tithi labels. The mask is a soft, wide-stopped
+   gradient rather than a hard line, and the global grain overlay sitting on
+   top breaks the edge up so it reads as imperfect rather than mechanical.
+
+   Implemented with mask-position on an oversized mask so it animates without
+   needing @property support. */
+.sweep {
+  --sweep-mask: linear-gradient(
+    100deg,
+    transparent 0%,
+    rgba(0, 0, 0, 0.15) 14%,
+    rgba(0, 0, 0, 0.6) 26%,
+    rgba(0, 0, 0, 0.92) 36%,
+    #000 46%
+  );
+  -webkit-mask-image: var(--sweep-mask);
+  mask-image: var(--sweep-mask);
+  -webkit-mask-size: 260% 100%;
+  mask-size: 260% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: 130% 0;
+  mask-position: 130% 0;
+  opacity: 0;
+  transition: opacity var(--d-mid) var(--ease-soft);
+}
+
+.sweep.is-swept {
+  opacity: 1;
+  animation: sweep-in var(--d-bloom) var(--ease-out) forwards;
+  animation-delay: calc(var(--i, 0) * 180ms);
+}
+
+@keyframes sweep-in {
+  from { mask-position: 130% 0; -webkit-mask-position: 130% 0; }
+  to   { mask-position: 0% 0;   -webkit-mask-position: 0% 0; }
+}
+
+/* --- Text haze -----------------------------------------------------------
+   Depth without blur. Layered text-shadows give the type a faint bloom, as
+   though it's lit rather than printed. Kept low so nothing loses legibility. */
+.t-hero, .t-title {
+  text-shadow:
+    0 0 24px rgba(239, 233, 220, 0.18),
+    0 0 60px rgba(169, 140, 224, 0.14);
+}
+
+.t-verse {
+  text-shadow:
+    0 0 18px rgba(239, 233, 220, 0.14),
+    0 0 44px rgba(169, 140, 224, 0.10);
+}
+
+.t-sanskrit {
+  text-shadow: 0 0 40px rgba(169, 140, 224, 0.22);
+}
+
+/* --- Exposure ------------------------------------------------------------
+   The backdrop darkens as she solves more, so the poem is progressively the
+   only lit thing on screen. --exposure is written by main.js from the solved
+   count; the vignette is strongest at the edges and clear in the middle. */
+.exposure {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: var(--exposure, 0);
+  transition: opacity var(--d-bloom) var(--ease-soft);
+  background:
+    radial-gradient(120% 85% at 50% 45%, transparent 34%, rgba(4, 2, 9, 0.62) 100%);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .reveal { opacity: 1; transform: none; }
+  .sweep {
+    opacity: 1;
+    -webkit-mask-image: none;
+    mask-image: none;
+    animation: none;
+  }
 }
