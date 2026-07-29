@@ -46,7 +46,7 @@ export const SECTIONS = [
       'Before there was light, there was the wanting of it.',
       'Before the first star, someone was already looking up.',
     ],
-    hint: 'Hold still.',
+    hint: 'Find the light.',
     skipLabel: 'Let there be light',
     /* Revealed only through the lens in section 4. */
     lensSecret: 'You were the reason I started paying attention.',

@@ -2,6 +2,18 @@
    effects.css — the atmosphere: grain, seam, glass, mist, glow
    ========================================================================== */
 
+/* --- Particles -----------------------------------------------------------
+   Sits above the exposure vignette so the stars stay crisp however dark the
+   backdrop gets, and below the poem. Painted by js/particles.js. */
+.particles {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: var(--z-particles);
+  pointer-events: none;
+}
+
 /* --- Grain ---------------------------------------------------------------
    One tiling SVG noise overlay across the whole page at 4%. This single
    detail is what stops the page reading as a stack of CSS gradients.
@@ -307,7 +319,7 @@
 .exposure {
   position: fixed;
   inset: 0;
-  z-index: 1;
+  z-index: var(--z-exposure);
   pointer-events: none;
   opacity: var(--exposure, 0);
   transition: opacity var(--d-bloom) var(--ease-soft);

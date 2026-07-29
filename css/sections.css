@@ -40,7 +40,10 @@
      they extend the document sideways. They're masked to fade before the top
      and bottom edges so this clip never shows as a seam. */
   overflow: clip;
-  isolation: isolate;
+  /* Deliberately NOT isolated. `isolation: isolate` makes each section a
+     stacking context, which traps its text at the section's own paint level —
+     the fixed exposure vignette then covers the poem instead of sitting behind
+     it, and the whole page reads as uniformly dimmed. */
   /* One segment per screen: scrolling settles on a section rather than
      stopping halfway between two. */
   scroll-snap-align: start;

@@ -85,7 +85,16 @@
   --exposure: 0;
 
   --seam-w: 1px;
+  /* Paint order, low to high:
+       mist / seam / glow   0   the backdrop
+       exposure             1   darkens the backdrop as she progresses
+       particles            3   above the darkening, so stars stay crisp
+       content             10   the poem is above all atmosphere
+       grain               60
+       chrome              70 */
   --z-bg: 0;
+  --z-exposure: 1;
+  --z-particles: 3;
   --z-content: 10;
   --z-puzzle: 20;
   --z-grain: 60;

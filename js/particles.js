@@ -8,38 +8,49 @@
 
 import { prefersReducedMotion } from './scroll.js';
 
+/* Sizes and alphas are deliberately well clear of sub-pixel. An earlier pass
+   used 0.4-1.3px at alpha 0.08 and the result was technically drawing and
+   practically invisible — a few dozen lit pixels on a whole phone screen.
+   `halo` adds a soft second pass around each particle so they read as points
+   of light rather than dots. */
 const PRESETS = {
   /* Fine grey motes falling slowly, with lateral drift. Shiva's ash. */
   ash: {
-    count: 90,
-    colour: [140, 135, 148],
-    size: [0.5, 1.8],
+    count: 110,
+    colour: [163, 158, 170],
+    size: [0.9, 2.4],
     vy: [0.08, 0.34],
     vx: [-0.12, 0.12],
-    alpha: [0.12, 0.42],
+    alpha: [0.22, 0.6],
     twinkle: 0,
+    halo: 0.5,
   },
-  /* Almost-static points that breathe. The night sky. */
+  /* Points that breathe. The night sky. */
   stars: {
-    count: 130,
-    colour: [239, 233, 220],
-    size: [0.4, 1.3],
+    count: 150,
+    colour: [242, 238, 228],
+    size: [0.7, 2],
     vy: [-0.01, 0.01],
     vx: [-0.02, 0.02],
-    alpha: [0.08, 0.6],
+    alpha: [0.3, 1],
     twinkle: 0.014,
+    halo: 1,
   },
   /* Warm flecks rising. Used from Tapasya onward. */
   embers: {
-    count: 55,
-    colour: [201, 162, 75],
-    size: [0.6, 1.9],
+    count: 70,
+    colour: [214, 176, 92],
+    size: [1, 2.6],
     vy: [-0.42, -0.12],
     vx: [-0.16, 0.16],
-    alpha: [0.14, 0.5],
+    alpha: [0.28, 0.75],
     twinkle: 0.008,
+    halo: 1,
   },
-  none: { count: 0, colour: [0, 0, 0], size: [0, 0], vy: [0, 0], vx: [0, 0], alpha: [0, 0], twinkle: 0 },
+  none: {
+    count: 0, colour: [0, 0, 0], size: [0, 0], vy: [0, 0], vx: [0, 0],
+    alpha: [0, 0], twinkle: 0, halo: 0,
+  },
 };
 
 const rand = (min, max) => min + Math.random() * (max - min);
@@ -63,10 +74,12 @@ function budget(count) {
   const area = w * h;
   const areaFactor = Math.min(1, area / (1440 * 900));
   const cores = navigator.hardwareConcurrency || 4;
-  const coreFactor = cores <= 4 ? 0.5 : cores <= 8 ? 0.8 : 1;
+  const coreFactor = cores <= 4 ? 0.7 : cores <= 8 ? 0.9 : 1;
   const isTouch = window.matchMedia('(hover: none)').matches;
-  const touchFactor = isTouch ? 0.55 : 1;
-  return Math.max(8, Math.round(count * areaFactor * coreFactor * touchFactor));
+  const touchFactor = isTouch ? 0.75 : 1;
+  /* A floor high enough that a small screen still looks like a sky rather
+     than a handful of stray dots. */
+  return Math.max(45, Math.round(count * areaFactor * coreFactor * touchFactor));
 }
 
 function spawn(p = {}) {
@@ -124,6 +137,15 @@ function frame() {
     else if (p.y < -4) { p.y = h + 4; p.x = rand(0, w); }
     if (p.x > w + 4) p.x = -4;
     else if (p.x < -4) p.x = w + 4;
+
+    /* Halo first, then the core on top: two cheap arcs give a soft bloom
+       without a per-particle gradient or a canvas blur. */
+    if (preset.halo) {
+      ctx.beginPath();
+      ctx.fillStyle = `rgba(${cr},${cg},${cb},${(p.a * 0.16 * preset.halo).toFixed(3)})`;
+      ctx.arc(p.x, p.y, p.r * 3.2, 0, Math.PI * 2);
+      ctx.fill();
+    }
 
     ctx.beginPath();
     ctx.fillStyle = `rgba(${cr},${cg},${cb},${p.a.toFixed(3)})`;

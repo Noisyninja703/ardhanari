@@ -104,6 +104,11 @@ ports. Options, roughly best first:
 
 ## Handy while developing
 
+Solved puzzles are remembered, which also means the backdrop dimming
+(`--exposure`) and the lit moons start where you left them. If the site looks
+darker than you expect, or the "keep going" cue is already showing, you're
+seeing a finished run — reset and reload.
+
 **Reset your progress** (solved puzzles are remembered) — in the browser console:
 
 ```js
