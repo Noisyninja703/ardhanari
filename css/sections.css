@@ -300,7 +300,11 @@
      she couldn't scroll the page with a finger anywhere over it. This lets
      the browser keep vertical scrolling while side-to-side movement wipes. */
   touch-action: pan-y;
-  overscroll-behavior: none;
+  /* No overscroll-behavior here. On a non-scrollable element it doesn't stop
+     pull-to-refresh — it stops the scroll from *chaining* out to the page, so
+     a finger starting anywhere on this panel couldn't scroll at all, even
+     after the puzzle was solved and touch-action was back to auto. Body-level
+     overscroll-behavior-y already handles pull-to-refresh. */
   cursor: grab;
   /* No border. It read as a grey box; the ash's own soft edge is the frame. */
   overflow: hidden;
@@ -355,9 +359,12 @@
   height: 100%;
   /* Load-bearing while unsolved: the drag is vertical, so without this the
      browser claims it and scrolls instead of moving the panels. Released the
-     moment it's solved, below, so it can never block scrolling afterwards. */
+     moment it's solved, below, so it can never block scrolling afterwards.
+
+     No overscroll-behavior — see the note on .wipe; on a non-scrollable
+     element it blocks scroll chaining and silently kills scrolling over the
+     whole area. */
   touch-action: none;
-  overscroll-behavior: none;
 }
 .is-solved .halves { touch-action: auto; }
 
