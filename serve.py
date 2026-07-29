@@ -25,6 +25,7 @@ import mimetypes
 import os
 import socket
 import socketserver
+import subprocess
 import sys
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -60,6 +61,29 @@ def lan_ip():
         return None
     finally:
         sock.close()
+
+
+def windows_inbound_status():
+    """Why the phone probably can't connect, on Windows.
+
+    A locked-down or work-managed machine blocks inbound connections and may
+    also forbid local firewall rules, in which case there is no fix you can
+    apply yourself and the LAN URL will never work. Better to say so up front
+    than to let someone debug their router for an hour.
+
+    Returns (blocked, gpo_locked) or (None, None) if we can't tell.
+    """
+    if os.name != "nt":
+        return None, None
+    try:
+        out = subprocess.run(
+            ["netsh", "advfirewall", "show", "currentprofile"],
+            capture_output=True, text=True, timeout=5,
+        ).stdout
+    except (OSError, subprocess.SubprocessError):
+        return None, None
+
+    return "BlockInbound" in out, "GPO-store only" in out
 
 
 class Handler(http.server.SimpleHTTPRequestHandler):
@@ -120,11 +144,23 @@ def main():
     print(f"  This machine   http://localhost:{port}")
     if ip:
         print(f"  Your phone     http://{ip}:{port}")
-        print()
-        print("  Phone must be on the same wifi. If it won't connect, Windows")
-        print("  Firewall is blocking Python - allow it on private networks.")
     else:
         print("  Your phone     unavailable (couldn't find a network address)")
+
+    blocked, gpo_locked = windows_inbound_status()
+    if ip and blocked and gpo_locked:
+        print()
+        print("  NOTE: this machine's firewall blocks incoming connections and")
+        print("  Group Policy forbids local firewall rules, so the phone URL")
+        print("  above will NOT work and there's no local fix. Use Chrome's USB")
+        print("  port forwarding instead - see README, 'Testing on your phone'.")
+    elif ip and blocked:
+        print()
+        print("  Phone must be on the same wifi. If it won't connect, allow")
+        print("  Python through Windows Firewall on private networks.")
+    elif ip:
+        print()
+        print("  Phone must be on the same wifi.")
     print()
     print("  Ctrl+C to stop.")
     print()

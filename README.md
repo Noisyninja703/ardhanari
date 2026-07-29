@@ -30,17 +30,73 @@ It prints two URLs:
   Your phone     http://192.168.1.158:8000
 ```
 
-**Test on the phone URL, not just localhost.** The puzzles behave differently
-with a finger than a cursor — the void section uses press-and-hold instead of
-hover-proximity, and the ash wipe uses a bigger brush. Same wifi required.
-
-If your phone won't connect, Windows Firewall is blocking Python. It usually
-prompts the first time; if you dismissed that, allow Python on private
-networks in Windows Defender Firewall settings.
-
 `serve.py` sends no-cache headers on everything, so a hard-reload is never
 needed — which matters more than it sounds, because phone browsers cache
 aggressively and you'll otherwise waste time convinced a change didn't apply.
+
+---
+
+## Testing on your phone
+
+**This matters.** The puzzles take different code paths on touch: the void
+section uses press-and-hold instead of hover-proximity, and the ash wipe uses
+a bigger brush. Desktop device-emulation does not exercise either properly.
+
+### The LAN URL doesn't work on this machine
+
+Not a bug in `serve.py`, and not the router. This laptop is work-managed, and
+Group Policy sets:
+
+```text
+Firewall Policy      BlockInbound,AllowOutbound
+LocalFirewallRules   N/A (GPO-store only)
+```
+
+All inbound connections are blocked, and local firewall rules are disabled —
+so a rule allowing Python through would be *ignored even if created with
+admin rights*. Notifications are suppressed too, which is why no "Allow
+Python?" prompt ever appears. There is no local fix. `serve.py` detects this
+and says so on startup.
+
+### Use Chrome USB port forwarding instead (Android)
+
+This tunnels the phone's `localhost` to this machine over the USB cable. No
+inbound connection, no firewall rule, no admin, and nothing exposed to the
+network — strictly better than the LAN approach even on an unlocked machine.
+
+1. On the phone: Settings → About phone → tap *Build number* seven times to
+   enable Developer options. Then Developer options → **USB debugging** on.
+2. Plug the phone into the laptop. Accept the "Allow USB debugging?" prompt on
+   the phone, ticking *always allow*.
+3. Start the server: `python serve.py`
+4. On the laptop, open Chrome → `chrome://inspect/#devices`
+5. Tick **Discover USB devices**. The phone should appear by name.
+6. Click **Port forwarding…**, tick *Enable port forwarding*, and add:
+   - Port: `8000`
+   - IP address and port: `localhost:8000`
+7. On the phone, open Chrome and go to **`http://localhost:8000`**
+
+That `localhost` is the phone's own localhost, forwarded down the cable. It
+only works while Chrome is open on the laptop and the cable is connected.
+
+Bonus: the phone's page appears under `chrome://inspect` with an **inspect**
+link, giving you real DevTools — console, elements, the works — against the
+actual phone. Better than anything the LAN approach offers.
+
+### On an iPhone
+
+There's no equivalent — Safari's Web Inspector debugs a page but can't forward
+ports. Options, roughly best first:
+
+- Serve from a personal (non-work) machine on your home wifi. `serve.py` works
+  the same there, and a home laptop won't have the GPO lockdown.
+- Ask IT for a firewall exception. Slow, and unlikely for a personal project.
+- Wait for Pages. Once the repo goes public on 1 August the real URL works on
+  any device, so treat phone testing as the last check before you send it.
+
+---
+
+## Handy while developing
 
 **Reset your progress** (solved puzzles are remembered) — in the browser console:
 
