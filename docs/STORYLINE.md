@@ -143,16 +143,23 @@ rather than in pure CSS.
 most personal writing on the site, because it's the part she has to go looking
 for.
 
-### ◓ Nakshatra — not built
+### ◓ Nakshatra — "The Sky We Made" · built, needs photos
 
-Our constellation. The breather: **no puzzle**, pure reward — five sections of
-gated verse in a row would be a chore, not a gift.
+The breather. **Nothing to solve**, because five gated sections in a row would
+be a chore rather than a gift. It opens the moment she arrives.
 
-A slow star field where certain stars are photos of the two of them. Tap one
-and a memory card blooms with a line. Constellation shape to be drawn from her
-initial or a date that matters.
+A slow field of ambient stars, and six brighter ones that are photographs, wired
+together by a faint asterism. Tapping a star opens a card with the photo and one
+line. **No verse in this section on purpose:** the memories are the writing.
 
-Needs: 4–6 photos with a line each, and a decision on the shape.
+Only the ambient stars drift. The memory stars stay put, because she has to be
+able to aim at them, and a moving target is a worse gift.
+
+**Blocked on Sivan.** The six memories in `content.js` are `[PLACEHOLDER]`
+captions pointing at `assets/img/nakshatra/1.webp` through `6.webp`. A missing
+file is handled, so the section works today and gets its meaning later. The
+constellation currently reads as a rising line; if a shape drawn from her name
+or a date is wanted, it's six pairs of coordinates in the `memories` array.
 
 ### ○ Purnima — not built
 

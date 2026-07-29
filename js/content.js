@@ -138,7 +138,7 @@ export const SECTIONS = [
     verses: [
       'The third eye is not for burning.',
       'It is for looking at one thing long enough to see what it actually is.',
-      'I have been looking at you for years and I am nowhere near finished.',
+      'I have been looking at you all this time and I am nowhere near finished.',
     ],
 
     hint: 'Move the glass across the dark.',
@@ -148,6 +148,41 @@ export const SECTIONS = [
        lens works everywhere. Every earlier section has had a line hidden in it
        since the day it was written. */
     lensSecret: 'Every part you have already read is hiding something. Go back.',
+  },
+
+  {
+    id: 'nakshatra',
+    phase: '◓',            // ◓ nearly full: almost all of it lit
+    tithi: 'Nakshatra',
+    devanagari: 'नक्षत्र',
+    puzzle: 'constellation',
+    heading: 'The Sky We Made',
+
+    /* No verse here on purpose. This section is the breather: five gated
+       sections in a row would be a chore, so the reward is that there's nothing
+       to solve. The memories below carry the words. */
+    verses: [],
+
+    /* Each memory is a star. Tapping one opens it.
+
+       `at` is [x%, y%] within the field, and the order below is the order the
+       constellation lines are drawn in, so it reads as one shape rather than
+       scattered dots. A missing photo file is fine: the star and its line still
+       work, exactly like the ash section's photo.
+
+       [PLACEHOLDER] Waiting on Sivan: real photos, and one line each about what
+       was actually happening. Six is the number the shape is drawn for. */
+    memories: [
+      { at: [18, 74], src: 'assets/img/nakshatra/1.webp', alt: '[DESCRIBE THIS PHOTO]', line: '[THE NIGHT WE MET]' },
+      { at: [33, 46], src: 'assets/img/nakshatra/2.webp', alt: '[DESCRIBE THIS PHOTO]', line: '[A DATE THAT MATTERS]' },
+      { at: [49, 60], src: 'assets/img/nakshatra/3.webp', alt: '[DESCRIBE THIS PHOTO]', line: '[SOMETHING ONLY YOU TWO KNOW]' },
+      { at: [64, 31], src: 'assets/img/nakshatra/4.webp', alt: '[DESCRIBE THIS PHOTO]', line: '[A PLACE YOU BOTH LOVE]' },
+      { at: [79, 48], src: 'assets/img/nakshatra/5.webp', alt: '[DESCRIBE THIS PHOTO]', line: '[AN ORDINARY DAY YOU REMEMBER]' },
+      { at: [89, 19], src: 'assets/img/nakshatra/6.webp', alt: '[DESCRIBE THIS PHOTO]', line: '[WHERE YOU ARE NOW]' },
+    ],
+
+    hint: 'Touch a star.',
+    lensSecret: 'None of these were the beginning. I only noticed them later.',
   },
 ];
 
@@ -164,6 +199,6 @@ export const UI = {
 
   /* On the last section only, once she's finished. Two steps, because it wipes
      every puzzle she solved and it should take more than one stray tap. */
-  resetOffer: 'Walk it again',
-  resetConfirm: 'Yes, start from the dark',
+  resetOffer: 'Walk it again?',
+  resetConfirm: 'Yes, start from the dark.',
 };

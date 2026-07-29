@@ -51,15 +51,20 @@ Things to know before changing it:
   section is. Keep each `lensSecret` short enough for two lines at phone width,
   around 60 characters.
 
-### 3. ◓ Nakshatra — the constellation *(needs photos)*
+### 3. ◓ Nakshatra — the constellation · BUILT, needs photos
 
-The breather. **No puzzle** — pure reward.
+`js/puzzles/constellation.js`. Lives in the puzzle system because that's how
+sections get built and unsealed, but it calls `solve()` on arrival rather than
+gating anything.
 
-- Slow-rotating star field; certain stars are photos. Tap one, a glass memory
-  card blooms with a line.
-- Pannable and pinch-zoomable, since it's larger than the viewport.
-- Blocked on: 4–6 photos with a line each, and the constellation shape (her
-  initial, or a meaningful date).
+- **Drop photos at `assets/img/nakshatra/1.webp` … `6.webp`** and write the six
+  captions in `content.js`. Missing files are handled, so it works without them.
+- Panning and pinch-zoom from the original plan were dropped. They were a
+  landscape-era idea; the field now fits the poem band, which avoids fighting
+  the page scroll for gestures.
+- A section whose `content.js` entry has a `hint` but **no `skipLabel`** gets
+  standing guidance instead of a puzzle hint: shown on arrival and never
+  cleared. That's how "Touch a star." survives a section that solves itself.
 
 ### 4. ○ Purnima — the letters *(needs Firebase setup from Sivan)*
 

@@ -813,6 +813,150 @@
   }
 }
 
+/* --- 6. Nakshatra / the constellation -------------------------------------
+   The breather. A slow field of stars, six of which are photographs. */
+
+.sky {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+/* Only the ambient stars drift. The memories stay put, because they're places
+   she has to be able to aim at, and a moving target is a worse gift. */
+.sky__drift {
+  position: absolute;
+  inset: 0;
+  animation: sky-drift 90s linear infinite;
+}
+
+@keyframes sky-drift {
+  from { transform: rotate(0deg) scale(1.04); }
+  to   { transform: rotate(360deg) scale(1.04); }
+}
+
+.sky__star {
+  position: absolute;
+  width: var(--s, 1px);
+  height: var(--s, 1px);
+  border-radius: 50%;
+  background: var(--moon);
+  opacity: var(--a, 0.5);
+  animation-name: star-twinkle;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
+}
+
+@keyframes star-twinkle {
+  0%, 100% { opacity: calc(var(--a) * 0.35); }
+  50%      { opacity: var(--a); }
+}
+
+/* The asterism. Faint enough to read as a suggestion rather than a diagram. */
+.sky__lines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.sky__lines polyline {
+  fill: none;
+  stroke: var(--datura);
+  stroke-width: 0.18;
+  stroke-linecap: round;
+  opacity: 0.45;
+  vector-effect: non-scaling-stroke;
+}
+
+/* A photograph, as a star. 44px of target around a small bright point. */
+.sky__memory {
+  position: absolute;
+  width: 44px;
+  height: 44px;
+  margin: -22px 0 0 -22px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.sky__memory::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 7px;
+  height: 7px;
+  margin: -3.5px 0 0 -3.5px;
+  border-radius: 50%;
+  background: var(--moon);
+  box-shadow:
+    0 0 10px 2px rgba(239, 233, 220, 0.7),
+    0 0 26px 6px rgba(169, 140, 224, 0.45);
+  transition: transform var(--d-mid) var(--ease-out), box-shadow var(--d-mid) var(--ease-out);
+  animation: memory-pulse 4.2s var(--ease-soft) infinite;
+}
+
+/* Brighter than the ambient stars, so it's clear which ones are hers. */
+@keyframes memory-pulse {
+  0%, 100% { transform: scale(0.85); }
+  50%      { transform: scale(1.15); }
+}
+
+.sky__memory:hover::before,
+.sky__memory:focus-visible::before,
+.sky__memory.is-open::before {
+  transform: scale(1.6);
+  box-shadow:
+    0 0 16px 4px rgba(255, 246, 224, 0.9),
+    0 0 44px 14px rgba(201, 162, 75, 0.5);
+}
+
+/* --- A memory, opened ---------------------------------------------------- */
+
+.memory {
+  position: absolute;
+  inset: auto 0 0 0;
+  z-index: 3;
+  display: grid;
+  gap: var(--s-3);
+  padding: var(--s-3);
+  opacity: 0;
+  transform: translate3d(0, 10px, 0) scale(0.98);
+  transition:
+    opacity var(--d-mid) var(--ease-out),
+    transform var(--d-mid) var(--ease-out);
+}
+.memory[hidden] { display: none; }
+.memory.is-open { opacity: 1; transform: none; }
+
+.memory__photo {
+  width: 100%;
+  max-height: 42dvh;
+  object-fit: cover;
+  border-radius: 1px;
+}
+.memory__photo[hidden] { display: none; }
+
+.memory__line {
+  margin: 0 auto;
+  max-width: none;
+  font-size: clamp(0.95rem, 3.3vw, 1.15rem);
+}
+
+.memory__close {
+  justify-self: center;
+  padding: var(--s-2) var(--s-4);
+  border-bottom: 1px solid var(--moon-ghost);
+}
+.memory__close:hover { color: var(--moon); border-bottom-color: var(--moon-faint); }
+
+@media (prefers-reduced-motion: reduce) {
+  .sky__drift { animation: none; }
+  .sky__star,
+  .sky__memory::before { animation: none; }
+}
+
 /* --- Puzzle hint and skip ------------------------------------------------
    She never gets stuck. Hint glows at 8s idle, skip appears at 25s. */
 .hint {

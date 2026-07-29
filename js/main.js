@@ -36,6 +36,8 @@ const PARTICLE_BY_SECTION = {
   ardhanarishvara: 'embers',
   tapasya: 'embers',
   trinetra: 'stars',
+  /* The constellation brings its own sky, so the shared field stands down. */
+  nakshatra: 'none',
 };
 
 /* --- Unlock state --------------------------------------------------------
@@ -141,13 +143,21 @@ function buildSection(data, index) {
   if (data.puzzle) {
     const hint = el('p', 'hint t-util', data.hint || '');
     hint.setAttribute('aria-live', 'polite');
-
-    const skip = el('button', 'skip t-util', data.skipLabel || 'Show me');
-    skip.type = 'button';
-
-    prompt.append(hint, skip);
+    prompt.append(hint);
     section._hint = hint;
-    section._skip = skip;
+
+    /* A section with no skipLabel has nothing to be stuck on, so it gets no way
+       past and its hint is standing guidance rather than a nudge: it appears on
+       arrival and stays. Nakshatra is the case — nothing to solve, but she does
+       need telling that the stars can be touched. */
+    if (data.skipLabel) {
+      const skip = el('button', 'skip t-util', data.skipLabel);
+      skip.type = 'button';
+      prompt.append(skip);
+      section._skip = skip;
+    } else {
+      section._guidance = true;
+    }
   }
 
   /* Every section says "keep going" once it's solved. That's how she learns
@@ -226,6 +236,7 @@ const puzzleModules = {
   halves: () => import('./puzzles/halves.js'),
   flame: () => import('./puzzles/flame.js'),
   lens: () => import('./puzzles/lens.js'),
+  constellation: () => import('./puzzles/constellation.js'),
 };
 
 const mounted = new WeakSet();
@@ -274,7 +285,8 @@ function markSolved(section, { silent = false } = {}) {
   save();
 
   clearTimers(section);
-  section._hint?.classList.remove('is-showing');
+  /* Standing guidance survives solving; a puzzle hint doesn't. */
+  if (!section._guidance) section._hint?.classList.remove('is-showing');
   section._skip?.classList.remove('is-showing');
   section._puzzle?.destroy?.();
   section._puzzle = null;
@@ -445,6 +457,8 @@ function observeSections(sections) {
            the hint timer should start. */
         if (entry.isIntersecting && ratio >= IN_VIEW) {
           section._sanskrit?.classList.add('is-swept');
+          /* Guidance doesn't wait, and doesn't care whether it's solved. */
+          if (section._guidance) section._hint?.classList.add('is-showing');
           startTimers(section);
         } else if (ratio < IN_VIEW) {
           clearTimers(section);

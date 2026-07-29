@@ -26,8 +26,9 @@ layout and gesture traps, and they are all written down there.
 
 ## Current state
 
-Five of seven sections are built. The first four are reviewed and Sivan is
-happy with them; Trinetra is new and unreviewed.
+Six of seven sections are built. The first five are reviewed and Sivan is happy
+with them. Nakshatra is built but is running on `[PLACEHOLDER]` photos and
+captions, so it needs assets before it means anything.
 
 **Every section needs a `lensSecret`** in `content.js`. Trinetra's lens can
 reveal hidden lines in any section, so a section without one is a section that
@@ -40,7 +41,7 @@ quietly has nothing to find.
 | ◐ Ardhanarishvara | One Body, Divided | Drag the two torn halves together | Done |
 | ◑ Tapasya | She Did the Waiting | Tend a flame to keep the verse writing itself | Done, awaiting review |
 | ◒ Trinetra | The Third Eye | Drag glass over hidden text | Done, awaiting review |
-| ◓ Nakshatra | — | Photo constellation, no puzzle | Not started |
+| ◓ Nakshatra | The Sky We Made | Tap photo-stars in a constellation | Built, needs photos |
 | ○ Purnima | — | Write and read love letters | Not started |
 
 Nothing is pushed. The repo is private on purpose — Pages needs it public, and
