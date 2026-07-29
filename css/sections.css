@@ -957,6 +957,145 @@
   .sky__memory::before { animation: none; }
 }
 
+/* --- 7. Purnima / the letters ---------------------------------------------
+   Folded paper adrift in the dark. Push them around, open one to read it. */
+
+.letters {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+.letters__empty {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  margin: 0;
+  color: var(--moon-faint);
+}
+
+/* A folded sheet. The angled corner and the paper's own faint gradient do the
+   work; nothing here is an image. */
+.letter {
+  position: absolute;
+  width: clamp(52px, 14vw, 66px);
+  aspect-ratio: 5 / 6;
+  margin: 0;
+  padding: 0;
+  /* Positioned in percentages by JS, so the field can resize under them. */
+  translate: -50% -50%;
+  rotate: var(--tilt, 0deg);
+  background: linear-gradient(150deg, rgba(239, 233, 220, 0.90), rgba(214, 206, 188, 0.72));
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.35) inset,
+    0 10px 26px -10px rgba(0, 0, 0, 0.8),
+    0 0 24px 2px rgba(169, 140, 224, 0.12);
+  cursor: grab;
+  /* The paper owns the gesture: dragging a letter must not scroll the page. */
+  touch-action: none;
+  animation: letter-adrift 16s var(--ease-soft) infinite alternate;
+  transition: box-shadow var(--d-mid) var(--ease-out);
+}
+.letter:hover,
+.letter:focus-visible {
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.45) inset,
+    0 12px 30px -10px rgba(0, 0, 0, 0.85),
+    0 0 34px 6px rgba(169, 140, 224, 0.3);
+}
+.letter.is-held {
+  cursor: grabbing;
+  animation-play-state: paused;
+  z-index: 2;
+}
+
+/* The turned-down corner. */
+.letter__fold {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 34%;
+  height: 34%;
+  background: linear-gradient(225deg, var(--void) 48%, rgba(190, 182, 166, 0.9) 50%);
+}
+
+/* Wax. Kumkum for his, gold for hers, which is one of the six places on the
+   whole site kumkum is allowed. */
+.letter__seal {
+  position: absolute;
+  bottom: 16%;
+  left: 50%;
+  width: 11px;
+  height: 11px;
+  margin-left: -5.5px;
+  border-radius: 50%;
+  background: var(--kumkum);
+  box-shadow: 0 0 8px 1px rgba(193, 51, 43, 0.6);
+}
+.letter--her .letter__seal {
+  background: var(--gold);
+  box-shadow: 0 0 8px 1px rgba(201, 162, 75, 0.6);
+}
+
+@keyframes letter-adrift {
+  from { translate: -50% -54%; }
+  to   { translate: -50% -46%; }
+}
+
+/* --- An opened letter ----------------------------------------------------- */
+
+.letter-card {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: var(--s-3);
+  padding: var(--s-4);
+  opacity: 0;
+  transform: translate3d(0, 8px, 0) scale(0.985);
+  transition:
+    opacity var(--d-mid) var(--ease-out),
+    transform var(--d-mid) var(--ease-out);
+}
+.letter-card[hidden] { display: none; }
+.letter-card.is-open { opacity: 1; transform: none; }
+
+.letter-card__meta {
+  text-align: center;
+  color: var(--moon-faint);
+}
+
+/* Letters run long, so this scrolls. pan-y rather than none, because here the
+   gesture she wants is reading. */
+.letter-card__body {
+  overflow-y: auto;
+  touch-action: pan-y;
+  overscroll-behavior: contain;
+  display: grid;
+  gap: var(--s-4);
+  padding-inline: var(--s-2);
+}
+.letter-card__body .t-verse {
+  margin-inline: auto;
+  font-style: normal;      /* prose, not verse */
+  text-align: left;
+  font-size: clamp(0.95rem, 3.2vw, 1.1rem);
+}
+
+.letter-card__close {
+  justify-self: center;
+  padding: var(--s-2) var(--s-4);
+  border-bottom: 1px solid var(--moon-ghost);
+}
+.letter-card__close:hover { color: var(--moon); border-bottom-color: var(--moon-faint); }
+
+@media (prefers-reduced-motion: reduce) {
+  .letter { animation: none; }
+}
+
 /* --- Puzzle hint and skip ------------------------------------------------
    She never gets stuck. Hint glows at 8s idle, skip appears at 25s. */
 .hint {

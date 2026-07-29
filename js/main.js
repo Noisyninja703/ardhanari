@@ -38,6 +38,7 @@ const PARTICLE_BY_SECTION = {
   trinetra: 'stars',
   /* The constellation brings its own sky, so the shared field stands down. */
   nakshatra: 'none',
+  purnima: 'stars',
 };
 
 /* --- Unlock state --------------------------------------------------------
@@ -237,6 +238,7 @@ const puzzleModules = {
   flame: () => import('./puzzles/flame.js'),
   lens: () => import('./puzzles/lens.js'),
   constellation: () => import('./puzzles/constellation.js'),
+  letters: () => import('./puzzles/letters.js'),
 };
 
 const mounted = new WeakSet();

@@ -161,19 +161,25 @@ file is handled, so the section works today and gets its meaning later. The
 constellation currently reads as a rising line; if a shape drawn from her name
 or a date is wanted, it's six pairs of coordinates in the `memories` array.
 
-### ○ Purnima — not built
+### ○ Purnima — "Everything I Wrote Down" · reading built, writing not
 
-The full moon, and the only section where **she can write back**.
+The full moon. Nothing left hidden, and the only section that is eventually
+two-way.
 
-- **Write:** a glass composer. On send the letter folds, takes a kumkum wax
-  seal, and drifts up into the field.
-- **Read:** letters float as folded-paper glyphs in dark space, draggable with
-  soft inertia, tappable to open. Letters Sivan wrote in advance are already
-  there when she arrives.
+**Reading works now.** Letters drift as folded paper with a wax seal, kumkum for
+his and gold for hers. She can push them around, they coast to a stop when
+flicked, and tapping one opens it into a glass card. They come from
+`data/letters.json`, which is also the archive the future Firestore sync writes
+to. No verse here either: the letters are the writing.
 
-Storage: Firestore for the instant write, plus an hourly GitHub Action that
-commits them to `data/letters.json` so they're archived in git forever. See
-[PLAN.md](PLAN.md).
+**Writing is Stage B** and needs Firebase. See [PLAN.md](PLAN.md).
+
+The five seeded letters are placeholders in the right register, and they are all
+from Sivan on purpose. Her half of the sky starts empty and fills when she
+writes, which is much better than finding words there she never wrote.
+
+This is also where the **"Walk it again"** control lives, since it's the last
+section: it appears once she's finished, and takes her back to the dark.
 
 ---
 

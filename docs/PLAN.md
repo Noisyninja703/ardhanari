@@ -1,15 +1,14 @@
 # Plan
 
-**Deadline: 1 August.** Three of seven sections are built, reviewed, and liked.
-The site is already a coherent gift as it stands — that matters, because it
-means everything below is upside rather than rescue.
+**Deadline: 1 August.** All seven sections are built and the poem is walkable
+end to end. Everything remaining is content, or the letters' write-back half.
 
-Order is deliberate: the two sections that need nothing from Sivan come first,
-so progress never blocks on waiting for content.
+Nothing left is structural, which means from here the highest-value work is
+words and photographs, not code.
 
 ---
 
-## Phase 3 — the remaining poem
+## Phase 3 — the remaining poem · COMPLETE
 
 ### 1. ◑ Tapasya — tend the flame · BUILT, awaiting review
 
@@ -66,16 +65,19 @@ gating anything.
   standing guidance instead of a puzzle hint: shown on arrival and never
   cleared. That's how "Touch a star." survives a section that solves itself.
 
-### 4. ○ Purnima — the letters *(needs Firebase setup from Sivan)*
+### 4. ○ Purnima — the letters
 
-Ship this in **two stages** so it's never half-broken:
+**Stage A is BUILT** and is a complete, giftable section on its own:
+`js/puzzles/letters.js` reads `data/letters.json`, scatters the letters as
+folded paper, lets her push them around and open them. A missing or unreadable
+archive shows one quiet line rather than breaking the section.
 
-**Stage A — read only, no backend.** Letters Sivan wrote in advance, committed
-by hand to `data/letters.json`, rendered as folded-paper glyphs floating in dark
-space: draggable with soft inertia, tappable to open into a glass card. This
-alone is a complete, giftable section.
+Notes for Stage B: letter bodies are rendered as text nodes, never `innerHTML`,
+which is the line that matters once she can type her own. The card body scrolls
+with `touch-action: pan-y` while the paper takes `none`, so dragging and reading
+don't fight.
 
-**Stage B — she can write back.**
+**Stage B — she can write back.** Still to do.
 
 - Firestore for the instant write. Rules do the security work, not secrecy —
   the web config is public by design:

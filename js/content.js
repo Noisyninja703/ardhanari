@@ -16,6 +16,14 @@ export const HER = {
 /* Prefer the pet name where there is one — it's warmer than the formal one. */
 export const CALL_HER = HER.petName || HER.name;
 
+/* Who signed a letter. The keys match the `author` field in data/letters.json
+   and the planned Firestore documents, so this is the only place the mapping
+   from a stored key to a name she reads lives. */
+export const AUTHORS = {
+  sivan: 'Sivan',
+  her: HER.name,
+};
+
 export const SITE = {
   title: 'Ardhanarishvara',
   subtitle: 'for ' + CALL_HER + ', on the first of August',
@@ -183,6 +191,28 @@ export const SECTIONS = [
 
     hint: 'Touch a star.',
     lensSecret: 'None of these were the beginning. I only noticed them later.',
+  },
+
+  {
+    id: 'purnima',
+    phase: '○',            // ○ full moon: all of it lit, nothing left hidden
+    tithi: 'Purnima',
+    devanagari: 'पूर्णिमा',
+    puzzle: 'letters',
+    heading: 'Everything I Wrote Down',
+
+    /* No verse. The letters are the writing, and there are a lot of them. */
+    verses: [],
+
+    /* Standing guidance: no skipLabel, because there is nothing here to be
+       stuck on. */
+    hint: 'Open one.',
+
+    /* Shown when there are no letters to read at all, which should only ever
+       happen if data/letters.json is missing or unreadable. */
+    emptyLetters: 'The letters have not arrived yet.',
+
+    lensSecret: 'I wrote all of these before I knew whether I would send any.',
   },
 ];
 

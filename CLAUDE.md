@@ -26,9 +26,13 @@ layout and gesture traps, and they are all written down there.
 
 ## Current state
 
-Six of seven sections are built. The first five are reviewed and Sivan is happy
-with them. Nakshatra is built but is running on `[PLACEHOLDER]` photos and
-captions, so it needs assets before it means anything.
+**All seven sections are built.** The poem is walkable end to end. What's left
+is content and the letters' write-back half, not structure.
+
+The first five are reviewed and Sivan is happy with them. Nakshatra runs on
+`[PLACEHOLDER]` photos and captions. Purnima reads letters from
+`data/letters.json` but she cannot write one yet: that's Stage B and it needs
+Firebase. See [docs/PLAN.md](docs/PLAN.md).
 
 **Every section needs a `lensSecret`** in `content.js`. Trinetra's lens can
 reveal hidden lines in any section, so a section without one is a section that
@@ -42,7 +46,7 @@ quietly has nothing to find.
 | ◑ Tapasya | She Did the Waiting | Tend a flame to keep the verse writing itself | Done, awaiting review |
 | ◒ Trinetra | The Third Eye | Drag glass over hidden text | Done, awaiting review |
 | ◓ Nakshatra | The Sky We Made | Tap photo-stars in a constellation | Built, needs photos |
-| ○ Purnima | — | Write and read love letters | Not started |
+| ○ Purnima | Everything I Wrote Down | Drift and open folded letters | Built, read-only |
 
 Nothing is pushed. The repo is private on purpose — Pages needs it public, and
 it goes public on the 1st.
