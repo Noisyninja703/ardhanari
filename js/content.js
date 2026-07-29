@@ -21,7 +21,7 @@ export const SITE = {
   subtitle: 'for ' + CALL_HER + ', on the first of August',
   /* Shown to screen readers and search previews. */
   description:
-    'A celestial love letter — seven phases of the moon, from the void to the full.',
+    'A celestial love letter. Seven phases of the moon, from the void to the full.',
 };
 
 /* --- Sections -------------------------------------------------------------
@@ -61,8 +61,8 @@ export const SECTIONS = [
     heading: 'The Ash Years',
     verses: [
       'When he lost her, he did not build a shrine.',
-      'He wore her as ash across his shoulders and called it clothing —',
-      'three thousand years of it, and not one of them spent forgetting.',
+      'He wore her as ash across his shoulders and called it clothing.',
+      'Three thousand years of that, and not one of them spent forgetting.',
       'I understand him better than I would like to admit.',
     ],
     hint: 'Brush the ash away.',
@@ -72,7 +72,7 @@ export const SECTIONS = [
        Until then the verse sits on the void, which also looks fine. */
     photo: {
       src: 'assets/img/ash.webp',
-      alt: '[DESCRIBE THE PHOTO — this is read aloud by screen readers]',
+      alt: '[DESCRIBE THE PHOTO. This is read aloud by screen readers.]',
     },
   },
 
@@ -95,8 +95,8 @@ export const SECTIONS = [
     /* Shown once the halves meet. */
     verses: [
       'They are not two who met and stayed.',
-      'They are one body that spent an age learning its own left side —',
-      'and I have stopped pretending I was ever whole on my own.',
+      'They are one body that spent an age learning its own left side.',
+      'I have stopped pretending I was ever whole on my own.',
     ],
 
     hint: 'Pull them together.',
@@ -110,7 +110,7 @@ export const SECTIONS = [
    nothing apologises and nothing is vague. */
 export const UI = {
   skipToContent: 'Skip to the poem',
-  moonMeterLabel: 'Phases of the moon — jump to a section',
+  moonMeterLabel: 'Phases of the moon. Jump to a section.',
   soundOn: 'Turn sound on',
   soundOff: 'Turn sound off',
   locked: 'Not yet reached',

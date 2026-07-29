@@ -57,6 +57,13 @@ These are settled decisions. Don't relitigate them without asking Sivan.
 - **Every section is exactly one screen**, divided into five proportional
   bands (10/15/50/10/15). See [docs/DESIGN.md](docs/DESIGN.md).
 - **All copy lives in `js/content.js`.** Never hard-code a word anywhere else.
+- **No em dashes in anything the site displays** — verses, headings, hints,
+  labels, meta descriptions, aria-labels. They read as AI-written. Code
+  comments are exempt. (This rule is written with one deliberately, in a file
+  she will never see, purely so the contrast is obvious.)
+- **Don't run the test suites unprompted.** They cost minutes of real Chrome
+  time and Sivan tests on real devices anyway. Make the change, say what to
+  look for, and offer.
 - **Puzzles are interchangeable modules** with one contract. `main.js` knows
   nothing about how any of them work.
 - **She can never get stuck.** Hint at 3s, an explicit way past at 15s,

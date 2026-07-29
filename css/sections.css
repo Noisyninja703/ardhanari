@@ -391,10 +391,66 @@
   max-width: none;   /* the fragment is one short line, not a paragraph */
   color: var(--moon-dim);
   transition: color var(--d-mid) var(--ease-soft);
+  /* Each half drifts on its own, so they read as two pieces adrift rather
+     than two blocks parked on a grid. The drift lives on the fragment, not
+     the panel, because the panel's transform is the gap. */
+  animation: half-drift-a 11s var(--ease-soft) infinite alternate;
+  will-change: transform;
 }
 /* Left/top half is Shiva's: ash. Right/bottom is Parvati's: gold. */
 .halves__panel--a .halves__fragment { color: var(--ash); }
-.halves__panel--b .halves__fragment { color: var(--gold); }
+.halves__panel--b .halves__fragment {
+  color: var(--gold);
+  /* A different rhythm and a slower period, so the two never move in
+     lockstep. Nothing kills "floating" faster than synchronised motion. */
+  animation: half-drift-b 14.5s var(--ease-soft) infinite alternate;
+}
+
+@keyframes half-drift-a {
+  0%   { transform: translate3d(-7px, -5px, 0) rotate(-0.5deg); }
+  50%  { transform: translate3d(4px, 3px, 0) rotate(0.35deg); }
+  100% { transform: translate3d(8px, -2px, 0) rotate(0.6deg); }
+}
+@keyframes half-drift-b {
+  0%   { transform: translate3d(6px, 4px, 0) rotate(0.45deg); }
+  50%  { transform: translate3d(-5px, -3px, 0) rotate(-0.4deg); }
+  100% { transform: translate3d(-8px, 3px, 0) rotate(-0.55deg); }
+}
+
+/* The second half is too far away to read, and comes into focus as she closes
+   the gap. Seeing the ending before the halves meet gives the whole thing away;
+   earning it word by word is the point.
+
+   --gap runs 1 (apart) to 0 (joined), so blur and dimming fall out of it for
+   free and track her finger exactly. */
+.halves__panel--b .halves__fragment {
+  filter: blur(calc(var(--gap, 1) * 7px));
+  opacity: calc(1 - var(--gap, 1) * 0.8);
+}
+
+/* Joined: both halves settle onto one shared, much slower drift, so the
+   completed line breathes as a single piece instead of pulling apart again. */
+.halves.is-joined .halves__fragment,
+.halves.is-joined .halves__panel--b .halves__fragment {
+  animation: half-drift-joined 18s var(--ease-soft) infinite alternate;
+  filter: none;
+  opacity: 1;
+}
+
+@keyframes half-drift-joined {
+  from { transform: translate3d(-3px, -2px, 0); }
+  to   { transform: translate3d(3px, 2px, 0); }
+}
+
+/* Reduced motion: no drift, and the withheld half is simply legible. */
+@media (prefers-reduced-motion: reduce) {
+  .halves__fragment,
+  .halves__panel--b .halves__fragment,
+  .halves.is-joined .halves__fragment {
+    animation: none;
+    transform: none;
+  }
+}
 
 /* Only animate on release and on keyboard steps — never mid-drag, or the
    panels lag behind the finger and it feels broken. */

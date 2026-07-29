@@ -389,7 +389,7 @@ function observeSections(sections) {
 
 function boot() {
   const app = document.getElementById('app');
-  document.title = `${SITE.title} — ${SITE.subtitle}`;
+  document.title = `${SITE.title}, ${SITE.subtitle}`;
 
   initScroll();
 

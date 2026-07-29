@@ -52,8 +52,8 @@ attention. No seam yet — one being, before division.
 Shiva after Sati's death. The verse is buried under ash; she wipes it away.
 
 > When he lost her, he did not build a shrine.
-> He wore her as ash across his shoulders and called it clothing —
-> three thousand years of it, and not one of them spent forgetting.
+> He wore her as ash across his shoulders and called it clothing.
+> Three thousand years of that, and not one of them spent forgetting.
 > I understand him better than I would like to admit.
 
 That last line is the hinge of the whole site — the first moment the speaker
@@ -63,9 +63,16 @@ admits he's talking about himself. **A photo belongs under this ash**
 ### ◐ Ardhanarishvara — "One Body, Divided" · built
 
 The signature. One verse torn across two halves, unreadable apart. Dragging
-either half moves both — you cannot bring one back without the other.
+either half moves both, because you cannot bring one back without the other.
 
 > *half of me* · *was always walking toward you*
+
+**The second half is withheld.** It's blurred and dimmed in proportion to the
+gap, so it only becomes readable as she closes it. Seeing the ending early
+gives the whole thing away; earning it word by word is the point. Both halves
+drift gently on their own rhythms so they read as pieces adrift in space, and
+settle onto one shared drift once joined, so the completed line breathes as a
+single piece.
 
 They snap together, the seam flares gold and dissolves, and the page's own seam
 stays gold from then on: the site is visibly less divided for the rest of the
@@ -122,6 +129,10 @@ commits them to `data/letters.json` so they're archived in git forever. See
 
 ## Writing notes
 
+- **No em dashes. Ever.** Not in verses, headings, hints, button labels, meta
+  descriptions or aria-labels. They are a tell, and they make the writing read
+  as AI-generated, which is fatal for a love letter meant to sound like Sivan.
+  Split the sentence instead of reaching for a semicolon.
 - **Her words matter more than mine.** Anything Sivan has already written to
   her beats anything generated. Ask for it.
 - The current verses are decent and entirely generic — they're about Shiva, not

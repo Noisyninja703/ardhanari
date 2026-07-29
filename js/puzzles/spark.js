@@ -1,5 +1,5 @@
 /* ==========================================================================
-   puzzles/void.js — Amavasya
+   puzzles/spark.js — Amavasya
 
    The section looks empty. Moving the pointer reveals a faint glow that
    follows it; hold still near the spark and it ignites, blooming into the

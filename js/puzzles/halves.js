@@ -33,24 +33,34 @@ export default function create({ body, data, solved: preSolved = false, solve })
   seam.className = 'halves__seam';
   seam.setAttribute('aria-hidden', 'true');
 
-  /* Panels are buttons so they're focusable and operable without a pointer. */
-  const makePanel = (side, text) => {
+  /* Panels are buttons so they're focusable and operable without a pointer.
+     `secret` marks the half whose words are withheld until they meet. */
+  const makePanel = (side, text, secret) => {
     const panel = document.createElement('button');
     panel.type = 'button';
     panel.className = `halves__panel halves__panel--${side}`;
     panel.setAttribute(
       'aria-label',
-      `${text} — drag toward the middle, or press the arrow keys, to rejoin the verse`
+      secret
+        ? 'The rest of the line, too far away to read. Drag toward the middle, or press the arrow keys, to bring the halves together.'
+        : `${text}. Drag toward the middle, or press the arrow keys, to bring the halves together.`
     );
+
     const span = document.createElement('span');
     span.className = 'halves__fragment t-verse';
     span.textContent = text;
+    /* Withheld visually, so withhold it from screen readers too. Announcing
+       the ending to one person and not another isn't accessibility, it's just
+       spoiling the surprise unevenly. Restored on join. */
+    if (secret) span.setAttribute('aria-hidden', 'true');
+
     panel.append(span);
     return panel;
   };
 
-  const panelA = makePanel('a', data.torn.a);
-  const panelB = makePanel('b', data.torn.b);
+  const panelA = makePanel('a', data.torn.a, false);
+  const panelB = makePanel('b', data.torn.b, true);
+  const secretFragment = panelB.querySelector('.halves__fragment');
 
   stage.append(panelA, seam, panelB);
   /* Above the completed verse, not below it: she joins the torn line first,
@@ -89,9 +99,12 @@ export default function create({ body, data, solved: preSolved = false, solve })
     stage.classList.add('is-settling', 'is-joined');
     render();
 
+    /* The withheld half arrives: readable, and announced. */
+    secretFragment.removeAttribute('aria-hidden');
+
     for (const panel of [panelA, panelB]) {
       panel.disabled = true;
-      panel.setAttribute('aria-label', 'Rejoined');
+      panel.removeAttribute('aria-label');
     }
     verses.classList.remove('verses--withheld');
     solve();
