@@ -198,10 +198,19 @@ export default function create({ section, body, data, solved: preSolved = false,
     root.hidden = true;
 
     const meta = document.createElement('p');
-    meta.className = 'letter-card__meta t-util';
+    meta.className = 'letter-card__meta t-util sweep';
 
     const bodyEl = document.createElement('div');
     bodyEl.className = 'letter-card__body';
+
+    /* The prose lives in its own wrapper so `margin-block: auto` can centre it
+       while it's short and collapse to nothing once it's long. That's what makes
+       a letter grow evenly up and down from the middle of the screen instead of
+       hanging from the top, while still scrolling normally when it outgrows the
+       space it has. */
+    const prose = document.createElement('div');
+    prose.className = 'letter-card__prose';
+    bodyEl.append(prose);
 
     const close = document.createElement('button');
     close.type = 'button';
@@ -214,20 +223,33 @@ export default function create({ section, body, data, solved: preSolved = false,
 
     function open(letter) {
       meta.textContent = `${who(letter.author)}, ${when(letter.createdAt)}`;
+      /* Reused between letters, so its sweep has to be rewound by hand. */
+      meta.classList.remove('is-swept');
 
       /* Paragraphs, not innerHTML: the body is data and must never be parsed
          as markup. Once she can write her own letters this is the line that
          keeps a stray angle bracket from becoming a bug. */
-      bodyEl.replaceChildren(
-        ...String(letter.body ?? '')
-          .split(/\n{2,}/)
-          .map((para) => {
-            const p = document.createElement('p');
-            p.className = 't-verse';
-            p.textContent = para.trim();
-            return p;
-          })
-      );
+      const paragraphs = String(letter.body ?? '')
+        .split(/\n{2,}/)
+        .map((para, i) => {
+          const p = document.createElement('p');
+          /* The same sweep of light the headings use, staggered a paragraph at a
+             time, so a letter arrives rather than simply appearing. */
+          p.className = 'letter-card__para sweep';
+          p.style.setProperty('--i', String(i + 1));
+          p.textContent = para.trim();
+          return p;
+        });
+
+      prose.replaceChildren(...paragraphs);
+      bodyEl.scrollTop = 0;
+
+      /* Next frame, so each mask has a start position to travel from. The nodes
+         are new on every open, so there's no stale animation to rewind. */
+      requestAnimationFrame(() => {
+        meta.classList.add('is-swept');
+        for (const p of paragraphs) p.classList.add('is-swept');
+      });
 
       root.hidden = false;
       requestAnimationFrame(() => root.classList.add('is-open'));

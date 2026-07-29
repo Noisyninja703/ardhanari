@@ -1152,18 +1152,38 @@
 /* Letters run long, so this scrolls. pan-y rather than none, because here the
    gesture she wants is reading. */
 .letter-card__body {
+  display: flex;
+  flex-direction: column;
   overflow-y: auto;
   touch-action: pan-y;
   overscroll-behavior: contain;
-  display: grid;
-  gap: var(--s-4);
   padding-inline: var(--s-2);
 }
-.letter-card__body .t-verse {
-  margin-inline: auto;
-  font-style: normal;      /* prose, not verse */
-  text-align: left;
+
+/* Auto margins above and below: while the letter is shorter than the space they
+   share the slack equally, so it sits centred and grows up and down as it gets
+   longer. Once it outgrows the space they collapse to nothing and it scrolls
+   from the top like any other block of text. This is why the prose needs its own
+   wrapper rather than being laid out by the scroller directly. */
+.letter-card__prose {
+  margin-block: auto;
+  display: flex;
+  flex-direction: column;
+  /* Prose spacing, not verse spacing: roughly a blank line between paragraphs
+     instead of the poem's 24px gap stacked on 1.75 leading, which made the
+     letters read as a list of separate thoughts. */
+  gap: 0.85em;
+}
+
+.letter-card__para {
+  margin: 0;
+  max-width: none;
+  font-family: var(--font-body);
   font-size: clamp(0.95rem, 3.2vw, 1.1rem);
+  line-height: 1.62;
+  text-align: left;
+  text-wrap: pretty;
+  color: var(--moon-dim);
 }
 
 .letter-card__close {
