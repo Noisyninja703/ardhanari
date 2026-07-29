@@ -94,6 +94,7 @@
        chrome              70 */
   --z-bg: 0;
   --z-exposure: 1;
+  --z-seam: 2;
   --z-particles: 3;
   --z-content: 10;
   --z-puzzle: 20;

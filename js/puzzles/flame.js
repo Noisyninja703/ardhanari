@@ -196,13 +196,22 @@ export default function create({ section, body, data, solved: preSolved = false,
 
   /* --- Keyboard --------------------------------------------------------- */
 
-  function onFocus() { setWarm(true); }   /* holding focus is holding still */
+  /* Holding keyboard focus is holding still, so focus tends the flame. Guarded
+     on :focus-visible because a tap also focuses the button on Android, and
+     treating that as tending would let a single tap type the whole verse. */
+  function onFocus() {
+    if (flame.matches(':focus-visible')) setWarm(true);
+  }
   function onBlur() { setWarm(false); }
 
   flame.addEventListener('focus', onFocus);
   flame.addEventListener('blur', onBlur);
-  /* A click finishes it outright: she's found the flame, don't make her hover. */
-  flame.addEventListener('click', finish);
+
+  /* Deliberately no click handler. There used to be one that finished the verse
+     outright, which broke the whole mechanic on touch: every press fires a
+     click when the finger lifts, so tapping the flame typed a few characters
+     and then instantly completed the section. Tending it is the only way
+     through, and the skip link is the way out. */
 
   section.addEventListener('pointermove', onPointerMove, { passive: true });
   section.addEventListener('pointerleave', onPointerLeave, { passive: true });
@@ -245,7 +254,6 @@ export default function create({ section, body, data, solved: preSolved = false,
       window.removeEventListener('pointercancel', onPointerUp);
       flame.removeEventListener('focus', onFocus);
       flame.removeEventListener('blur', onBlur);
-      flame.removeEventListener('click', finish);
     },
   };
 }

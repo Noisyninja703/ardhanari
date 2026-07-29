@@ -77,12 +77,20 @@ single piece.
 The halves sit **side by side** and are dragged together sideways, so the seam
 they make is vertical, matching the seam that runs down the rest of the site.
 
+Once they meet, the two halves **dissolve into a single line** of text that
+flows and wraps across the whole column. They can't just stay where they are:
+each half only has half a column, so the short one is a single line and the
+long one is two, and the "joined" result reads as two mismatched blocks instead
+of a sentence.
+
 **The site's seam is born here.** It does not exist in the first three
-sections. The moment she closes the gap it flares at the centre and grows out
-to full height, then stays gold for every section after. That's deliberate: the
-seam is the thing she made, not scenery that was always there. Reloading a
-solved site skips the birth animation, since she shouldn't watch it hatch
-again.
+sections. The moment she closes the gap, a bloom bursts from the centre of the
+screen and the seam grows out to the full height of the viewport, then stays
+gold for every section after. It's a full-page element behind all the text, not
+tied to where the words met, so the burst belongs to the whole page rather than
+to a block of type. That's deliberate: the seam is the thing she made, not
+scenery that was always there. Reloading a solved site skips the birth, since
+she shouldn't watch it hatch again.
 
 ### ◑ Tapasya — "She Did the Waiting" · built
 

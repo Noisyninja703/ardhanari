@@ -49,10 +49,51 @@
 .seam {
   position: fixed;
   inset: 0;
-  z-index: var(--z-bg);
+  /* Above the exposure vignette and the section backgrounds, below the poem.
+     It spans the whole viewport, not the block of text that made it, which is
+     the point: what she joined runs the height of the page. */
+  z-index: var(--z-seam);
   pointer-events: none;
   opacity: var(--seam-strength, 0);
   transition: opacity var(--d-slow) var(--ease-soft);
+}
+
+/* On the visit that earns it, the seam is fully present immediately and the
+   birth animation does the reveal. Fading the container in over a second and a
+   half at the same time only muted the flare. */
+.seam.is-born {
+  opacity: 1;
+  transition: none;
+}
+
+/* The burst. A bloom at the centre of the screen that expands past the edges
+   and is gone, leaving the seam behind it. */
+.seam__flash {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 60vmax;
+  height: 60vmax;
+  margin: -30vmax 0 0 -30vmax;
+  border-radius: 50%;
+  opacity: 0;
+  background: radial-gradient(
+    circle,
+    rgba(255, 246, 224, 0.55) 0%,
+    rgba(201, 162, 75, 0.30) 26%,
+    rgba(169, 140, 224, 0.12) 52%,
+    transparent 72%
+  );
+}
+
+.seam.is-born .seam__flash {
+  animation: seam-burst 1.5s var(--ease-out) forwards;
+}
+
+@keyframes seam-burst {
+  0%   { opacity: 0;    transform: scale(0.04); }
+  12%  { opacity: 1;    transform: scale(0.3); }
+  100% { opacity: 0;    transform: scale(2.6); }
 }
 
 /* The two tinted halves. Deliberately weak — they colour the air, they are

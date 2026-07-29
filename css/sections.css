@@ -455,16 +455,40 @@
 
 /* Joined: both halves settle onto one shared, much slower drift, so the
    completed line breathes as a single piece instead of pulling apart again. */
-.halves.is-joined .halves__fragment,
-.halves.is-joined .halves__panel--b .halves__fragment {
-  /* Identical animation, duration and delay on both halves, so their
-     transforms stay in step and the rejoined line never pulls apart. */
-  animation: half-drift-joined 24s linear infinite;
-  filter: none;
-  opacity: 1;
+/* The rejoined line: one piece of text, wrapping across the whole column.
+   Sits over the two halves and fades in as they fade out, so the join reads as
+   two things becoming one rather than two things parked next to each other. */
+.halves__joined {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  margin: 0;
+  padding-inline: var(--s-2);
+  max-width: none;
+  text-align: center;
+  text-wrap: balance;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--d-mid) var(--ease-out);
   text-shadow:
     0 0 18px rgba(239, 233, 220, 0.2),
     0 0 44px rgba(201, 162, 75, 0.18);
+}
+
+/* The halves hand over: they finish converging, then dissolve into the line. */
+.halves.is-joined .halves__fragment,
+.halves.is-joined .halves__panel--b .halves__fragment {
+  opacity: 0;
+  filter: none;
+  animation: none;
+  transition: opacity 380ms var(--ease-out);
+}
+
+.halves.is-joined .halves__joined {
+  opacity: 1;
+  transition-delay: 260ms;
+  animation: half-drift-joined 24s linear infinite;
 }
 
 @keyframes half-drift-joined {

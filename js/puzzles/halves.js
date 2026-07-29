@@ -63,7 +63,19 @@ export default function create({ body, data, solved: preSolved = false, solve })
   const panelB = makePanel('b', data.torn.b, true);
   const secretFragment = panelB.querySelector('.halves__fragment');
 
-  stage.append(panelA, seam, panelB);
+  /* The rejoined line, as one piece of text.
+
+     The two halves can't simply stay where they are once they meet: each only
+     has half a column, so the short half is one line and the long half is two,
+     and the "joined" result reads as two mismatched blocks rather than a
+     sentence. On join the halves fade out and this single line fades in over
+     them, flowing and wrapping across the full column like the verse it is. */
+  const joinedLine = document.createElement('p');
+  joinedLine.className = 'halves__joined t-verse';
+  joinedLine.textContent = `${data.torn.a} ${data.torn.b}`;
+  joinedLine.setAttribute('aria-hidden', 'true');
+
+  stage.append(panelA, seam, panelB, joinedLine);
   /* Above the completed verse, not below it: she joins the torn line first,
      and the rest of the verse blooms underneath as the reward. */
   body.insertBefore(stage, verses);
@@ -100,8 +112,11 @@ export default function create({ body, data, solved: preSolved = false, solve })
     stage.classList.add('is-settling', 'is-joined');
     render();
 
-    /* The withheld half arrives: readable, and announced. */
-    secretFragment.removeAttribute('aria-hidden');
+    /* The single joined line becomes the real text, for eyes and for screen
+       readers. The two halves are now just the animation that got us here. */
+    joinedLine.removeAttribute('aria-hidden');
+    secretFragment.setAttribute('aria-hidden', 'true');
+    panelA.querySelector('.halves__fragment').setAttribute('aria-hidden', 'true');
 
     for (const panel of [panelA, panelB]) {
       panel.disabled = true;
