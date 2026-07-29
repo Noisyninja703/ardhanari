@@ -8,13 +8,17 @@
 
 /* Fill these in and they propagate everywhere. */
 export const HER = {
-  name: '[HER NAME]',
-  petName: '[WHAT YOU CALL HER]',
+  name: 'Maniksha',
+  /* What you actually call her. Falls back to her name until you set it. */
+  petName: '',
 };
+
+/* Prefer the pet name where there is one — it's warmer than the formal one. */
+export const CALL_HER = HER.petName || HER.name;
 
 export const SITE = {
   title: 'Ardhanarishvara',
-  subtitle: 'for ' + HER.petName + ', on the first of August',
+  subtitle: 'for ' + CALL_HER + ', on the first of August',
   /* Shown to screen readers and search previews. */
   description:
     'A celestial love letter — seven phases of the moon, from the void to the full.',

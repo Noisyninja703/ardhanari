@@ -1,8 +1,12 @@
-# StarBoard — Ardhanarishvara
+# ardhanari
+
+For Maniksha, from Sivan. 1 August.
 
 A scrollable celestial love letter. Seven phases of the moon, from the void to
-the full, themed on Shiva and Parvati. Each section gates its verse behind a
-small interaction.
+the full, built on **Ardhanarishvara** — Shiva and Parvati as one body split
+down the middle. Each section gates its verse behind a small interaction.
+
+Live at <https://noisyninja703.github.io/ardhanari/>
 
 Currently built: **phase 1** — Amavasya (the void) and Bhasma (the ash years).
 
@@ -37,8 +41,8 @@ Action needed for the site itself — what's in the repo is what gets served.
 2. Repo → **Settings** → **Pages**.
 3. Under *Build and deployment*, set **Source: Deploy from a branch**.
 4. Choose branch `main`, folder `/ (root)`. Save.
-5. Wait ~1 minute. The URL appears at the top of that same page, as
-   `https://<username>.github.io/StarBoard/`.
+5. Wait ~1 minute. The URL appears at the top of that same page:
+   `https://noisyninja703.github.io/ardhanari/`.
 
 Every push to `main` republishes automatically. If a change doesn't show up,
 it's almost always browser cache — hard-reload with `Ctrl+Shift+R`.
@@ -46,7 +50,7 @@ it's almost always browser cache — hard-reload with `Ctrl+Shift+R`.
 ### Test on the live URL, not just locally
 
 Paths behave differently once the site is served from a subfolder
-(`/StarBoard/`). All paths here are **relative** (`css/tokens.css`, not
+(`/ardhanari/`). All paths here are **relative** (`css/tokens.css`, not
 `/css/tokens.css`) precisely so this works — if you ever add a leading slash,
 it will work locally and break on Pages.
 
