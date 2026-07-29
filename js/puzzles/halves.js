@@ -10,9 +10,10 @@
    without the other, which is the entire point of the form — and it halves
    the work.
 
-   One axis at every width: the halves are stacked and dragged vertically.
-   The site is a portrait column everywhere, so the drag moves with the
-   scroll rather than across it, and there's no second layout to maintain.
+   The split is vertical and the drag is horizontal, at every width. The seam
+   this creates is the same vertical seam that runs down the whole site from
+   here on, which is the point: it isn't decoration, it's the thing she made.
+   Sideways also keeps the gesture off the scroll axis.
    ========================================================================== */
 
 const SNAP_PX = 40;      /* magnetic pull distance, as planned */
@@ -74,7 +75,7 @@ export default function create({ body, data, solved: preSolved = false, solve })
 
   /** Half the total separation, in px. Each panel travels this far. */
   function maxOffset() {
-    return stage.clientHeight * 0.15;
+    return stage.clientWidth * 0.15;
   }
 
   function render() {
@@ -122,21 +123,21 @@ export default function create({ body, data, solved: preSolved = false, solve })
      and requiring her to land on the text itself meant a touch in that gap
      did nothing at all. Anywhere in the band now works.
 
-     Which way the drag closes comes from where it started: begin above the
-     middle and you're pulling the top half down, begin below it and you're
-     pulling the bottom half up. */
+     Which way the drag closes comes from where it started: begin left of the
+     middle and you're pulling the left half right, begin right of it and
+     you're pulling the right half left. */
 
-  let dragging = null;   /* { pointerId, start, startGap, fromTop } */
+  let dragging = null;   /* { pointerId, start, startGap, fromLeft } */
 
   function onDown(e) {
     if (joined) return;
-    const mid = stage.getBoundingClientRect().top + stage.clientHeight / 2;
+    const mid = stage.getBoundingClientRect().left + stage.clientWidth / 2;
     stage.setPointerCapture?.(e.pointerId);
     dragging = {
       pointerId: e.pointerId,
-      start: e.clientY,
+      start: e.clientX,
       startGap: gap,
-      fromTop: e.clientY <= mid,
+      fromLeft: e.clientX <= mid,
     };
     stage.classList.add('is-dragging');
   }
@@ -144,8 +145,8 @@ export default function create({ body, data, solved: preSolved = false, solve })
   function onMove(e) {
     if (!dragging || joined || e.pointerId !== dragging.pointerId) return;
 
-    const direction = dragging.fromTop ? 1 : -1;
-    const travelled = (e.clientY - dragging.start) * direction;
+    const direction = dragging.fromLeft ? 1 : -1;
+    const travelled = (e.clientX - dragging.start) * direction;
 
     setGap(dragging.startGap - travelled / maxOffset());
   }

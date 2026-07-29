@@ -43,8 +43,9 @@
    viewport for the entire scroll and is the spine of the whole site.
    Left half cools toward ash, right half warms toward gold.
 
-   --seam-strength is driven from JS (0 before Amavasya resolves, 1 through
-   the middle sections, easing back to 0 once the halves are rejoined). */
+   --seam-strength is driven from JS: 0 until she rejoins the halves, 1 from
+   that moment onward. The seam does not exist before then, because it's what
+   she made rather than scenery that was always there. */
 .seam {
   position: fixed;
   inset: 0;
@@ -82,6 +83,8 @@
   left: 50%;
   width: var(--seam-w);
   transform: translateX(-50%);
+  /* Grows out from the middle when it's born. */
+  transform-origin: 50% 50%;
   background: linear-gradient(
     to bottom,
     transparent,
@@ -92,8 +95,42 @@
   );
 }
 
-/* The tinted halves fade back once she's rejoined them — after that point
-   the page stops insisting there's a left side and a right side. */
+/* The seam is born the moment she rejoins the halves: it flares at the centre
+   and grows out to full height. It doesn't exist before that, because it's the
+   thing she made rather than a decoration that was always there. */
+.seam.is-born .seam__line {
+  animation: seam-birth 2.2s var(--ease-out) forwards;
+}
+
+@keyframes seam-birth {
+  0% {
+    transform: translateX(-50%) scaleY(0);
+    opacity: 0;
+    box-shadow: 0 0 0 0 rgba(201, 162, 75, 0);
+  }
+  30% {
+    transform: translateX(-50%) scaleY(0.22);
+    opacity: 1;
+    box-shadow:
+      0 0 20px 5px rgba(255, 244, 214, 0.85),
+      0 0 60px 18px rgba(201, 162, 75, 0.55);
+  }
+  100% {
+    transform: translateX(-50%) scaleY(1);
+    opacity: 1;
+    box-shadow:
+      0 0 24px 2px rgba(201, 162, 75, 0.25),
+      0 0 70px 14px rgba(201, 162, 75, 0.10);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .seam.is-born .seam__line { animation: none; }
+}
+
+/* The ash and gold tints fade up with the seam, but held well back: by the
+   time the seam exists the halves are already one, so the page shouldn't go
+   on insisting there's a left side and a right side. */
 .seam::before,
 .seam::after {
   transition: opacity var(--d-bloom) var(--ease-soft);
@@ -103,8 +140,8 @@
   opacity: 0.35;
 }
 
-/* Set when the halves puzzle resolves: the seam flares gold, then the
-   division softens for every section after it. */
+/* The seam only ever exists in its joined state, so this is simply what it
+   looks like: gold, lit, and the same from here to the end. */
 .seam.is-joined .seam__line {
   background: linear-gradient(
     to bottom,

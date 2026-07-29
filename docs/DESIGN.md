@@ -47,7 +47,7 @@ one value.**
 
 Every section is exactly `100dvh`, divided into proportional bands:
 
-```
+```text
 ┌──────────────────────────────┐
 │  10%   tithi label           │
 │  15%   heading               │
@@ -87,8 +87,10 @@ below the fixed overlays.
   so there's no image request. This single detail is what stops the page
   reading as a stack of CSS gradients.
 - **The seam** — a vertical hairline with ash-tinted left and gold-tinted right.
-  Invisible in the void, appears after it, turns gold and softens once the
-  halves are rejoined. It's the spine of the whole site.
+  It does **not** exist until she rejoins the halves in Ardhanarishvara, where
+  it is born: a flare at the centre, growing out to full height, gold from then
+  to the end. Driven by `--seam-strength` plus `.is-joined`, with `.is-born`
+  adding the birth animation only on the visit that earns it.
 - **Mist** — stacked radial gradients on 74–92s keyframes, masked to fade
   before each section's top and bottom edge. That mask is what removed the harsh
   seam between segments.

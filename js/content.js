@@ -122,7 +122,7 @@ export const SECTIONS = [
       'until even a god had to open his eyes and look.',
     ],
 
-    hint: 'Keep your hand near the flame.',
+    hint: 'Keep the flame safe.',
     skipLabel: 'Let it burn',
     lensSecret: 'You did the waiting. I have never once forgotten what that cost you.',
   },

@@ -421,19 +421,28 @@ function boot() {
 
   /* The seam is invisible in the void and appears once she's through it —
      one being, before division. */
+  /* The page's seam does not exist until she rejoins the halves. It's the
+     thing she made, not scenery that was always there, so it's born at that
+     moment: it flares at the centre, grows out to full height, and stays gold
+     for every section after. */
   const seam = document.querySelector('.seam');
-  const revealSeam = () => seam.style.setProperty('--seam-strength', '1');
-  if (unlocked.has('amavasya')) revealSeam();
-  else sections[0].addEventListener('ardh:solved', revealSeam, { once: true });
-
-  /* Once the halves are rejoined the page's own seam flares gold and the
-     ash/gold division softens — the change persists for every section
-     after it, which is the whole arc of the site in one class. */
-  const joinSeam = () => seam.classList.add('is-joined');
   const halvesSection = sections.find((s) => s.id === 'ardhanarishvara');
+
+  function bearSeam({ animate }) {
+    seam.style.setProperty('--seam-strength', '1');
+    seam.classList.add('is-joined');
+    /* Skip the birth animation when it was already earned on a previous
+       visit — she shouldn't watch it hatch again on every reload. */
+    if (animate) seam.classList.add('is-born');
+  }
+
   if (halvesSection) {
-    if (unlocked.has('ardhanarishvara')) joinSeam();
-    else halvesSection.addEventListener('ardh:solved', joinSeam, { once: true });
+    if (unlocked.has('ardhanarishvara')) bearSeam({ animate: false });
+    else {
+      halvesSection.addEventListener('ardh:solved', () => bearSeam({ animate: true }), {
+        once: true,
+      });
+    }
   }
 }
 

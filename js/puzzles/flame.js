@@ -182,10 +182,11 @@ export default function create({ section, body, data, solved: preSolved = false,
 
   function onPointerDown(e) {
     if (done || e.pointerType !== 'touch') return;
-    const r = flame.getBoundingClientRect();
-    const dx = e.clientX - (r.left + r.width / 2);
-    const dy = e.clientY - (r.top + r.height / 2);
-    if (Math.hypot(dx, dy) < NEAR_PX * 1.4) setWarm(true);
+    /* Touch has to land on the flame itself, not merely near it. The flame is
+       the only element here with touch-action: none, so a touch anywhere else
+       is a scroll waiting to happen — lighting it from 200px away just meant
+       the flame flared and then died as the page moved under her. */
+    if (flame.contains(e.target)) setWarm(true);
   }
 
   function onPointerUp() {

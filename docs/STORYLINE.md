@@ -74,9 +74,15 @@ drift gently on their own rhythms so they read as pieces adrift in space, and
 settle onto one shared drift once joined, so the completed line breathes as a
 single piece.
 
-They snap together, the seam flares gold and dissolves, and the page's own seam
-stays gold from then on: the site is visibly less divided for the rest of the
-scroll.
+The halves sit **side by side** and are dragged together sideways, so the seam
+they make is vertical, matching the seam that runs down the rest of the site.
+
+**The site's seam is born here.** It does not exist in the first three
+sections. The moment she closes the gap it flares at the centre and grows out
+to full height, then stays gold for every section after. That's deliberate: the
+seam is the thing she made, not scenery that was always there. Reloading a
+solved site skips the birth animation, since she shouldn't watch it hatch
+again.
 
 ### ◑ Tapasya — "She Did the Waiting" · built
 
