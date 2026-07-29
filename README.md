@@ -6,7 +6,14 @@ A scrollable celestial love letter. Seven phases of the moon, from the void to
 the full, built on **Ardhanarishvara** — Shiva and Parvati as one body split
 down the middle. Each section gates its verse behind a small interaction.
 
-Live at <https://noisyninja703.github.io/ardhanari/>
+Live at <https://noisyninja703.github.io/ardhanari/> once the repo is public.
+
+**Docs:** [CLAUDE.md](CLAUDE.md) is the start-here overview (written for the
+next AI agent, but it's the fastest way to see where things stand).
+[docs/STORYLINE.md](docs/STORYLINE.md) is the seven sections and the theme,
+[docs/DESIGN.md](docs/DESIGN.md) the tokens and layout system,
+[docs/PLAN.md](docs/PLAN.md) what's left to build, and
+[docs/GOTCHAS.md](docs/GOTCHAS.md) the traps already paid for.
 
 Built so far:
 
