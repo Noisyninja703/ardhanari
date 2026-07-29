@@ -17,22 +17,28 @@
   isolation: isolate;
 }
 
+/* One centred portrait column, at every width. Everything is centred and
+   scales via --column; there are no side-by-side or orientation-specific
+   layouts anywhere in this file. */
 .section__inner {
   position: relative;
   z-index: var(--z-content);
   display: grid;
   gap: var(--s-5);
-  justify-items: start;
-  width: 100%;
-  max-width: 46rem;
+  justify-items: center;
+  text-align: center;
+  width: var(--column);
   margin-inline: auto;
 }
+
+.section__inner .t-verse { margin-inline: auto; }
 
 /* The tithi label: lunar phase glyph plus its name. This is the structural
    device — the moon encodes the progression, so we never number sections. */
 .tithi {
   display: flex;
   align-items: baseline;
+  justify-content: center;
   gap: var(--s-3);
 }
 .tithi__phase {
@@ -51,21 +57,12 @@
   width: max-content;
 }
 
-/* Sections that declare align: 'center' are symmetrical at every width —
-   used where the layout itself carries meaning, like the two even halves of
-   Ardhanarishvara. */
-.section--center .section__inner {
-  justify-items: center;
-  text-align: center;
-}
-.section--center .t-verse { margin-inline: auto; }
-
-/* Desktop only: text sits to one side of the seam, alternating per section.
-   At 390px this would just squash the measure, so it stays centred there. */
-@media (min-width: 52rem) {
-  .section__inner { max-width: 68rem; }
-  .section--left  .section__inner { padding-right: 52%; }
-  .section--right .section__inner { padding-left: 52%; justify-items: start; }
+/* Decorative Devanagari. Sized in proportion to the column so it reads as
+   texture behind the poem — too small and it's just noise, too large and it
+   sprawls past the column on a wide screen. */
+.t-sanskrit {
+  font-size: clamp(2.5rem, 16vw, 6rem);
+  opacity: 0.07;
 }
 
 /* --- Parallax ------------------------------------------------------------
@@ -89,8 +86,6 @@
   justify-items: center;
   text-align: center;
 }
-.amavasya .section__inner { justify-items: center; text-align: center; }
-
 /* The void's text is centred, so centred Devanagari would sit directly
    behind the verse and read as mud. Drop it low and let it bleed off the
    bottom edge instead — texture, not a collision. */
@@ -171,7 +166,6 @@
      still gets a decent field of ash. A fixed aspect-ratio clipped longer
      verses on desktop. */
   min-height: 20rem;
-  max-width: 34rem;
   margin-inline: auto;
   touch-action: none;
   overscroll-behavior: none;
@@ -217,10 +211,6 @@
   height: 100%;
 }
 
-@media (min-width: 52rem) {
-  .wipe, .wipe__beneath { min-height: 24rem; }
-  .wipe { max-width: 40rem; }
-}
 
 /* --- 5. Ardhanarishvara / the two halves ---------------------------------
    The signature. Two panels holding one torn verse, dragged back together.
@@ -276,53 +266,30 @@
   transition: opacity var(--d-fast) linear;
 }
 
-/* Horizontal split: panels side by side, dragged across. */
-.halves--x .halves__panel { top: 0; bottom: 0; width: 50%; }
-/* Padding on the meeting edges is a third of a character, so when they close
-   the two fragments are separated by roughly one word-space and genuinely
-   read as a single line. The section's own padding is what keeps the outer
-   edges off the viewport. */
-.halves--x .halves__panel--a {
-  left: 0;
-  justify-content: end;
-  text-align: right;
-  padding-right: 0.33ch;
-  transform: translate3d(calc(var(--gap) * -30%), 0, 0);
-}
-.halves--x .halves__panel--b {
-  right: 0;
-  justify-content: start;
-  text-align: left;
-  padding-left: 0.33ch;
-  transform: translate3d(calc(var(--gap) * 30%), 0, 0);
-}
-.halves--x .halves__seam {
-  top: 12%;
-  bottom: 12%;
-  left: 50%;
-  width: 1px;
-}
-
-/* Vertical split for portrait phones: stacked, dragged up and down. Same
-   interaction rotated, so dismissing the landscape nudge costs her nothing. */
-.halves--y .halves__panel {
+/* One split, at every width: stacked halves dragged vertically. The vertical
+   axis is the right one for a portrait column — it moves with the scroll
+   rather than across it, and there's no second layout to maintain. */
+.halves__panel {
   left: 0;
   right: 0;
   height: 50%;
   justify-content: center;
-  text-align: center;
 }
-.halves--y .halves__panel--a {
+.halves__panel--a {
   top: 0;
   align-content: end;
+  /* A third of a line's leading, so when they close the two fragments sit
+     one line apart and read as continuous verse. */
+  padding-bottom: 0.2em;
   transform: translate3d(0, calc(var(--gap) * -30%), 0);
 }
-.halves--y .halves__panel--b {
+.halves__panel--b {
   bottom: 0;
   align-content: start;
+  padding-top: 0.2em;
   transform: translate3d(0, calc(var(--gap) * 30%), 0);
 }
-.halves--y .halves__seam {
+.halves__seam {
   left: 15%;
   right: 15%;
   top: 50%;
@@ -363,42 +330,6 @@
 /* The completed verse is withheld until they meet. */
 .verses--withheld { display: none; }
 
-/* --- Orientation nudge ---------------------------------------------------
-   Covers only the section that wants rotating, never the whole page. */
-.nudge {
-  position: absolute;
-  inset: 0;
-  z-index: var(--z-overlay);
-  display: grid;
-  place-content: center;
-  padding: var(--gutter);
-  background: rgba(10, 6, 18, 0.82);
-}
-.nudge[hidden] { display: none; }
-
-.nudge__inner {
-  display: grid;
-  justify-items: center;
-  gap: var(--s-5);
-  padding: var(--s-6);
-  text-align: center;
-}
-.nudge__glyph {
-  font-size: 2rem;
-  color: var(--moon-faint);
-  animation: nudge-turn 3.6s var(--ease-soft) infinite;
-}
-@keyframes nudge-turn {
-  0%, 55%, 100% { transform: rotate(90deg); }
-  75%, 95%      { transform: rotate(0deg); }
-}
-.nudge__text { max-width: 22ch; }
-.nudge__stay {
-  padding: var(--s-2) 0;
-  border-bottom: 1px solid var(--moon-ghost);
-}
-.nudge__stay:hover { color: var(--moon); border-bottom-color: var(--moon-faint); }
-
 /* --- Puzzle hint and skip ------------------------------------------------
    She never gets stuck. Hint glows at 8s idle, skip appears at 25s. */
 .hint {
@@ -427,8 +358,10 @@
    44px minimum hit target on every dot — non-negotiable on touch. */
 .moon-meter {
   position: fixed;
-  right: var(--s-3);
-  bottom: var(--s-3);
+  /* clamp rather than a breakpoint: it eases outward with the viewport
+     instead of jumping at an arbitrary width. */
+  right: clamp(var(--s-3), 2vw, var(--s-5));
+  bottom: clamp(var(--s-3), 2vw, var(--s-5));
   z-index: var(--z-chrome);
   display: flex;
   flex-direction: column;
@@ -451,9 +384,6 @@
 .moon-meter__dot.is-unlocked { opacity: 0.8; color: var(--moon-dim); }
 .moon-meter__dot.is-current  { opacity: 1; color: var(--gold); }
 
-@media (min-width: 52rem) {
-  .moon-meter { right: var(--s-5); bottom: var(--s-5); }
-}
 
 /* --- Sound toggle -------------------------------------------------------- */
 .sound-toggle {

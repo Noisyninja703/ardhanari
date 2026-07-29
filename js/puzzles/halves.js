@@ -6,18 +6,14 @@
    snap magnetically at the centre, the seam flares gold, and the verse
    completes as a single line.
 
-   Two deliberate choices:
+   Dragging either half moves BOTH, mirrored. You cannot bring one half back
+   without the other, which is the entire point of the form — and it halves
+   the work.
 
-   - Dragging either half moves BOTH, mirrored. You cannot bring one half
-     back without the other, which is the entire point of the form. It also
-     halves the work.
-   - The axis follows the viewport. On a portrait phone the split is
-     horizontal and she drags vertically; anywhere wider it's vertical and
-     she drags across. Same interaction, same meaning, rotated — so the
-     landscape nudge stays an invitation rather than a requirement.
+   One axis at every width: the halves are stacked and dragged vertically.
+   The site is a portrait column everywhere, so the drag moves with the
+   scroll rather than across it, and there's no second layout to maintain.
    ========================================================================== */
-
-import { attachNudge, isPortraitPhone, onOrientationChange } from '../orientation-nudge.js';
 
 const SNAP_PX = 40;      /* magnetic pull distance, as planned */
 const KEY_STEP = 0.28;   /* how much one arrow press closes the gap */
@@ -45,7 +41,7 @@ export default function create({ section, data, solved: preSolved = false, solve
     panel.className = `halves__panel halves__panel--${side}`;
     panel.setAttribute(
       'aria-label',
-      `${text} — drag toward the centre, or press the arrow keys, to rejoin the verse`
+      `${text} — drag toward the middle, or press the arrow keys, to rejoin the verse`
     );
     const span = document.createElement('span');
     span.className = 'halves__fragment t-verse';
@@ -66,19 +62,10 @@ export default function create({ section, data, solved: preSolved = false, solve
 
   let gap = 1;              /* 1 = fully torn apart, 0 = joined */
   let joined = false;
-  let axis = 'x';           /* 'x' = drag across, 'y' = drag up/down */
 
   /** Half the total separation, in px. Each panel travels this far. */
   function maxOffset() {
-    const size = axis === 'x' ? stage.clientWidth : stage.clientHeight;
-    return size * 0.15;
-  }
-
-  function applyAxis() {
-    axis = isPortraitPhone() ? 'y' : 'x';
-    stage.classList.toggle('halves--x', axis === 'x');
-    stage.classList.toggle('halves--y', axis === 'y');
-    render();
+    return stage.clientHeight * 0.15;
   }
 
   function render() {
@@ -121,25 +108,21 @@ export default function create({ section, data, solved: preSolved = false, solve
 
   let dragging = null;   /* { pointerId, start, startGap } */
 
-  function coord(e) {
-    return axis === 'x' ? e.clientX : e.clientY;
-  }
-
   function onDown(e) {
     if (joined) return;
     const panel = e.currentTarget;
     panel.setPointerCapture?.(e.pointerId);
-    dragging = { pointerId: e.pointerId, start: coord(e), startGap: gap, panel };
+    dragging = { pointerId: e.pointerId, start: e.clientY, startGap: gap, panel };
     stage.classList.add('is-dragging');
   }
 
   function onMove(e) {
     if (!dragging || joined || e.pointerId !== dragging.pointerId) return;
 
-    /* Panel A closes the gap by moving forward along the axis; panel B by
-       moving back. Normalising here means one formula below. */
+    /* The top half closes the gap by moving down, the bottom half by moving
+       up. Normalising the direction here means one formula below. */
     const direction = dragging.panel === panelA ? 1 : -1;
-    const travelled = (coord(e) - dragging.start) * direction;
+    const travelled = (e.clientY - dragging.start) * direction;
 
     setGap(dragging.startGap - travelled / maxOffset());
   }
@@ -182,17 +165,10 @@ export default function create({ section, data, solved: preSolved = false, solve
   panelA.addEventListener('keydown', onKey);
   panelB.addEventListener('keydown', onKey);
 
-  /* --- Orientation ------------------------------------------------------- */
-
-  const nudge = attachNudge(section, 'This one wants more sky — turn me sideways.');
-  const stopWatching = onOrientationChange(applyAxis);
-
-  applyAxis();
+  render();
 
   return {
     destroy() {
-      stopWatching();
-      nudge.destroy();
       for (const panel of [panelA, panelB]) {
         panel.removeEventListener('pointerdown', onDown);
         panel.removeEventListener('pointermove', onMove);

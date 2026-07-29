@@ -46,6 +46,12 @@
 
   --measure: 34ch;    /* verse line length. longer than this and it reads flat. */
 
+  /* The column everything lives in. Portrait-shaped at EVERY width: on a wide
+     monitor the site stays a tall centred column rather than spreading out,
+     which is what preserves the pacing and drama of the vertical scroll.
+     This is the one number to change if the site ever feels too narrow. */
+  --column: min(92vw, 34rem);
+
   /* --- Space -------------------------------------------------------------
      A 1.5x-ish ramp. Use these, don't invent magic numbers. */
   --s-1:  0.25rem;
@@ -84,12 +90,6 @@
   --glass-blur:   blur(20px) saturate(1.2);
 }
 
-/* Wider viewports get a stronger seam and more assertive colour halves.
-   On a 390px screen two strong colour fields fight the text. */
-@media (min-width: 52rem) {
-  :root {
-    --seam-w: 1px;
-    --ash-veil:  rgba(140, 135, 148, 0.30);
-    --gold-veil: rgba(201, 162, 75, 0.24);
-  }
-}
+/* Deliberately no width or orientation breakpoints here. One set of tokens
+   for every screen: the layout is a centred portrait column that scales with
+   width, not a set of different layouts. */

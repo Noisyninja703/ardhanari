@@ -41,7 +41,6 @@ export const SECTIONS = [
     tithi: 'Amavasya',
     devanagari: 'अमावस्या',
     puzzle: 'void',
-    align: 'center',
     heading: 'Before Light',
     verses: [
       'Before there was light, there was the wanting of it.',
@@ -59,7 +58,6 @@ export const SECTIONS = [
     tithi: 'Bhasma',
     devanagari: 'भस्म',
     puzzle: 'ash',
-    align: 'left',
     heading: 'The Ash Years',
     verses: [
       'When he lost her, he did not build a shrine.',
@@ -84,7 +82,6 @@ export const SECTIONS = [
     tithi: 'Ardhanarishvara',
     devanagari: 'अर्धनारीश्वर',
     puzzle: 'halves',
-    align: 'center',
     heading: 'One Body, Divided',
 
     /* The verse is torn across the two halves and unreadable until she
@@ -105,8 +102,6 @@ export const SECTIONS = [
     hint: 'Pull them together.',
     skipLabel: 'Make them one',
     lensSecret: 'Ardhanarishvara: not two halves of a couple. One being, remembering itself.',
-    /* This section reads better with room. See js/orientation-nudge.js. */
-    wantsLandscape: true,
   },
 ];
 

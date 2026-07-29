@@ -65,9 +65,6 @@ function buildSection(data, index) {
   const section = el('section', `section ${data.id}`);
   section.id = data.id;
   section.dataset.puzzle = data.puzzle || '';
-  if (data.align === 'left') section.classList.add('section--left');
-  if (data.align === 'right') section.classList.add('section--right');
-  if (data.align === 'center') section.classList.add('section--center');
   section.setAttribute('aria-labelledby', `${data.id}-heading`);
 
   /* Decorative Devanagari as background texture. aria-hidden: a screen

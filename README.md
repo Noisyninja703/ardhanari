@@ -191,6 +191,26 @@ verse.
 
 ---
 
+## Layout: one portrait column, everywhere
+
+There are **no orientation branches and no responsive breakpoints** in this
+project, on purpose. The site is a single centred column that scales with
+width via `--column` in `css/tokens.css`:
+
+```css
+--column: min(92vw, 34rem);
+```
+
+On a phone that's the full width; on a wide monitor it stays a tall centred
+column rather than spreading out. That's what preserves the pacing of the
+vertical scroll — a poem that goes wide stops feeling like a poem.
+
+Practical consequence: **to change how wide the site feels, change that one
+value.** Everything else follows. If you find yourself reaching for a
+`@media` query, reach for a `clamp()` instead.
+
+---
+
 ## Things that are deliberate
 
 - **Nothing autoplays audio**, and sound is off by default.
