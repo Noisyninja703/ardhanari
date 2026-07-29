@@ -101,7 +101,7 @@ export const SECTIONS = [
 
     hint: 'Pull them together.',
     skipLabel: 'Make them one',
-    lensSecret: 'Ardhanarishvara: not two halves of a couple. One being, remembering itself.',
+    lensSecret: 'Not two halves of a couple. One being, remembering itself.',
   },
 
   {
@@ -124,7 +124,7 @@ export const SECTIONS = [
 
     hint: 'Keep the flame safe.',
     skipLabel: 'Let it burn',
-    lensSecret: 'You did the waiting. I have never once forgotten what that cost you.',
+    lensSecret: 'You did the waiting. I have not forgotten what it cost you.',
   },
 
   {
@@ -147,7 +147,7 @@ export const SECTIONS = [
     /* This one is the reward for solving the section, and it tells her the
        lens works everywhere. Every earlier section has had a line hidden in it
        since the day it was written. */
-    lensSecret: 'Everything you have already read has something hidden in it. Take this back with you.',
+    lensSecret: 'Every part you have already read is hiding something. Go back.',
   },
 ];
 

@@ -553,33 +553,16 @@
   width: 1px;
 }
 
-/* Joined: the seam flares gold and then dissolves, leaving the two fragments
-   sitting together as one line with nothing between them. A seam that stayed
-   would keep the words apart, which is the opposite of the point. */
+/* Joined: the local seam simply goes. It used to flare and dissolve here, which
+   fired at the same instant as the page-wide seam burst and read as two
+   competing explosions in two different places. One of them is the moment; this
+   little line is not it. It just steps out of the way and lets the words meet.
+
+   The --seam-glow feedback while she's dragging stays, since that's what tells
+   her the halves are closing. */
 .halves.is-joined .halves__seam {
-  background: var(--gold);
-  animation: seam-flare 2.4s var(--ease-out) forwards;
-}
-
-@keyframes seam-flare {
-  0% {
-    opacity: 0.5;
-    box-shadow: 0 0 6px 1px rgba(201, 162, 75, 0.3);
-  }
-  22% {
-    opacity: 1;
-    box-shadow:
-      0 0 14px 2px rgba(201, 162, 75, 0.7),
-      0 0 56px 12px rgba(201, 162, 75, 0.3);
-  }
-  100% {
-    opacity: 0;
-    box-shadow: 0 0 40px 16px rgba(201, 162, 75, 0);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .halves.is-joined .halves__seam { animation: none; opacity: 0; }
+  opacity: 0;
+  transition: opacity 420ms var(--ease-out);
 }
 .halves.is-joined .halves__fragment { color: var(--moon); }
 .halves.is-joined .halves__panel { cursor: default; }
@@ -791,13 +774,18 @@
   position: absolute;
   left: 0;
   right: 0;
-  top: 66%;
+  /* Anchored to the bottom of the section, below the Devanagari footer and
+     just above the fixed moon meter. That strip is the only place in a fully
+     packed section that is reliably free: at 66% down it collided with the
+     poem in any section with tall content, which the flame section is.
+     Sitting in the margin also suits a line that's meant to be found. */
+  bottom: calc(var(--chrome-h) + var(--s-2));
   z-index: 6;           /* above the backdrop, below the poem */
   margin: 0;
   padding-inline: var(--gutter);
   text-align: center;
   font-family: var(--font-body);
-  font-size: clamp(0.95rem, 3.4vw, 1.15rem);
+  font-size: clamp(0.9rem, 3.1vw, 1.05rem);
   font-style: italic;
   line-height: 1.6;
   color: var(--datura);

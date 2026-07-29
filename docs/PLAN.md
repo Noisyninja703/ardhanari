@@ -44,9 +44,12 @@ Things to know before changing it:
   element-relative maths is the reason it isn't pure CSS.
 - `RADIUS` in the module and `.lens` width/height in CSS must stay in step
   (width is twice the radius).
-- Hidden lines sit at `top: 66%` of their section, below the poem and above the
-  prompt band. If a future section puts something there, move them rather than
-  letting them overlap.
+- Hidden lines are anchored to the **bottom** of their section, below the
+  Devanagari footer and just above the fixed moon meter. That strip is the only
+  place a fully packed section reliably has free: placed at 66% down they
+  collided with the poem wherever the body band was tall, which the flame
+  section is. Keep each `lensSecret` short enough for two lines at phone width,
+  around 60 characters.
 
 ### 3. ◓ Nakshatra — the constellation *(needs photos)*
 
