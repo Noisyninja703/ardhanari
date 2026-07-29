@@ -5,10 +5,10 @@
    folded piece of paper. She can push them around, and opening one unfolds it
    into something readable.
 
-   Stage A: letters are read from data/letters.json, which is the archive. When
-   Firestore exists this module will try that first and fall back to the file,
-   so the letters survive Firebase disappearing. Nothing here needs a backend to
-   work today.
+   Letters are read from data/letters.json and that file is the whole store.
+   By decision there is no database, no sync and no composer: they're written in
+   advance and committed. She doesn't write back through the site, which also
+   means the last thing she reads here is unambiguously his.
 
    Like the constellation, this section has no gate. It opens on arrival.
    ========================================================================== */
@@ -25,8 +25,12 @@ export default function create({ section, body, data, solved: preSolved = false,
   field.className = 'letters';
 
   const card = buildCard();
-  field.append(card.root);
   body.append(field);
+
+  /* The open letter belongs to the section, not the field, so it can fill the
+     screen instead of being confined to the poem band. The CSS adds back the
+     padding that keeps it clear of the gutters and the moon meter. */
+  section.append(card.root);
 
   /* --- Loading ----------------------------------------------------------- */
 

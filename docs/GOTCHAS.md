@@ -200,6 +200,3 @@ on the open internet. `noindex` is set, but that's politeness, not privacy.
 **All paths must stay relative** (`css/tokens.css`, not `/css/tokens.css`).
 Pages serves from a subfolder, so a leading slash works locally and breaks live.
 
-**Firebase's web config is public by design.** Security comes from Firestore
-rules, not from hiding the key. The service-account credential for the archive
-Action is different — that belongs in GitHub Secrets.

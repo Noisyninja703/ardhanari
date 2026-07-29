@@ -1,10 +1,9 @@
 # Plan
 
 **Deadline: 1 August.** All seven sections are built and the poem is walkable
-end to end. Everything remaining is content, or the letters' write-back half.
+end to end. Nothing left is structural.
 
-Nothing left is structural, which means from here the highest-value work is
-words and photographs, not code.
+From here the highest-value work is words and photographs, not code.
 
 ---
 
@@ -65,44 +64,27 @@ gating anything.
   standing guidance instead of a puzzle hint: shown on arrival and never
   cleared. That's how "Touch a star." survives a section that solves itself.
 
-### 4. ○ Purnima — the letters
+### 4. ○ Purnima — the letters · BUILT
 
-**Stage A is BUILT** and is a complete, giftable section on its own:
 `js/puzzles/letters.js` reads `data/letters.json`, scatters the letters as
-folded paper, lets her push them around and open them. A missing or unreadable
-archive shows one quiet line rather than breaking the section.
+folded paper, and lets her push them around and open them. A missing or
+unreadable archive shows one quiet line rather than breaking the section.
 
-Notes for Stage B: letter bodies are rendered as text nodes, never `innerHTML`,
-which is the line that matters once she can type her own. The card body scrolls
-with `touch-action: pan-y` while the paper takes `none`, so dragging and reading
-don't fight.
+**Decision: the letters are pre-written and that's all they are.** No Firestore,
+no archive Action, no composer, and she does not write back through the site.
+Sivan writes them, commits them, and that's the section. Everything that made
+this the most complicated part of the project is simply gone.
 
-**Stage B — she can write back.** Still to do.
+Two consequences worth keeping:
 
-- Firestore for the instant write. Rules do the security work, not secrecy —
-  the web config is public by design:
+- Letter bodies are rendered as text nodes, never `innerHTML`. Nothing untrusted
+  reaches them now, but data still shouldn't be parsed as markup.
+- `author` stays in the schema (`sivan` or `her`) with a gold seal for hers, so
+  if Sivan ever wants to include something she wrote to him, it renders
+  correctly with no code change.
 
-  ```text
-  allow read: if true;
-  allow create: if request.resource.data.keys().hasOnly(['author','body','createdAt'])
-                && request.resource.data.body.size() < 4000
-                && request.resource.data.author in ['sivan','her'];
-  allow update, delete: if false;
-  ```
-
-  Nothing can be edited or deleted from the browser, length is capped, shape is
-  fixed. Worst case a stranger adds a letter.
-- `.github/workflows/archive-letters.yml`, hourly cron plus
-  `workflow_dispatch`: read the collection with a service account from GitHub
-  Secrets, write `data/letters.json`, commit only if changed.
-- The site reads Firestore first and **falls back to `data/letters.json`**, so
-  the letters survive Firebase disappearing entirely.
-- Sivan's ~15 minutes of console work: create the project, enable Firestore,
-  paste the rules, generate a service-account key, add it as `FIREBASE_SA`.
-
-Note the correction already made to the original idea: a static page has
-nowhere to hold a submitted message, so **no cron job can scrape letters off
-the page.** Firestore is what makes the archive possible.
+To add a letter: append an object to `letters` in `data/letters.json`. See
+`data/README.md`.
 
 ---
 
@@ -133,16 +115,13 @@ arguably a better gift than a rushed everything.
 7. Open `noisyninja703.github.io/ardhanari` on a phone and walk it end to end.
    Test the live URL, not just localhost — paths behave differently from a
    subfolder.
-8. Letters end-to-end if Stage B ships: submit → visible in Firestore → run the
-   Action manually → confirm `data/letters.json` committed → hard reload →
-   break the Firebase config and confirm the JSON fallback still renders.
+8. Open a letter and a star and confirm both fill the screen and scroll.
 
 ---
 
 ## Open questions for Sivan
 
 - Constellation shape: her initial, or a date?
-- Does he want the archive Action, or is Firestore alone enough?
 - Sound: yes or no? It's the easiest thing to cut.
 - Anything he'd rather write himself than have written for him.
 
@@ -156,8 +135,9 @@ about Shiva, not about Maniksha.
 
 1. How they met — one or two concrete images from it, not a summary.
 2. 3–5 dates that matter.
-3. 4–6 photos, each with a line about what was happening.
+3. Six photos for the constellation, each with a line about what was happening.
 4. Two or three inside jokes.
 5. Any Hindu or family references she'd love to see done properly.
-6. **Anything he's already written to her.** His words beat mine every time.
+6. **The letters themselves.** Five placeholders sit in `data/letters.json`;
+   anything he has actually written to her beats all of them.
 7. Whether her name or a date should shape the constellation.

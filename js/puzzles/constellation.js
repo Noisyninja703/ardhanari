@@ -136,8 +136,13 @@ export default function create({ section, body, data, solved: preSolved = false,
     field.append(star);
   }
 
-  field.append(card);
   body.append(field);
+
+  /* The card belongs to the section, not the star field, so it can fill the
+     screen. Inside the field it was confined to the poem band and a photograph
+     had a third of a screen to live in. The CSS adds back the padding that
+     keeps it clear of the moon meter. */
+  section.append(card);
 
   function onKey(e) {
     if (e.key === 'Escape' && openStar) closeMemory();

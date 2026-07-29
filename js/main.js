@@ -131,13 +131,20 @@ function buildSection(data, index) {
   heading.style.setProperty('--i', '1');
   headRow.append(heading);
 
-  const verses = el('div', 'verses');
-  data.verses.forEach((line, i) => {
-    const p = el('p', 't-verse reveal', line);
-    p.style.setProperty('--i', String(i + 2));
-    verses.append(p);
-  });
-  body.append(verses);
+  /* Only build the verse block if there are verses. An empty one still took a
+     grid row in the poem band and stretched to fill half of it, so sections
+     whose content is a field rather than a poem, the constellation and the
+     letters, were getting a quarter of the screen instead of the half the
+     layout allots them. */
+  if (data.verses?.length) {
+    const verses = el('div', 'verses');
+    data.verses.forEach((line, i) => {
+      const p = el('p', 't-verse reveal', line);
+      p.style.setProperty('--i', String(i + 2));
+      verses.append(p);
+    });
+    body.append(verses);
+  }
 
   /* Hint, skip and the onward cue all share the prompt band — none of them is
      ever wanted at the same moment as another. */

@@ -16,9 +16,9 @@ export const HER = {
 /* Prefer the pet name where there is one — it's warmer than the formal one. */
 export const CALL_HER = HER.petName || HER.name;
 
-/* Who signed a letter. The keys match the `author` field in data/letters.json
-   and the planned Firestore documents, so this is the only place the mapping
-   from a stored key to a name she reads lives. */
+/* Who signed a letter. Keys match the `author` field in data/letters.json, so
+   this is the only place the mapping from a stored key to a name she reads
+   lives. */
 export const AUTHORS = {
   sivan: 'Sivan',
   her: HER.name,

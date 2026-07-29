@@ -914,13 +914,18 @@
 
 /* --- A memory, opened ---------------------------------------------------- */
 
+/* Fills the whole section, so the photograph gets the room a photograph
+   deserves. inset: 0 resolves against the section's PADDING box, which includes
+   the strip reserved for the moon meter, so the bottom padding here has to
+   clear it again by hand. */
 .memory {
   position: absolute;
-  inset: auto 0 0 0;
-  z-index: 3;
+  inset: 0;
+  z-index: 30;
   display: grid;
-  gap: var(--s-3);
-  padding: var(--s-3);
+  grid-template-rows: minmax(0, 1fr) auto auto;
+  gap: var(--s-4);
+  padding: var(--s-5) var(--gutter) calc(var(--chrome-h) + var(--s-3));
   opacity: 0;
   transform: translate3d(0, 10px, 0) scale(0.98);
   transition:
@@ -930,10 +935,13 @@
 .memory[hidden] { display: none; }
 .memory.is-open { opacity: 1; transform: none; }
 
+/* contain, not cover: with the whole screen to fill, cropping would start
+   cutting people out of their own photograph. */
 .memory__photo {
   width: 100%;
-  max-height: 42dvh;
-  object-fit: cover;
+  height: 100%;
+  min-height: 0;
+  object-fit: contain;
   border-radius: 1px;
 }
 .memory__photo[hidden] { display: none; }
@@ -1046,14 +1054,17 @@
 
 /* --- An opened letter ----------------------------------------------------- */
 
+/* Fills the whole section, so a long letter is read on a whole screen rather
+   than in the poem band. Bottom padding clears the fixed moon meter, which
+   inset: 0 otherwise runs underneath. */
 .letter-card {
   position: absolute;
   inset: 0;
-  z-index: 4;
+  z-index: 30;
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto;
-  gap: var(--s-3);
-  padding: var(--s-4);
+  gap: var(--s-4);
+  padding: var(--s-5) var(--gutter) calc(var(--chrome-h) + var(--s-3));
   opacity: 0;
   transform: translate3d(0, 8px, 0) scale(0.985);
   transition:

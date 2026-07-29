@@ -30,9 +30,11 @@ layout and gesture traps, and they are all written down there.
 is content and the letters' write-back half, not structure.
 
 The first five are reviewed and Sivan is happy with them. Nakshatra runs on
-`[PLACEHOLDER]` photos and captions. Purnima reads letters from
-`data/letters.json` but she cannot write one yet: that's Stage B and it needs
-Firebase. See [docs/PLAN.md](docs/PLAN.md).
+`[PLACEHOLDER]` photos and captions, and Purnima on placeholder letters, so both
+need content rather than code.
+
+**Settled: the letters are pre-written only.** No database, no sync, no
+composer, and she does not write back through the site. Don't reintroduce it.
 
 **Every section needs a `lensSecret`** in `content.js`. Trinetra's lens can
 reveal hidden lines in any section, so a section without one is a section that
@@ -46,7 +48,7 @@ quietly has nothing to find.
 | ◑ Tapasya | She Did the Waiting | Tend a flame to keep the verse writing itself | Done, awaiting review |
 | ◒ Trinetra | The Third Eye | Drag glass over hidden text | Done, awaiting review |
 | ◓ Nakshatra | The Sky We Made | Tap photo-stars in a constellation | Built, needs photos |
-| ○ Purnima | Everything I Wrote Down | Drift and open folded letters | Built, read-only |
+| ○ Purnima | Everything I Wrote Down | Drift and open folded letters | Built, needs letters |
 
 Nothing is pushed. The repo is private on purpose — Pages needs it public, and
 it goes public on the 1st.
