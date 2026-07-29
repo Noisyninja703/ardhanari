@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#0A0612">
+
+  <title>Ardhanarishvara</title>
+  <meta name="description" content="A celestial love letter — seven phases of the moon, from the void to the full.">
+
+  <!-- No indexing. This is a present, not a portfolio piece. -->
+  <meta name="robots" content="noindex, nofollow">
+
+  <!-- Fonts. preconnect first so the handshake overlaps the CSS parse.
+       Tiro Devanagari Sanskrit renders both the shlokas and the English
+       headings, so Devanagari and Latin speak in one voice. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Sanskrit:ital@0;1&family=Spectral:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@300;400&display=swap">
+
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/effects.css">
+  <link rel="stylesheet" href="css/sections.css">
+
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='%230A0612'/%3E%3Cpath d='M20 4a13 13 0 100 24 15 15 0 010-24z' fill='%23EFE9DC'/%3E%3C/svg%3E">
+</head>
+
+<body>
+  <a class="skip-link t-util" href="#amavasya">Skip to the poem</a>
+
+  <!-- Atmosphere. All decorative, all aria-hidden: none of it is content. -->
+  <canvas id="particles" aria-hidden="true"
+          style="position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none"></canvas>
+  <div class="pointer-glow" aria-hidden="true"></div>
+  <div class="seam" aria-hidden="true"><div class="seam__line"></div></div>
+  <div class="grain" aria-hidden="true"></div>
+
+  <!-- Sections are built from js/content.js so the writing lives in exactly
+       one place. -->
+  <main id="app"></main>
+
+  <noscript>
+    <div style="padding:2rem;max-width:34ch;margin:0 auto;font-style:italic">
+      <p>This one needs JavaScript switched on — the whole thing is light and
+        motion, and none of it works without it.</p>
+    </div>
+  </noscript>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

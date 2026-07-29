@@ -1,0 +1,286 @@
+/* ==========================================================================
+   sections.css — per-section layout and the persistent chrome
+   Authored at 390px wide first. Every min-width query below is an
+   enhancement, never a fix.
+   ========================================================================== */
+
+/* --- Section shell -------------------------------------------------------
+   dvh, not vh. Mobile browser chrome collapses as you scroll and 100vh
+   causes the classic jumping-gap bug. */
+.section {
+  position: relative;
+  min-height: 100dvh;
+  display: grid;
+  align-content: center;
+  padding: var(--s-8) var(--gutter);
+  overflow: clip;
+  isolation: isolate;
+}
+
+.section__inner {
+  position: relative;
+  z-index: var(--z-content);
+  display: grid;
+  gap: var(--s-5);
+  justify-items: start;
+  width: 100%;
+  max-width: 46rem;
+  margin-inline: auto;
+}
+
+/* The tithi label: lunar phase glyph plus its name. This is the structural
+   device — the moon encodes the progression, so we never number sections. */
+.tithi {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-3);
+}
+.tithi__phase {
+  font-size: 1rem;
+  line-height: 1;
+  color: var(--moon-faint);
+}
+
+/* Decorative Devanagari, absolutely placed so it never affects the flow. */
+.section__sanskrit {
+  position: absolute;
+  z-index: var(--z-bg);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: max-content;
+}
+
+/* Desktop only: text sits to one side of the seam, alternating per section.
+   At 390px this would just squash the measure, so it stays centred there. */
+@media (min-width: 52rem) {
+  .section__inner { max-width: 68rem; }
+  .section--left  .section__inner { padding-right: 52%; }
+  .section--right .section__inner { padding-left: 52%; justify-items: start; }
+}
+
+/* --- Parallax ------------------------------------------------------------
+   Transforms are written by scroll.js from one shared RAF loop. Never a
+   scroll listener per element. */
+.parallax-layer {
+  position: absolute;
+  inset: -10% -5%;
+  z-index: var(--z-bg);
+  pointer-events: none;
+  will-change: transform;
+}
+
+/* --- 1. Amavasya / the void ---------------------------------------------- */
+
+.amavasya {
+  /* The void is the only section with no mist at all. Absolute black is
+     the point: there is nothing here until she finds it. */
+  background: var(--void);
+  place-content: center;
+  justify-items: center;
+  text-align: center;
+}
+.amavasya .section__inner { justify-items: center; text-align: center; }
+
+/* The void's text is centred, so centred Devanagari would sit directly
+   behind the verse and read as mud. Drop it low and let it bleed off the
+   bottom edge instead — texture, not a collision. */
+.amavasya .section__sanskrit {
+  top: auto;
+  bottom: -4%;
+  transform: translate(-50%, 0);
+}
+
+/* The single point of light she has to find and hold still for. */
+.spark {
+  position: relative;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--moon);
+  opacity: 0;
+  transform: scale(0.4);
+  transition:
+    opacity var(--d-slow) var(--ease-out),
+    transform var(--d-slow) var(--ease-out);
+}
+/* Breathing room so the lit star reads as its own thing floating above the
+   title, rather than crowding the tithi label. */
+.amavasya .spark { margin-bottom: var(--s-6); }
+
+.spark.is-near   { opacity: 0.5; transform: scale(1); }
+.spark.is-ignited {
+  opacity: 1;
+  transform: scale(1.6);
+  animation: spark-pulse 6s var(--ease-soft) infinite alternate;
+}
+
+@keyframes spark-pulse {
+  from { transform: scale(1.5); }
+  to   { transform: scale(1.9); }
+}
+
+/* Everything in the void is hidden until the spark ignites.
+   Set in CSS rather than by JS: the puzzle module is a dynamic import, so
+   a JS-applied class arrives a frame or two late and the whole poem flashes
+   on screen before hiding. Hiding from the first paint avoids that. */
+.amavasya .section__inner {
+  opacity: 0;
+  transition: opacity var(--d-bloom) var(--ease-out);
+}
+.amavasya.is-solved .section__inner { opacity: 1; }
+
+.scroll-cue {
+  display: grid;
+  justify-items: center;
+  gap: var(--s-2);
+  margin-top: var(--s-7);
+}
+.scroll-cue__line {
+  width: 1px;
+  height: 3.5rem;
+  background: linear-gradient(to bottom, var(--moon-faint), transparent);
+  animation: cue-fall 3.4s var(--ease-soft) infinite;
+  transform-origin: top;
+}
+@keyframes cue-fall {
+  0%, 100% { transform: scaleY(0.3); opacity: 0.3; }
+  50%      { transform: scaleY(1);   opacity: 1; }
+}
+
+/* --- 2. Bhasma / the ash years ------------------------------------------- */
+
+.bhasma { background: var(--void); }
+
+/* The wipe surface. touch-action: none is load-bearing — without it the
+   browser claims the gesture and scrolls the page mid-wipe, which is the
+   single most common way an interaction like this dies on a phone. */
+.wipe {
+  position: relative;
+  width: 100%;
+  /* Height is driven by the verse inside, with a floor so a short verse
+     still gets a decent field of ash. A fixed aspect-ratio clipped longer
+     verses on desktop. */
+  min-height: 20rem;
+  max-width: 34rem;
+  margin-inline: auto;
+  touch-action: none;
+  overscroll-behavior: none;
+  cursor: grab;
+  border: 1px solid var(--moon-ghost);
+  overflow: hidden;
+  transition: border-color var(--d-slow) var(--ease-soft);
+}
+.wipe:active { cursor: grabbing; }
+
+/* Once the ash is gone the frame goes with it, so the verse floats on the
+   void instead of sitting in a visible box. */
+.is-solved .wipe { border-color: transparent; cursor: default; }
+
+.wipe__beneath {
+  position: relative;   /* in flow: this is what gives .wipe its height */
+  display: grid;
+  place-content: center;
+  gap: var(--s-4);
+  min-height: 20rem;
+  padding: var(--s-7) var(--s-6);
+  text-align: center;
+}
+.wipe__photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.55;
+  filter: grayscale(0.5) contrast(1.05);
+}
+/* No z-index here. It used to have one, which painted the verse *above*
+   the ash canvas and left nothing to wipe away. */
+.wipe__verse { position: relative; margin-inline: auto; }
+
+/* The ash itself, drawn and erased by ash.js. Must sit above the verse. */
+.wipe__canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+}
+
+@media (min-width: 52rem) {
+  .wipe, .wipe__beneath { min-height: 24rem; }
+  .wipe { max-width: 40rem; }
+}
+
+/* --- Puzzle hint and skip ------------------------------------------------
+   She never gets stuck. Hint glows at 8s idle, skip appears at 25s. */
+.hint {
+  min-height: 1.25rem;
+  opacity: 0;
+  transition: opacity var(--d-mid) var(--ease-soft);
+}
+.hint.is-showing { opacity: 1; animation: hint-breathe 4s var(--ease-soft) infinite alternate; }
+@keyframes hint-breathe {
+  from { opacity: 0.45; }
+  to   { opacity: 1; }
+}
+
+.skip {
+  opacity: 0;
+  pointer-events: none;
+  padding: var(--s-2) 0;
+  border-bottom: 1px solid var(--moon-ghost);
+  transition: opacity var(--d-mid) var(--ease-soft);
+}
+.skip.is-showing { opacity: 1; pointer-events: auto; }
+.skip:hover { color: var(--moon); border-bottom-color: var(--moon-faint); }
+
+/* --- Moon meter ----------------------------------------------------------
+   Fixed chrome. Waxes as she unlocks sections and doubles as the nav.
+   44px minimum hit target on every dot — non-negotiable on touch. */
+.moon-meter {
+  position: fixed;
+  right: var(--s-3);
+  bottom: var(--s-3);
+  z-index: var(--z-chrome);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+  padding: var(--s-2);
+}
+
+.moon-meter__dot {
+  display: grid;
+  place-content: center;
+  width: 44px;
+  height: 44px;
+  color: var(--moon-faint);
+  font-size: 1.1rem;
+  line-height: 1;
+  opacity: 0.4;
+  transition: opacity var(--d-fast) var(--ease-out), color var(--d-fast) var(--ease-out);
+}
+.moon-meter__dot[aria-disabled='true'] { cursor: default; }
+.moon-meter__dot.is-unlocked { opacity: 0.8; color: var(--moon-dim); }
+.moon-meter__dot.is-current  { opacity: 1; color: var(--gold); }
+
+@media (min-width: 52rem) {
+  .moon-meter { right: var(--s-5); bottom: var(--s-5); }
+}
+
+/* --- Sound toggle -------------------------------------------------------- */
+.sound-toggle {
+  position: fixed;
+  top: var(--s-3);
+  right: var(--s-3);
+  z-index: var(--z-chrome);
+  display: grid;
+  place-content: center;
+  width: 44px;
+  height: 44px;
+  color: var(--moon-faint);
+  opacity: 0.5;
+  transition: opacity var(--d-fast) var(--ease-out);
+}
+.sound-toggle:hover, .sound-toggle[aria-pressed='true'] { opacity: 1; color: var(--moon-dim); }

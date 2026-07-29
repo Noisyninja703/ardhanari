@@ -1,0 +1,95 @@
+/* ==========================================================================
+   tokens.css — the single source of truth
+   Nothing in this file does layout. If you want to change how the site
+   feels, change it here and nowhere else.
+   ========================================================================== */
+
+:root {
+  /* --- Colour ------------------------------------------------------------
+     Six values. Resist adding a seventh. */
+  --void:    #0A0612;  /* page ground: near-black with a violet bias */
+  --ash:     #8C8794;  /* Shiva's half: smoke, particles, secondary text */
+  --moon:    #EFE9DC;  /* body text: bone-white, never pure #fff */
+  --datura:  #A98CE0;  /* cool glow, mist, night-flower accent */
+  --gold:    #C9A24B;  /* Parvati's half: leaf-gold, seam flare, unlocks */
+  --kumkum:  #C1332B;  /* reserved. bindi, wax seals, the third eye. */
+
+  /* Derived alphas. Named by intent, not by value, so usage stays honest. */
+  --moon-dim:    rgba(239, 233, 220, 0.62);
+  --moon-faint:  rgba(239, 233, 220, 0.34);
+  --moon-ghost:  rgba(239, 233, 220, 0.12);
+  --ash-veil:    rgba(140, 135, 148, 0.20);
+  --gold-veil:   rgba(201, 162, 75, 0.16);
+  --datura-veil: rgba(169, 140, 224, 0.14);
+
+  /* --- Type --------------------------------------------------------------
+     Display and headings share one face with the Devanagari, so the
+     shlokas and the English speak in the same voice. */
+  --font-display: 'Tiro Devanagari Sanskrit', 'Spectral', Georgia, serif;
+  --font-body:    'Spectral', Georgia, 'Times New Roman', serif;
+  --font-util:    'Jost', system-ui, -apple-system, sans-serif;
+
+  /* One fluid scale, authored at 390px and opening up to 1440px.
+     Mobile and desktop share the ratio — no separate mobile scale. */
+  --t-hero:  clamp(2.75rem, 1.6rem + 6.2vw, 6.5rem);
+  --t-title: clamp(1.9rem,  1.3rem + 3.2vw, 3.6rem);
+  --t-verse: clamp(1.125rem, 1.02rem + 0.55vw, 1.5rem);
+  --t-body:  clamp(1rem,    0.96rem + 0.2vw,  1.125rem);
+  --t-util:  0.6875rem;  /* 11px, fixed. Utility text should not grow. */
+
+  --lh-hero:  0.98;
+  --lh-verse: 1.75;   /* poetry wants air */
+  --lh-body:  1.6;
+
+  --tr-util: 0.24em;  /* the wide-tracked uppercase label look */
+  --tr-hero: -0.02em;
+
+  --measure: 34ch;    /* verse line length. longer than this and it reads flat. */
+
+  /* --- Space -------------------------------------------------------------
+     A 1.5x-ish ramp. Use these, don't invent magic numbers. */
+  --s-1:  0.25rem;
+  --s-2:  0.5rem;
+  --s-3:  0.75rem;
+  --s-4:  1rem;
+  --s-5:  1.5rem;
+  --s-6:  2.25rem;
+  --s-7:  3.5rem;
+  --s-8:  5.5rem;
+
+  --gutter: clamp(1.25rem, 5vw, 5rem);
+
+  /* --- Motion ------------------------------------------------------------
+     Slow. Nothing on this page should feel snappy except the puzzles. */
+  --ease-out:  cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+
+  --d-fast:  240ms;
+  --d-mid:   680ms;
+  --d-slow:  1400ms;
+  --d-bloom: 2600ms;  /* title reveals, verse fades */
+
+  /* --- Structure ---------------------------------------------------------- */
+  --seam-w: 1px;
+  --z-bg: 0;
+  --z-content: 10;
+  --z-puzzle: 20;
+  --z-grain: 60;
+  --z-chrome: 70;
+  --z-overlay: 80;
+
+  /* Glass. Falls back gracefully; see effects.css. */
+  --glass-bg:     rgba(18, 12, 30, 0.55);
+  --glass-border: rgba(239, 233, 220, 0.12);
+  --glass-blur:   blur(20px) saturate(1.2);
+}
+
+/* Wider viewports get a stronger seam and more assertive colour halves.
+   On a 390px screen two strong colour fields fight the text. */
+@media (min-width: 52rem) {
+  :root {
+    --seam-w: 1px;
+    --ash-veil:  rgba(140, 135, 148, 0.30);
+    --gold-veil: rgba(201, 162, 75, 0.24);
+  }
+}
