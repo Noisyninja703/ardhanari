@@ -115,15 +115,33 @@ her passive, which would break the whole myth.
 The turn toward Maniksha is held back to the lens secret, so it lands later:
 *"You did the waiting. I have never once forgotten what that cost you."*
 
-### ◒ Trinetra — not built
+### ◒ Trinetra — "The Third Eye" · built
 
-The third eye. Seeing what's actually there.
+Seeing what's actually there.
 
-Puzzle: she drags a **glass lens** and text invisible to the naked eye becomes
-readable through it. Crucially, hidden lines are seeded in **every earlier
-section too** (`lensSecret` already exists on each entry in `content.js`), so
-scrolling back up with the lens rewards curiosity. This is the easter-egg
-engine, not a one-off.
+> The third eye is not for burning.
+> It is for looking at one thing long enough to see what it actually is.
+> I have been looking at you for years and I am nowhere near finished.
+
+Puzzle: she drags a **piece of glass** across the page. Lines invisible to the
+naked eye are readable through it. Holding it over this section's own hidden
+line opens the eye and solves it.
+
+**This is the easter-egg engine, not a one-off.** Every section has carried a
+hidden line since it was written (`lensSecret` in `content.js`), and the lens
+persists for the rest of the visit, so she can carry it back up the page and
+sweep everything she has already read. This section's own secret is what tells
+her that: *"Everything you have already read has something hidden in it. Take
+this back with you."*
+
+The reveal is a real window, not a fade: each hidden line is fully coloured
+text masked away to nothing, and the mask is a circle at the lens position
+expressed in that element's own coordinates. That's why it runs in a frame loop
+rather than in pure CSS.
+
+**Add a `lensSecret` to every future section.** It costs one line and it's the
+most personal writing on the site, because it's the part she has to go looking
+for.
 
 ### ◓ Nakshatra — not built
 

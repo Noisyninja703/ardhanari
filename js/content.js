@@ -126,6 +126,29 @@ export const SECTIONS = [
     skipLabel: 'Let it burn',
     lensSecret: 'You did the waiting. I have never once forgotten what that cost you.',
   },
+
+  {
+    id: 'trinetra',
+    phase: '◒',            // ◒ waxing further: seeing more of it
+    tithi: 'Trinetra',
+    devanagari: 'त्रिनेत्र',
+    puzzle: 'lens',
+    heading: 'The Third Eye',
+
+    verses: [
+      'The third eye is not for burning.',
+      'It is for looking at one thing long enough to see what it actually is.',
+      'I have been looking at you for years and I am nowhere near finished.',
+    ],
+
+    hint: 'Move the glass across the dark.',
+    skipLabel: 'Open the eye',
+
+    /* This one is the reward for solving the section, and it tells her the
+       lens works everywhere. Every earlier section has had a line hidden in it
+       since the day it was written. */
+    lensSecret: 'Everything you have already read has something hidden in it. Take this back with you.',
+  },
 ];
 
 /* --- Chrome and interface copy -------------------------------------------

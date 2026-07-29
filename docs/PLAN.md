@@ -29,19 +29,24 @@ Two things worth knowing if it needs changing:
 
 Tuning knobs: `NEAR_PX` (190) and `CHARS_PER_S` (26) at the top of the module.
 
-### 2. ◒ Trinetra — the lens
+### 2. ◒ Trinetra — the lens · BUILT, awaiting review
 
-A draggable glass circle that reveals text invisible to the naked eye.
+`js/puzzles/lens.js`. The hidden lines come from `lensSecret`, which now pays
+off in every section rather than sitting unused.
 
-- `lensSecret` **already exists** on every section in `content.js` and is
-  currently unused. This section makes those pay off: hidden lines are seeded in
-  every earlier section, so scrolling back up with the lens rewards curiosity.
-- Implementation: a circle with `backdrop-filter: invert(1) blur(2px)`, with a
-  feature-query fallback (Safari is where this will bite).
-- The hidden text must exist in the DOM at very low opacity, not be injected on
-  hover — it has to be there for the lens to find.
-- Touch: the lens follows the finger; give it a larger radius on coarse
-  pointers.
+Things to know before changing it:
+
+- **The lens deliberately outlives its puzzle.** `destroy()` is empty, where
+  every other puzzle tears itself down. She earned the glass, so she keeps it
+  and it has to go on working in sections she scrolls back to.
+- The reveal is a mask, not an opacity fade: a circle at the lens position in
+  each hidden line's own coordinate space, rewritten each frame. That
+  element-relative maths is the reason it isn't pure CSS.
+- `RADIUS` in the module and `.lens` width/height in CSS must stay in step
+  (width is twice the radius).
+- Hidden lines sit at `top: 66%` of their section, below the poem and above the
+  prompt band. If a future section puts something there, move them rather than
+  letting them overlap.
 
 ### 3. ◓ Nakshatra — the constellation *(needs photos)*
 

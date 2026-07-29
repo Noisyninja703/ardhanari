@@ -26,8 +26,12 @@ layout and gesture traps, and they are all written down there.
 
 ## Current state
 
-Four of seven sections are built. The first three are reviewed and Sivan is
-happy with them; the fourth is new and unreviewed.
+Five of seven sections are built. The first four are reviewed and Sivan is
+happy with them; Trinetra is new and unreviewed.
+
+**Every section needs a `lensSecret`** in `content.js`. Trinetra's lens can
+reveal hidden lines in any section, so a section without one is a section that
+quietly has nothing to find.
 
 | Phase | Section | Interaction | Status |
 | --- | --- | --- | --- |
@@ -35,7 +39,7 @@ happy with them; the fourth is new and unreviewed.
 | ◖ Bhasma | The Ash Years | Wipe ash off the buried verse | Done |
 | ◐ Ardhanarishvara | One Body, Divided | Drag the two torn halves together | Done |
 | ◑ Tapasya | She Did the Waiting | Tend a flame to keep the verse writing itself | Done, awaiting review |
-| ◒ Trinetra | — | Drag a lens that reveals hidden text | Not started |
+| ◒ Trinetra | The Third Eye | Drag glass over hidden text | Done, awaiting review |
 | ◓ Nakshatra | — | Photo constellation, no puzzle | Not started |
 | ○ Purnima | — | Write and read love letters | Not started |
 

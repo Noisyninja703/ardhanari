@@ -35,6 +35,7 @@ const PARTICLE_BY_SECTION = {
   bhasma: 'ash',
   ardhanarishvara: 'embers',
   tapasya: 'embers',
+  trinetra: 'stars',
 };
 
 /* --- Unlock state --------------------------------------------------------
@@ -152,6 +153,20 @@ function buildSection(data, index) {
     section._sanskrit = sanskrit;
   }
 
+  /* The hidden line. Present from the first paint of every section, masked
+     away to nothing until she has the lens from Trinetra. Absolutely placed so
+     it can't disturb the five bands, and sitting just below the poem so the
+     glass finds it without needing a hunt.
+
+     Not aria-hidden: it's real writing, and once she has the lens it should be
+     readable by a screen reader too. It simply isn't announced early, because
+     it sits after everything else in the section's reading order. */
+  if (data.lensSecret) {
+    const secret = el('p', 'secret', data.lensSecret);
+    section.append(secret);
+    section._secret = secret;
+  }
+
   section.append(tithiRow, headRow, body, prompt, footer);
   section._body = body;
 
@@ -167,6 +182,7 @@ const puzzleModules = {
   ash: () => import('./puzzles/ash.js'),
   halves: () => import('./puzzles/halves.js'),
   flame: () => import('./puzzles/flame.js'),
+  lens: () => import('./puzzles/lens.js'),
 };
 
 async function mountPuzzle(section) {

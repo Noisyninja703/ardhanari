@@ -702,6 +702,114 @@
   .caret { display: none; }
 }
 
+/* --- 5. Trinetra / the lens -----------------------------------------------
+   A piece of glass she drags around. Positioned by transform from JS, so it
+   only ever costs a compositor update. */
+
+.lens {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: var(--z-chrome);
+  width: 184px;         /* twice RADIUS in js/puzzles/lens.js */
+  height: 184px;
+  border-radius: 50%;
+  /* It owns its gesture: dragging glass across the page must not scroll it. */
+  touch-action: none;
+  cursor: grab;
+  border: 1px solid rgba(239, 233, 220, 0.22);
+  /* The rim highlight is what sells it as a physical object rather than a
+     circular hole. */
+  box-shadow:
+    inset 0 0 30px 6px rgba(169, 140, 224, 0.14),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.16),
+    0 0 22px 2px rgba(169, 140, 224, 0.16),
+    0 18px 44px -14px rgba(0, 0, 0, 0.7);
+  transition: box-shadow var(--d-mid) var(--ease-soft);
+}
+.lens:active,
+.lens.is-held { cursor: grabbing; }
+
+/* Progressive: the ring alone reads as glass. The optics are the upgrade. */
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+  .lens {
+    -webkit-backdrop-filter: brightness(1.5) saturate(1.3) blur(0.4px);
+    backdrop-filter: brightness(1.5) saturate(1.3) blur(0.4px);
+  }
+}
+
+/* A faint sheen across the glass, offset so it reads as a curved surface. */
+.lens::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at 34% 28%,
+    rgba(255, 255, 255, 0.13) 0%,
+    rgba(255, 255, 255, 0.04) 34%,
+    transparent 62%
+  );
+}
+
+/* Something is under the glass right now. */
+.lens.is-reading {
+  box-shadow:
+    inset 0 0 34px 8px rgba(201, 162, 75, 0.24),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.2),
+    0 0 34px 6px rgba(201, 162, 75, 0.3),
+    0 18px 44px -14px rgba(0, 0, 0, 0.7);
+}
+
+/* --- Hidden lines --------------------------------------------------------
+   Fully coloured text, masked away to nothing. The mask is a circle at the
+   lens position expressed in this element's own coordinates, written by
+   lens.js each frame, so what she sees is a real window and not a fade.
+
+   Defaults put the mask far off screen, which is what keeps these invisible
+   before she has the lens. */
+.secret {
+  --mx: -9999px;
+  --my: -9999px;
+
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 66%;
+  z-index: 6;           /* above the backdrop, below the poem */
+  margin: 0;
+  padding-inline: var(--gutter);
+  text-align: center;
+  font-family: var(--font-body);
+  font-size: clamp(0.95rem, 3.4vw, 1.15rem);
+  font-style: italic;
+  line-height: 1.6;
+  color: var(--datura);
+  text-shadow: 0 0 16px rgba(169, 140, 224, 0.55);
+  pointer-events: none;
+
+  --secret-window: radial-gradient(
+    circle var(--lens-r, 0px) at var(--mx) var(--my),
+    #000 52%,
+    rgba(0, 0, 0, 0.35) 78%,
+    transparent 100%
+  );
+  -webkit-mask-image: var(--secret-window);
+  mask-image: var(--secret-window);
+}
+
+/* Reduced motion: no dragging a lens around. The hidden lines are simply
+   legible, dimmed enough to still read as marginalia rather than verse. */
+@media (prefers-reduced-motion: reduce) {
+  .lens { display: none; }
+  .secret {
+    -webkit-mask-image: none;
+    mask-image: none;
+    opacity: 0.6;
+  }
+}
+
 /* --- Puzzle hint and skip ------------------------------------------------
    She never gets stuck. Hint glows at 8s idle, skip appears at 25s. */
 .hint {
