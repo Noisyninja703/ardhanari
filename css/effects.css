@@ -80,6 +80,17 @@
   );
 }
 
+/* The tinted halves fade back once she's rejoined them — after that point
+   the page stops insisting there's a left side and a right side. */
+.seam::before,
+.seam::after {
+  transition: opacity var(--d-bloom) var(--ease-soft);
+}
+.seam.is-joined::before,
+.seam.is-joined::after {
+  opacity: 0.35;
+}
+
 /* Set when the halves puzzle resolves: the seam flares gold, then the
    division softens for every section after it. */
 .seam.is-joined .seam__line {

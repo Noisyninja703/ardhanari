@@ -8,7 +8,13 @@ down the middle. Each section gates its verse behind a small interaction.
 
 Live at <https://noisyninja703.github.io/ardhanari/>
 
-Currently built: **phase 1** — Amavasya (the void) and Bhasma (the ash years).
+Built so far:
+
+| Phase | Section | Interaction |
+| --- | --- | --- |
+| ● Amavasya | Before Light | Hold still near the spark to light it |
+| ◖ Bhasma | The Ash Years | Wipe the ash off the buried verse |
+| ◐ Ardhanarishvara | One Body, Divided | Drag the two torn halves back together |
 
 ---
 

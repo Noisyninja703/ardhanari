@@ -51,6 +51,15 @@
   width: max-content;
 }
 
+/* Sections that declare align: 'center' are symmetrical at every width —
+   used where the layout itself carries meaning, like the two even halves of
+   Ardhanarishvara. */
+.section--center .section__inner {
+  justify-items: center;
+  text-align: center;
+}
+.section--center .t-verse { margin-inline: auto; }
+
 /* Desktop only: text sits to one side of the seam, alternating per section.
    At 390px this would just squash the measure, so it stays centred there. */
 @media (min-width: 52rem) {
@@ -212,6 +221,183 @@
   .wipe, .wipe__beneath { min-height: 24rem; }
   .wipe { max-width: 40rem; }
 }
+
+/* --- 5. Ardhanarishvara / the two halves ---------------------------------
+   The signature. Two panels holding one torn verse, dragged back together.
+   --gap runs 1 (torn apart) to 0 (joined) and is written by halves.js. */
+
+.ardhanarishvara { background: var(--void); }
+
+.halves {
+  position: relative;
+  width: 100%;
+  min-height: 16rem;
+  /* Load-bearing: without this the browser claims the drag and scrolls the
+     page instead of moving the panels. */
+  touch-action: none;
+  overscroll-behavior: none;
+}
+
+.halves__panel {
+  position: absolute;
+  display: grid;
+  /* align only. justify is set per side below so the fragments sit against
+     the seam and close into one readable line — place-content: center would
+     centre each fragment in its own half and they'd never touch. */
+  align-content: center;
+  padding: var(--s-4);
+  cursor: grab;
+  text-align: center;
+  /* The panels are buttons; they must not look like chrome. */
+  background: none;
+  border: 0;
+}
+.halves__panel:active { cursor: grabbing; }
+.is-dragging .halves__panel { cursor: grabbing; }
+
+.halves__fragment {
+  max-width: none;   /* the fragment is one short line, not a paragraph */
+  color: var(--moon-dim);
+  transition: color var(--d-mid) var(--ease-soft);
+}
+/* Left/top half is Shiva's: ash. Right/bottom is Parvati's: gold. */
+.halves__panel--a .halves__fragment { color: var(--ash); }
+.halves__panel--b .halves__fragment { color: var(--gold); }
+
+/* Only animate on release and on keyboard steps — never mid-drag, or the
+   panels lag behind the finger and it feels broken. */
+.halves.is-settling .halves__panel { transition: transform var(--d-mid) var(--ease-out); }
+
+/* The meeting line. Brightens as they close via --seam-glow. */
+.halves__seam {
+  position: absolute;
+  background: var(--moon);
+  opacity: calc(var(--seam-glow, 0) * 0.5);
+  transition: opacity var(--d-fast) linear;
+}
+
+/* Horizontal split: panels side by side, dragged across. */
+.halves--x .halves__panel { top: 0; bottom: 0; width: 50%; }
+/* Padding on the meeting edges is a third of a character, so when they close
+   the two fragments are separated by roughly one word-space and genuinely
+   read as a single line. The section's own padding is what keeps the outer
+   edges off the viewport. */
+.halves--x .halves__panel--a {
+  left: 0;
+  justify-content: end;
+  text-align: right;
+  padding-right: 0.33ch;
+  transform: translate3d(calc(var(--gap) * -30%), 0, 0);
+}
+.halves--x .halves__panel--b {
+  right: 0;
+  justify-content: start;
+  text-align: left;
+  padding-left: 0.33ch;
+  transform: translate3d(calc(var(--gap) * 30%), 0, 0);
+}
+.halves--x .halves__seam {
+  top: 12%;
+  bottom: 12%;
+  left: 50%;
+  width: 1px;
+}
+
+/* Vertical split for portrait phones: stacked, dragged up and down. Same
+   interaction rotated, so dismissing the landscape nudge costs her nothing. */
+.halves--y .halves__panel {
+  left: 0;
+  right: 0;
+  height: 50%;
+  justify-content: center;
+  text-align: center;
+}
+.halves--y .halves__panel--a {
+  top: 0;
+  align-content: end;
+  transform: translate3d(0, calc(var(--gap) * -30%), 0);
+}
+.halves--y .halves__panel--b {
+  bottom: 0;
+  align-content: start;
+  transform: translate3d(0, calc(var(--gap) * 30%), 0);
+}
+.halves--y .halves__seam {
+  left: 15%;
+  right: 15%;
+  top: 50%;
+  height: 1px;
+}
+
+/* Joined: the seam flares gold and then dissolves, leaving the two fragments
+   sitting together as one line with nothing between them. A seam that stayed
+   would keep the words apart, which is the opposite of the point. */
+.halves.is-joined .halves__seam {
+  background: var(--gold);
+  animation: seam-flare 2.4s var(--ease-out) forwards;
+}
+
+@keyframes seam-flare {
+  0% {
+    opacity: 0.5;
+    box-shadow: 0 0 6px 1px rgba(201, 162, 75, 0.3);
+  }
+  22% {
+    opacity: 1;
+    box-shadow:
+      0 0 14px 2px rgba(201, 162, 75, 0.7),
+      0 0 56px 12px rgba(201, 162, 75, 0.3);
+  }
+  100% {
+    opacity: 0;
+    box-shadow: 0 0 40px 16px rgba(201, 162, 75, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .halves.is-joined .halves__seam { animation: none; opacity: 0; }
+}
+.halves.is-joined .halves__fragment { color: var(--moon); }
+.halves.is-joined .halves__panel { cursor: default; }
+
+/* The completed verse is withheld until they meet. */
+.verses--withheld { display: none; }
+
+/* --- Orientation nudge ---------------------------------------------------
+   Covers only the section that wants rotating, never the whole page. */
+.nudge {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-overlay);
+  display: grid;
+  place-content: center;
+  padding: var(--gutter);
+  background: rgba(10, 6, 18, 0.82);
+}
+.nudge[hidden] { display: none; }
+
+.nudge__inner {
+  display: grid;
+  justify-items: center;
+  gap: var(--s-5);
+  padding: var(--s-6);
+  text-align: center;
+}
+.nudge__glyph {
+  font-size: 2rem;
+  color: var(--moon-faint);
+  animation: nudge-turn 3.6s var(--ease-soft) infinite;
+}
+@keyframes nudge-turn {
+  0%, 55%, 100% { transform: rotate(90deg); }
+  75%, 95%      { transform: rotate(0deg); }
+}
+.nudge__text { max-width: 22ch; }
+.nudge__stay {
+  padding: var(--s-2) 0;
+  border-bottom: 1px solid var(--moon-ghost);
+}
+.nudge__stay:hover { color: var(--moon); border-bottom-color: var(--moon-faint); }
 
 /* --- Puzzle hint and skip ------------------------------------------------
    She never gets stuck. Hint glows at 8s idle, skip appears at 25s. */

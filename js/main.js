@@ -27,6 +27,7 @@ const SKIP_DELAY = 25000;
 const PARTICLE_BY_SECTION = {
   amavasya: 'stars',
   bhasma: 'ash',
+  ardhanarishvara: 'embers',
 };
 
 /* --- Unlock state --------------------------------------------------------
@@ -66,6 +67,7 @@ function buildSection(data, index) {
   section.dataset.puzzle = data.puzzle || '';
   if (data.align === 'left') section.classList.add('section--left');
   if (data.align === 'right') section.classList.add('section--right');
+  if (data.align === 'center') section.classList.add('section--center');
   section.setAttribute('aria-labelledby', `${data.id}-heading`);
 
   /* Decorative Devanagari as background texture. aria-hidden: a screen
@@ -146,6 +148,7 @@ function buildSection(data, index) {
 const puzzleModules = {
   void: () => import('./puzzles/void.js'),
   ash: () => import('./puzzles/ash.js'),
+  halves: () => import('./puzzles/halves.js'),
 };
 
 async function mountPuzzle(section) {
@@ -313,6 +316,16 @@ function boot() {
   const revealSeam = () => seam.style.setProperty('--seam-strength', '1');
   if (unlocked.has('amavasya')) revealSeam();
   else sections[0].addEventListener('ardh:solved', revealSeam, { once: true });
+
+  /* Once the halves are rejoined the page's own seam flares gold and the
+     ash/gold division softens — the change persists for every section
+     after it, which is the whole arc of the site in one class. */
+  const joinSeam = () => seam.classList.add('is-joined');
+  const halvesSection = sections.find((s) => s.id === 'ardhanarishvara');
+  if (halvesSection) {
+    if (unlocked.has('ardhanarishvara')) joinSeam();
+    else halvesSection.addEventListener('ardh:solved', joinSeam, { once: true });
+  }
 }
 
 if (document.readyState === 'loading') {

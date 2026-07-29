@@ -77,6 +77,37 @@ export const SECTIONS = [
       alt: '[DESCRIBE THE PHOTO — this is read aloud by screen readers]',
     },
   },
+
+  {
+    id: 'ardhanarishvara',
+    phase: '◐',            // ◐ half moon: the two halves, evenly divided
+    tithi: 'Ardhanarishvara',
+    devanagari: 'अर्धनारीश्वर',
+    puzzle: 'halves',
+    align: 'center',
+    heading: 'One Body, Divided',
+
+    /* The verse is torn across the two halves and unreadable until she
+       brings them together. Each fragment has to make a kind of sense
+       alone, and a better one joined. */
+    torn: {
+      a: 'half of me',
+      b: 'was always walking toward you',
+    },
+
+    /* Shown once the halves meet. */
+    verses: [
+      'They are not two who met and stayed.',
+      'They are one body that spent an age learning its own left side —',
+      'and I have stopped pretending I was ever whole on my own.',
+    ],
+
+    hint: 'Pull them together.',
+    skipLabel: 'Make them one',
+    lensSecret: 'Ardhanarishvara: not two halves of a couple. One being, remembering itself.',
+    /* This section reads better with room. See js/orientation-nudge.js. */
+    wantsLandscape: true,
+  },
 ];
 
 /* --- Chrome and interface copy -------------------------------------------
