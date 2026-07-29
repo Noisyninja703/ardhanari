@@ -76,7 +76,25 @@ Documented in `css/tokens.css`. Check it before inventing a `z-index`.
 | 3 | particles — above the darkening, so stars stay crisp |
 | 10 | content — the poem is above all atmosphere |
 | 60 | grain |
-| 70 | chrome (moons, sound toggle) |
+| 70 | chrome (moons, glass toggle) |
+
+### Root state for the glass
+
+Four classes on `<html>`, read by both the lens module and the CSS. Keeping them
+on the root is what lets a card in one section hide an object owned by another
+without the two modules knowing about each other.
+
+| Class | Meaning |
+| --- | --- |
+| `has-lens` | The lens module is mounted |
+| `lens-ready` | She has actually reached Trinetra, so the toggle may exist |
+| `lens-off` | She has put the glass away |
+| `lens-busy` | Something modal is open, so the glass stands aside |
+
+The lens writes no positions at all unless it's genuinely in her hand, so the
+hidden lines' masks stay parked off screen and nothing can be read through a
+lens that isn't there. `lens-new` is added only on the visit that earns the
+glass, and is what plays the toggle's announcement.
 
 Sections must **not** be `isolation: isolate`, or their content gets trapped
 below the fixed overlays.

@@ -725,6 +725,76 @@
   visibility: visible;
 }
 
+/* Put away by her, or stood aside for something open over the page. Both look
+   the same from here; only the reason differs. */
+:root.lens-off .lens.is-available,
+:root.lens-busy .lens.is-available {
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+/* --- The glass toggle -----------------------------------------------------
+   Top right, and it does not exist until Trinetra hands her the glass. */
+.lens-toggle {
+  position: fixed;
+  top: clamp(var(--s-3), 2vw, var(--s-5));
+  right: clamp(var(--s-3), 2vw, var(--s-5));
+  z-index: var(--z-chrome);
+  display: grid;
+  place-content: center;
+  width: 44px;
+  height: 44px;
+  font-size: 1.15rem;
+  line-height: 1;
+  color: var(--moon-dim);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity var(--d-slow) var(--ease-out), color var(--d-fast) var(--ease-out);
+}
+
+:root.lens-ready .lens-toggle {
+  opacity: 0.85;
+  visibility: visible;
+  pointer-events: auto;
+}
+.lens-toggle:hover { color: var(--moon); opacity: 1; }
+
+/* Away: dimmer, and the glyph hollows out. */
+.lens-toggle.is-off { color: var(--moon-faint); }
+
+/* The announcement. Deliberately slower and repeated where the moon's
+   milestone pop is a single flash: this is a new control appearing in a corner
+   she has had no reason to look at for six sections, so it breathes three times
+   over five seconds and then settles. Runs once, on the visit that earns it. */
+:root.lens-new .lens-toggle {
+  animation: chrome-announce 5.4s var(--ease-soft) 0.5s 1 both;
+}
+
+@keyframes chrome-announce {
+  0%, 100% {
+    text-shadow: none;
+    transform: scale(1);
+  }
+  8%, 36%, 64% {
+    color: var(--moon);
+    text-shadow:
+      0 0 14px rgba(239, 233, 220, 0.9),
+      0 0 40px rgba(201, 162, 75, 0.6),
+      0 0 90px rgba(201, 162, 75, 0.28);
+    transform: scale(1.35);
+  }
+  22%, 50%, 78% {
+    text-shadow: 0 0 12px rgba(201, 162, 75, 0.25);
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root.lens-new .lens-toggle { animation: none; }
+}
+
 .lens:active,
 .lens.is-held { cursor: grabbing; }
 

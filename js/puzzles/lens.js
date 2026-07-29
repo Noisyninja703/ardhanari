@@ -99,9 +99,12 @@ export default function create({ section, body, solved: preSolved = false, solve
     const dt = lastTs ? Math.min(ts - lastTs, 100) : 16;
     lastTs = ts;
 
-    /* Before she arrives, write nothing. The hidden lines' masks stay parked
-       off screen, so nothing anywhere on the page can be read early. */
-    if (!arrived) {
+    /* Write nothing unless the glass is actually in her hand. That covers
+       before she arrives, after she puts it away, and while a letter or a
+       memory is open. The hidden lines' masks stay parked off screen, so
+       nothing anywhere on the page can be read through a lens that isn't
+       there. */
+    if (!arrived || root.classList.contains('lens-off') || root.classList.contains('lens-busy')) {
       raf = requestAnimationFrame(tick);
       return;
     }
@@ -184,16 +187,25 @@ export default function create({ section, body, solved: preSolved = false, solve
      After that first arrival it stays available everywhere, which is the whole
      point of it. */
   let arrived = false;
+
+  /* Handing over the glass. `lens-ready` is what lets the toggle in the top
+     corner exist at all, and what triggers its announcement. */
+  function handOver({ announce }) {
+    if (arrived) return;
+    arrived = true;
+    lens.classList.add('is-available');
+    root.classList.add('lens-ready');
+    if (announce) root.classList.add('lens-new');
+    centreOnSection();
+    clampToViewport();
+  }
+
   const arrivalIO = new IntersectionObserver(
     (entries) => {
       for (const entry of entries) {
         if (entry.intersectionRatio < 0.55) continue;
-        arrived = true;
-        lens.classList.add('is-available');
-        /* Re-centre on the section she's actually looking at now. */
-        centreOnSection();
-        clampToViewport();
         arrivalIO.disconnect();
+        handOver({ announce: true });
       }
     },
     { threshold: [0, 0.55, 1] }
@@ -201,11 +213,11 @@ export default function create({ section, body, solved: preSolved = false, solve
   arrivalIO.observe(section);
 
   /* If she reloads with this section already solved, the glass is hers
-     immediately: she has earned it and may be anywhere on the page. */
+     immediately: she has earned it and may be anywhere on the page. No
+     announcement, because it isn't news to her any more. */
   if (preSolved) {
-    arrived = true;
-    lens.classList.add('is-available');
     arrivalIO.disconnect();
+    handOver({ announce: false });
   }
 
   return {

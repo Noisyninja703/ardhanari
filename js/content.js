@@ -224,6 +224,10 @@ export const UI = {
   moonMeterLabel: 'Phases of the moon. Jump to a section.',
   soundOn: 'Turn sound on',
   soundOff: 'Turn sound off',
+
+  /* The glass toggle, top right. Only exists once Trinetra has given it to her. */
+  lensHide: 'Put the glass away',
+  lensShow: 'Take the glass out',
   locked: 'Not yet reached',
   scrollCue: 'Keep going',
 

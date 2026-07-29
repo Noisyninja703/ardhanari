@@ -231,11 +231,16 @@ export default function create({ section, body, data, solved: preSolved = false,
 
       root.hidden = false;
       requestAnimationFrame(() => root.classList.add('is-open'));
+
+      /* The glass steps aside while a letter is open. It's covering the words
+         she came here to read. */
+      document.documentElement.classList.add('lens-busy');
       opener = document.activeElement;
       close.focus({ preventScroll: true });
     }
 
     function shut() {
+      document.documentElement.classList.remove('lens-busy');
       root.classList.remove('is-open');
       setTimeout(() => {
         if (!root.classList.contains('is-open')) root.hidden = true;

@@ -96,6 +96,11 @@ export default function create({ section, body, data, solved: preSolved = false,
     /* Next frame, so the transition has a start state to run from. */
     requestAnimationFrame(() => card.classList.add('is-open'));
 
+    /* The glass steps aside while something is open over the page. It would
+       otherwise sit on top of the photograph, and reading a memory through a
+       lens is not the point of the lens. */
+    document.documentElement.classList.add('lens-busy');
+
     openStar?.classList.remove('is-open');
     openStar = star;
     star.classList.add('is-open');
@@ -104,6 +109,7 @@ export default function create({ section, body, data, solved: preSolved = false,
   }
 
   function closeMemory() {
+    document.documentElement.classList.remove('lens-busy');
     card.classList.remove('is-open');
     openStar?.setAttribute('aria-expanded', 'false');
     openStar?.classList.remove('is-open');

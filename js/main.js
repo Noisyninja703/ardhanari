@@ -411,6 +411,51 @@ function updateMoonMeter({ popId = null } = {}) {
   });
 }
 
+/* --- The glass toggle ----------------------------------------------------
+   Chrome for putting the lens away and taking it back out. It does not exist
+   until Trinetra hands her the glass: lens.js adds `lens-ready` to the root
+   when she arrives at it, and the CSS both reveals this and plays a slow
+   announcement so she has time to notice something new appeared.
+
+   Three separate pieces of root state keep this honest, and the lens module
+   reads all three:
+     has-lens    she owns the glass at all
+     lens-ready  it has actually been earned, so the toggle may show
+     lens-off    she has chosen to put it away
+     lens-busy   something modal is open, so the glass steps aside for now
+
+   Deliberately not persisted. Reaching for the glass is the interesting state,
+   so that's where a new visit should start. */
+
+function buildLensToggle() {
+  const root = document.documentElement;
+  const button = el('button', 'lens-toggle');
+  button.type = 'button';
+
+  const glyph = el('span', 'lens-toggle__glyph');
+  glyph.setAttribute('aria-hidden', 'true');
+
+  const label = el('span', 'visually-hidden');
+  button.append(glyph, label);
+
+  function sync() {
+    const off = root.classList.contains('lens-off');
+    button.setAttribute('aria-pressed', off ? 'false' : 'true');
+    label.textContent = off ? UI.lensShow : UI.lensHide;
+    button.classList.toggle('is-off', off);
+    /* A lens with something in it, or an empty ring. */
+    glyph.textContent = off ? '◌' : '◎';
+  }
+
+  button.addEventListener('click', () => {
+    root.classList.toggle('lens-off');
+    sync();
+  });
+
+  sync();
+  return button;
+}
+
 /* --- Observers ----------------------------------------------------------- */
 
 function observeReveals(root) {
@@ -491,7 +536,7 @@ function boot() {
   allSections = sections;
   app.append(...sections);
 
-  document.body.append(buildMoonMeter());
+  document.body.append(buildMoonMeter(), buildLensToggle());
 
   attachPointerGlow(document.querySelector('.pointer-glow'));
   initParticles(document.getElementById('particles'));
