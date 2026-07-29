@@ -1196,16 +1196,49 @@
 .reset {
   opacity: 0;
   pointer-events: none;
-  padding: var(--s-2) 0;
-  border-bottom: 1px solid var(--moon-ghost);
-  transition: opacity var(--d-bloom) var(--ease-out), color var(--d-fast) var(--ease-out);
+  padding: var(--s-2) var(--s-4);
+  color: var(--moon-dim);
+  border-bottom: 1px solid var(--gold-veil);
+  transition:
+    opacity var(--d-bloom) var(--ease-out),
+    color var(--d-fast) var(--ease-out),
+    text-shadow var(--d-mid) var(--ease-soft);
 }
 .is-solved .reset {
   opacity: 1;
   pointer-events: auto;
   transition-delay: var(--d-slow);   /* let the verse land first */
+  /* A slow breath of light. Utility text on a dark page reads as a caption
+     rather than a control, and this is the one thing at the very end of the
+     poem she might actually want to press. */
+  animation: reset-breathe 5s var(--ease-soft) var(--d-slow) infinite;
 }
-.reset:hover { color: var(--moon); border-bottom-color: var(--moon-faint); }
+.reset:hover,
+.reset:focus-visible {
+  color: var(--moon);
+  border-bottom-color: var(--gold);
+  animation-play-state: paused;
+  text-shadow:
+    0 0 14px rgba(201, 162, 75, 0.6),
+    0 0 34px rgba(201, 162, 75, 0.28);
+}
+
+@keyframes reset-breathe {
+  0%, 100% {
+    color: var(--moon-dim);
+    text-shadow: 0 0 10px rgba(201, 162, 75, 0.14);
+  }
+  50% {
+    color: var(--moon);
+    text-shadow:
+      0 0 16px rgba(201, 162, 75, 0.45),
+      0 0 38px rgba(201, 162, 75, 0.20);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .is-solved .reset { animation: none; }
+}
 
 /* Armed: the second tap is the one that wipes it, so it should look different. */
 .reset.is-armed {

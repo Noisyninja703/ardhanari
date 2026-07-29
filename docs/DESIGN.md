@@ -93,8 +93,17 @@ without the two modules knowing about each other.
 
 The lens writes no positions at all unless it's genuinely in her hand, so the
 hidden lines' masks stay parked off screen and nothing can be read through a
-lens that isn't there. `lens-new` is added only on the visit that earns the
-glass, and is what plays the toggle's announcement.
+lens that isn't there.
+
+**On the visit that earns the glass it starts out and in her hand.** On every
+later visit it starts put away, and the toggle announces itself instead, which
+hints at both the control and the glass at once. `lens-new` drives that
+announcement and is set in both cases.
+
+Because of that, a section she has already solved mounts its puzzle immediately
+rather than on approach: things she has earned should be hers from the first
+frame wherever she is on the page. Unsolved sections still mount lazily, which
+is what stops the glass appearing five sections before it's earned.
 
 Sections must **not** be `isolation: isolate`, or their content gets trapped
 below the fixed overlays.

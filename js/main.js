@@ -452,6 +452,14 @@ function buildLensToggle() {
     sync();
   });
 
+  /* The lens module can change this state on its own: on a later visit it
+     starts the glass put away. The toggle is built before that module loads, so
+     it watches the root rather than assuming it's the only thing writing here. */
+  new MutationObserver(sync).observe(root, {
+    attributes: true,
+    attributeFilter: ['class'],
+  });
+
   sync();
   return button;
 }
@@ -572,7 +580,16 @@ function boot() {
     },
     { rootMargin: '60% 0px' }
   );
-  sections.forEach((s) => mountIO.observe(s));
+
+  sections.forEach((section) => {
+    /* A section she has already solved is mounted straight away rather than on
+       approach. There's no gate left in it to leak, and things she has earned
+       should be hers from the first frame wherever she happens to be: without
+       this, the glass and its toggle only came back once she had scrolled
+       within reach of Trinetra again. */
+    if (unlocked.has(section.id)) mountPuzzle(section);
+    else mountIO.observe(section);
+  });
 
   /* The seam is invisible in the void and appears once she's through it —
      one being, before division. */

@@ -212,12 +212,17 @@ export default function create({ section, body, solved: preSolved = false, solve
   );
   arrivalIO.observe(section);
 
-  /* If she reloads with this section already solved, the glass is hers
-     immediately: she has earned it and may be anywhere on the page. No
-     announcement, because it isn't news to her any more. */
+  /* A later visit: the glass is hers, but it starts put away rather than
+     floating over the page before she's asked for it. The toggle announces
+     itself instead, which is both the hint that the glass exists and the hint
+     that the control in the corner is what summons it.
+
+     Only on later visits. On the visit that earns it, handOver above leaves it
+     out and in her hand, because that's the moment it means something. */
   if (preSolved) {
     arrivalIO.disconnect();
-    handOver({ announce: false });
+    root.classList.add('lens-off');
+    handOver({ announce: true });
   }
 
   return {
