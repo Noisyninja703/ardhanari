@@ -984,18 +984,18 @@
 
 /* --- A memory, opened ---------------------------------------------------- */
 
-/* Fills the whole section, so the photograph gets the room a photograph
-   deserves. inset: 0 resolves against the section's PADDING box, which includes
-   the strip reserved for the moon meter, so the bottom padding here has to
-   clear it again by hand. */
+/* Fills the whole section and sits above the chrome, so an opened memory is
+   the only thing on screen rather than a photograph with travel arrows and a
+   row of moons laid over it. Because it covers the chrome it no longer has to
+   pad around it either. */
 .memory {
   position: absolute;
   inset: 0;
-  z-index: 30;
+  z-index: var(--z-overlay);
   display: grid;
   grid-template-rows: minmax(0, 1fr) auto auto;
   gap: var(--s-4);
-  padding: var(--s-5) var(--gutter) calc(var(--chrome-h) + var(--s-3));
+  padding: var(--s-5) var(--gutter) var(--s-6);
   opacity: 0;
   transform: translate3d(0, 10px, 0) scale(0.98);
   transition:
@@ -1022,12 +1022,37 @@
   font-size: clamp(0.95rem, 3.3vw, 1.15rem);
 }
 
-.memory__close {
+/* Dismissals breathe the same way "Walk it again" does, so every control that
+   is genuinely a button looks like one. Utility text on a dark page reads as a
+   caption otherwise, and here it's the only way out of a full screen card. */
+.memory__close,
+.letter-card__close {
   justify-self: center;
   padding: var(--s-2) var(--s-4);
-  border-bottom: 1px solid var(--moon-ghost);
+  color: var(--moon-dim);
+  border-bottom: 1px solid var(--gold-veil);
+  transition:
+    color var(--d-fast) var(--ease-out),
+    border-color var(--d-fast) var(--ease-out),
+    text-shadow var(--d-mid) var(--ease-soft);
+  animation: control-breathe 5s var(--ease-soft) infinite;
 }
-.memory__close:hover { color: var(--moon); border-bottom-color: var(--moon-faint); }
+.memory__close:hover,
+.memory__close:focus-visible,
+.letter-card__close:hover,
+.letter-card__close:focus-visible {
+  color: var(--moon);
+  border-bottom-color: var(--gold);
+  animation-play-state: paused;
+  text-shadow:
+    0 0 14px rgba(201, 162, 75, 0.6),
+    0 0 34px rgba(201, 162, 75, 0.28);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .memory__close,
+  .letter-card__close { animation: none; }
+}
 
 @media (prefers-reduced-motion: reduce) {
   .sky__drift { animation: none; }
@@ -1124,17 +1149,17 @@
 
 /* --- An opened letter ----------------------------------------------------- */
 
-/* Fills the whole section, so a long letter is read on a whole screen rather
-   than in the poem band. Bottom padding clears the fixed moon meter, which
-   inset: 0 otherwise runs underneath. */
+/* Fills the whole section and sits above the chrome, so a letter is read on a
+   clear screen rather than with the arrows and the moons on top of it. Covering
+   the chrome also means it no longer has to pad around it. */
 .letter-card {
   position: absolute;
   inset: 0;
-  z-index: 30;
+  z-index: var(--z-overlay);
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto;
   gap: var(--s-4);
-  padding: var(--s-5) var(--gutter) calc(var(--chrome-h) + var(--s-3));
+  padding: var(--s-5) var(--gutter) var(--s-6);
   opacity: 0;
   transform: translate3d(0, 8px, 0) scale(0.985);
   transition:
@@ -1186,12 +1211,7 @@
   color: var(--moon-dim);
 }
 
-.letter-card__close {
-  justify-self: center;
-  padding: var(--s-2) var(--s-4);
-  border-bottom: 1px solid var(--moon-ghost);
-}
-.letter-card__close:hover { color: var(--moon); border-bottom-color: var(--moon-faint); }
+/* Styled with .memory__close above; both are the way out of a full screen. */
 
 @media (prefers-reduced-motion: reduce) {
   .letter { animation: none; }
@@ -1239,7 +1259,7 @@
   /* A slow breath of light. Utility text on a dark page reads as a caption
      rather than a control, and this is the one thing at the very end of the
      poem she might actually want to press. */
-  animation: reset-breathe 5s var(--ease-soft) var(--d-slow) infinite;
+  animation: control-breathe 5s var(--ease-soft) var(--d-slow) infinite;
 }
 .reset:hover,
 .reset:focus-visible {
@@ -1251,7 +1271,9 @@
     0 0 34px rgba(201, 162, 75, 0.28);
 }
 
-@keyframes reset-breathe {
+/* Shared by every control that is a real button but styled as utility text:
+   "Walk it again", and the way out of each full screen card. */
+@keyframes control-breathe {
   0%, 100% {
     color: var(--moon-dim);
     text-shadow: 0 0 10px rgba(201, 162, 75, 0.14);

@@ -77,6 +77,7 @@ Documented in `css/tokens.css`. Check it before inventing a `z-index`.
 | 10 | content — the poem is above all atmosphere |
 | 60 | grain |
 | 70 | chrome (travel arrows, moons, glass toggle) |
+| 80 | opened cards — a memory or a letter, above everything |
 
 ### Root state for the glass
 
