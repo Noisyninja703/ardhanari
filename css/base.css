@@ -17,6 +17,18 @@ html {
      out of reach. */
   scroll-snap-type: y mandatory;
 
+  /* Paged, not scrolled. Free scrolling on a phone was miserable: every
+     section owns a large puzzle surface that has to claim the gesture, and
+     mandatory snap fought whatever was left, so the page only moved if you
+     found the right patch of empty background to drag. She travels a section
+     at a time now, via the arrows bottom-right, the wheel, or the keyboard.
+
+     The document is still the scroller and is still scrolled programmatically:
+     nothing is transformed, nothing is faked, it simply isn't user-scrollable.
+     The class is added by JS so the page is still readable and scrollable if
+     the script never runs. */
+  &.is-paged { overflow: hidden; }
+
   /* Must be on the ROOT element, not body: overscroll-behavior only
      propagates to the viewport from the root, so setting it on body did
      nothing at all.

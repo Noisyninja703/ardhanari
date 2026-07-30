@@ -303,6 +303,7 @@ function markSolved(section, { silent = false } = {}) {
   updateSeals();
   updateExposure();
   updateMoonMeter({ popId: silent ? null : section.id });
+  syncNav();
 
   if (!silent) section.dispatchEvent(new CustomEvent('ardh:solved', { bubbles: true }));
 }
@@ -367,6 +368,109 @@ function clearTimers(section) {
 
 let meterDots = [];
 let currentId = SECTIONS[0].id;
+
+/* --- Travelling between sections -----------------------------------------
+   Scrolling is locked and she moves a section at a time. Free scrolling on a
+   phone was genuinely unpleasant here: every section owns a large puzzle
+   surface that has to claim the gesture, mandatory snap fought whatever was
+   left, and the result was a page that only moved if you found the right
+   patch of empty background to drag. One section per press is predictable, and
+   it suits a poem that was always meant to be read a phase at a time.
+
+   The document is still the scroller and is still scrolled programmatically,
+   so nothing here hijacks a wheel or fakes a transform. It simply isn't
+   user-scrollable. */
+
+let navBack = null;
+let navOnward = null;
+
+function reachableSections() {
+  return allSections.filter((s) => !s.classList.contains('section--sealed'));
+}
+
+function currentIndex() {
+  const open = reachableSections();
+  const i = open.findIndex((s) => s.id === currentId);
+  return i === -1 ? 0 : i;
+}
+
+function travel(step) {
+  const open = reachableSections();
+  const target = open[currentIndex() + step];
+  if (!target) return;
+  target.scrollIntoView({
+    behavior: prefersReducedMotion() ? 'auto' : 'smooth',
+    block: 'start',
+  });
+}
+
+function syncNav() {
+  if (!navBack) return;
+  const open = reachableSections();
+  const i = currentIndex();
+  navBack.disabled = i <= 0;
+  navOnward.disabled = i >= open.length - 1;
+
+  /* Breathes only once this section is finished, so the arrow is telling her
+     something rather than just sitting there: the way onward is open. */
+  const here = open[i];
+  navOnward.classList.toggle(
+    'is-inviting',
+    !navOnward.disabled && !!here && unlocked.has(here.id)
+  );
+}
+
+function buildSectionNav() {
+  const nav = el('nav', 'section-nav');
+  nav.setAttribute('aria-label', UI.moonMeterLabel);
+
+  const make = (dir, glyph, label) => {
+    const button = el('button', `section-nav__step section-nav__step--${dir}`);
+    button.type = 'button';
+    button.innerHTML = `<span aria-hidden="true">${glyph}</span>`;
+    button.append(el('span', 'visually-hidden', label));
+    button.addEventListener('click', () => travel(dir === 'back' ? -1 : 1));
+    return button;
+  };
+
+  navBack = make('back', '↑', UI.navBack);
+  navOnward = make('onward', '↓', UI.navOnward);
+  nav.append(navBack, navOnward);
+  return nav;
+}
+
+function wireTravelKeys() {
+  window.addEventListener(
+    'keydown',
+    (e) => {
+      /* The lens takes the arrow keys while it's focused, and any control with
+         its own key handling should keep it. */
+      const active = document.activeElement;
+      if (active && active !== document.body && active.closest('.lens, input, textarea')) return;
+
+      const back = ['ArrowUp', 'PageUp'];
+      const onward = ['ArrowDown', 'PageDown', ' '];
+      if (back.includes(e.key)) { e.preventDefault(); travel(-1); }
+      else if (onward.includes(e.key)) { e.preventDefault(); travel(1); }
+    },
+    { passive: false }
+  );
+
+  /* A wheel or trackpad still moves her a section at a time, so the page
+     doesn't feel dead on a desktop. Rate-limited, or one flick of an inertial
+     trackpad would skate through three sections. */
+  let wheelLocked = false;
+  window.addEventListener(
+    'wheel',
+    (e) => {
+      if (wheelLocked || Math.abs(e.deltaY) < 12) return;
+      wheelLocked = true;
+      travel(e.deltaY > 0 ? 1 : -1);
+      setTimeout(() => { wheelLocked = false; }, 700);
+    },
+    { passive: true }
+  );
+}
 
 function buildMoonMeter() {
   const nav = el('nav', 'moon-meter');
@@ -512,6 +616,7 @@ function observeSections(sections) {
           currentId = section.id;
           setPreset(PARTICLE_BY_SECTION[section.id] || 'none');
           updateMoonMeter();
+          syncNav();
         }
 
         /* The Devanagari footer sits at the very bottom of the section, so it
@@ -544,7 +649,14 @@ function boot() {
   allSections = sections;
   app.append(...sections);
 
-  document.body.append(buildMoonMeter(), buildLensToggle());
+  /* One fixed strip at the bottom holds both the travel arrows and the moons,
+     so a single reserve (--chrome-h) keeps every section clear of both. */
+  const chrome = el('div', 'chrome');
+  chrome.append(buildSectionNav(), buildMoonMeter());
+  document.body.append(chrome, buildLensToggle());
+
+  document.documentElement.classList.add('is-paged');
+  wireTravelKeys();
 
   attachPointerGlow(document.querySelector('.pointer-glow'));
   initParticles(document.getElementById('particles'));
@@ -554,6 +666,7 @@ function boot() {
   observeSections(sections);
   updateMoonMeter();
   updateExposure();
+  syncNav();
 
   sections.forEach((section) => {
     section._skip?.addEventListener('click', () => markSolved(section));

@@ -228,6 +228,10 @@ export const UI = {
   /* The glass toggle, top right. Only exists once Trinetra has given it to her. */
   lensHide: 'Put the glass away',
   lensShow: 'Take the glass out',
+
+  /* Moving between sections. Scrolling is locked, so these are how she travels. */
+  navBack: 'Back a phase',
+  navOnward: 'Onward a phase',
   locked: 'Not yet reached',
   scrollCue: 'Keep going',
 

@@ -98,6 +98,14 @@ document sideways. They're masked to fade before the top and bottom edges so
 the clip never shows as a seam — that mask *is* the fix for the harsh
 boundaries between segments.
 
+**`--column` must never be wider than the padded width.** It was `min(92vw,
+34rem)` while the sections already inset themselves by `--gutter`. On a 390px
+phone that made the column 8.8px too wide, its `margin-inline: auto` collapsed,
+and every section's content sat **4.4px right of centre** while the fixed seam
+stayed on the true middle. The spark and the flame are the tell, because they're
+the two things meant to sit exactly on the seam. It's `min(100%, 34rem)` now, so
+it cannot overflow whatever the gutter does.
+
 **`dvh`, never `vh`.** Mobile browser chrome collapses on scroll and `100vh`
 causes the classic jumping-gap bug.
 
@@ -129,6 +137,14 @@ about 100 lit pixels across a whole phone screen — technically drawing,
 practically absent. Sizes and alphas are now well clear of sub-pixel and each
 particle gets a cheap second arc as a halo. ~4000 lit pixels now.
 
+**A canvas sized in `dvh` needs a `ResizeObserver`, not just `resize`.** The
+particle canvas renders stretched on first load on a phone: collapsing browser
+chrome changes its CSS height without reliably firing a window `resize`, so the
+backing store keeps its old dimensions. It corrects itself the moment anything
+else triggers a re-measure, which is why scrolling to another section and back
+"fixed" it. Observe the canvas itself, and re-measure after the first frame and
+on `load`.
+
 **Fade with the frame timestamp, not per frame**, or transitions run at
 different speeds on 60Hz and 144Hz displays.
 
@@ -152,6 +168,16 @@ isn't. Reset:
 ```js
 localStorage.removeItem('ardh:unlocked'); location.reload();
 ```
+
+**The page is paged, not scrolled.** `html.is-paged { overflow: hidden }` and
+she travels a section at a time via the arrows bottom right, the wheel, or the
+keyboard. Free scrolling on a phone was miserable: every section owns a large
+puzzle surface that has to claim the gesture, and mandatory snap fought whatever
+was left, so the page only moved if you found the right patch of empty
+background. The document is still the scroller and is still scrolled
+programmatically with `scrollIntoView`, so nothing is transformed or faked, and
+any test can still drive it the same way. The class is added by JS, so without
+scripting the page stays a normal scrolling document.
 
 **Sections after the first unsolved one are removed from the document**
 (`display: none`), so the page ends at the frontier and she can't scroll past

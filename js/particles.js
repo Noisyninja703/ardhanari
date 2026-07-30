@@ -241,6 +241,22 @@ export function initParticles(el) {
   window.addEventListener('resize', resize, { passive: true });
   window.addEventListener('orientationchange', () => requestAnimationFrame(resize));
 
+  /* A ResizeObserver on the canvas itself, because `resize` is not enough on a
+     phone. The canvas is sized in dvh, so collapsing browser chrome changes its
+     CSS height without necessarily firing a window resize: the backing store
+     keeps its old dimensions and the whole field renders stretched until
+     something else happens to trigger a re-measure. That's why it looked wrong
+     on first load and corrected itself the moment you scrolled to another
+     section and back. */
+  new ResizeObserver(resize).observe(canvas);
+
+  /* The first measurement can also land before layout has settled. Re-measure
+     once more after the first frame and once the page has fully loaded. */
+  requestAnimationFrame(resize);
+  if (document.readyState !== 'complete') {
+    window.addEventListener('load', () => requestAnimationFrame(resize), { once: true });
+  }
+
   /* Backgrounded tab: stop entirely. Nobody is watching. */
   document.addEventListener('visibilitychange', () => {
     visible = !document.hidden;

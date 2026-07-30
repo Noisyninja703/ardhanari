@@ -1279,20 +1279,84 @@
 /* --- Moon meter ----------------------------------------------------------
    Fixed chrome. Waxes as she unlocks sections and doubles as the nav.
    44px minimum hit target on every dot — non-negotiable on touch. */
-/* Horizontal, across the bottom, evenly spaced. It used to sit bottom-right
-   in a vertical stack, where in a portrait column it overlapped the poem and
-   the puzzles. Sections reserve --chrome-h at the bottom for it. */
-.moon-meter {
+/* --- The bottom chrome ---------------------------------------------------
+   One fixed strip holding the travel arrows and the moons, so a single reserve
+   (--chrome-h) keeps every section's content clear of both. */
+.chrome {
   position: fixed;
   left: 0;
   right: 0;
   bottom: 0;
   z-index: var(--z-chrome);
   display: grid;
+  justify-items: end;
+  gap: var(--s-1);
+  padding: var(--s-2) var(--gutter) var(--s-3);
+  /* A soft rise out of the void so the chrome doesn't sit on a hard edge. */
+  background: linear-gradient(to top, rgba(10, 6, 18, 0.94), rgba(10, 6, 18, 0.72) 55%, transparent);
+}
+
+/* --- Travelling between sections ------------------------------------------
+   Bottom right, above the moons. Scrolling is locked, so these are how she
+   moves, and they need to look like the controls they are. */
+.section-nav {
+  display: flex;
   gap: var(--s-2);
-  padding: var(--s-3) var(--gutter) var(--s-4);
-  /* A soft rise out of the void so the bar doesn't sit on a hard edge. */
-  background: linear-gradient(to top, rgba(10, 6, 18, 0.92), transparent);
+}
+
+.section-nav__step {
+  display: grid;
+  place-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  font-size: 1.15rem;
+  line-height: 1;
+  color: var(--moon-dim);
+  border: 1px solid var(--moon-ghost);
+  transition:
+    color var(--d-fast) var(--ease-out),
+    border-color var(--d-fast) var(--ease-out),
+    box-shadow var(--d-mid) var(--ease-soft),
+    opacity var(--d-mid) var(--ease-out);
+}
+.section-nav__step:hover:not(:disabled) {
+  color: var(--moon);
+  border-color: var(--moon-faint);
+  box-shadow: 0 0 18px 1px rgba(169, 140, 224, 0.25);
+}
+
+/* Nothing that way: still there, so the pair doesn't jump around. */
+.section-nav__step:disabled {
+  opacity: 0.22;
+  cursor: default;
+}
+
+/* The way onward, once this section is done. The same slow breath the reset
+   uses, so "you may go on" always looks the same. */
+.section-nav__step--onward.is-inviting:not(:disabled) {
+  animation: nav-breathe 4.5s var(--ease-soft) infinite;
+}
+
+@keyframes nav-breathe {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(201, 162, 75, 0); border-color: var(--moon-ghost); }
+  50% {
+    box-shadow: 0 0 16px 1px rgba(201, 162, 75, 0.28);
+    border-color: var(--gold-veil);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .section-nav__step { animation: none !important; }
+}
+
+/* Horizontal, across the bottom, evenly spaced. It used to sit bottom-right
+   in a vertical stack, where in a portrait column it overlapped the poem and
+   the puzzles. Sections reserve --chrome-h at the bottom for the whole strip. */
+.moon-meter {
+  display: grid;
+  gap: var(--s-2);
+  width: 100%;
 }
 
 .moon-meter__dots {

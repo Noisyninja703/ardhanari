@@ -76,7 +76,7 @@ Documented in `css/tokens.css`. Check it before inventing a `z-index`.
 | 3 | particles — above the darkening, so stars stay crisp |
 | 10 | content — the poem is above all atmosphere |
 | 60 | grain |
-| 70 | chrome (moons, glass toggle) |
+| 70 | chrome (travel arrows, moons, glass toggle) |
 
 ### Root state for the glass
 
@@ -133,6 +133,21 @@ below the fixed overlays.
   fewer motes.
 - **Glass** — `backdrop-filter` as an upgrade inside `@supports`; the flat
   translucent fallback looks fine on its own.
+
+## Travelling
+
+Scrolling is locked (`html.is-paged`) and she moves one section at a time:
+arrows bottom right, the wheel, or the keyboard (arrows, page up and down,
+space). The onward arrow breathes once the current section is solved, using the
+same slow pulse as "Walk it again", so "you may go on" always looks the same.
+
+The document is still the scroller and is still moved with `scrollIntoView`.
+Nothing is transformed and no gesture is synthesised, which is what keeps this
+compatible with anchors, the moon meter's links, and any test driving the page.
+
+`--chrome-h` reserves the bottom strip for the arrows and the moons together.
+Measure `.chrome` if you change either: at 390px it is 112px inside a 128px
+reserve, and if it ever outgrows that the Devanagari footer slides underneath.
 
 ## Motion
 
