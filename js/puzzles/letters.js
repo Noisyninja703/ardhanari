@@ -8,7 +8,7 @@
    Letters are read from data/letters.json and that file is the whole store.
    By decision there is no database, no sync and no composer: they're written in
    advance and committed. She doesn't write back through the site, which also
-   means the last thing she reads here is unambiguously his.
+   means the last thing she reads here is unambiguously mine.
 
    Like the constellation, this section has no gate. It opens on arrival.
    ========================================================================== */
@@ -74,7 +74,10 @@ export default function create({ section, body, data, solved: preSolved = false,
 
     el.innerHTML = '<span class="letter__fold" aria-hidden="true"></span>' +
                    '<span class="letter__seal" aria-hidden="true"></span>';
-    el.setAttribute('aria-label', `Letter from ${who(letter.author)}, ${when(letter.createdAt)}. Open it.`);
+    el.setAttribute(
+      'aria-label',
+      `${letter.title ?? 'A letter'}. From ${who(letter.author)}, ${when(letter.createdAt)}. Open it.`
+    );
 
     /* Scattered on a loose grid so they never start in a heap, with enough
        jitter that the grid doesn't show. */
@@ -197,8 +200,18 @@ export default function create({ section, body, data, solved: preSolved = false,
     root.className = 'letter-card glass';
     root.hidden = true;
 
+    /* Title beside the signature on one line, so opening a letter tells her what
+       it is before she starts reading it. */
     const meta = document.createElement('p');
-    meta.className = 'letter-card__meta t-util sweep';
+    meta.className = 'letter-card__meta sweep';
+
+    const metaTitle = document.createElement('span');
+    metaTitle.className = 'letter-card__title';
+
+    const metaBy = document.createElement('span');
+    metaBy.className = 'letter-card__by t-util';
+
+    meta.append(metaTitle, metaBy);
 
     const bodyEl = document.createElement('div');
     bodyEl.className = 'letter-card__body';
@@ -222,7 +235,8 @@ export default function create({ section, body, data, solved: preSolved = false,
     let opener = null;
 
     function open(letter) {
-      meta.textContent = `${who(letter.author)}, ${when(letter.createdAt)}`;
+      metaTitle.textContent = letter.title ?? '';
+      metaBy.textContent = `${who(letter.author)}, ${when(letter.createdAt)}`;
       /* Reused between letters, so its sweep has to be rewound by hand. */
       meta.classList.remove('is-swept');
 
@@ -231,13 +245,21 @@ export default function create({ section, body, data, solved: preSolved = false,
          keeps a stray angle bracket from becoming a bug. */
       const paragraphs = String(letter.body ?? '')
         .split(/\n{2,}/)
-        .map((para, i) => {
+        .map((stanza, i) => {
           const p = document.createElement('p');
-          /* The same sweep of light the headings use, staggered a paragraph at a
+          /* The same sweep of light the headings use, staggered a stanza at a
              time, so a letter arrives rather than simply appearing. */
           p.className = 'letter-card__para sweep';
           p.style.setProperty('--i', String(i + 1));
-          p.textContent = para.trim();
+
+          /* These are poems, so a single newline is a line break she meant to
+             be there. Built from text nodes and <br>, never innerHTML: the body
+             is data and must not be parsed as markup. */
+          stanza.trim().split('\n').forEach((line, n) => {
+            if (n > 0) p.append(document.createElement('br'));
+            p.append(document.createTextNode(line.trim()));
+          });
+
           return p;
         });
 
@@ -322,5 +344,7 @@ function who(author) {
 function when(iso) {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return 'undated';
-  return d.toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' });
+  /* en-GB rather than the browser's locale, so it always reads "9 June 2026"
+     rather than flipping to month-first on someone else's phone. */
+  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 }

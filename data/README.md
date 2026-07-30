@@ -12,21 +12,29 @@ and read straight from here.
 
 ```json
 {
-  "updated": "ISO timestamp, when this file was last written",
+  "updated": "ISO timestamp, when I last touched this file",
   "letters": [
     {
-      "id": "unique string",
+      "title": "Short title, shown beside my name when she opens it",
       "author": "sivan | her",
       "createdAt": "ISO timestamp",
-      "body": "The letter. \\n\\n separates paragraphs."
+      "body": "The poem. A single \n is a line break. \n\n starts a new stanza."
     }
   ]
 }
 ```
 
-`id` only needs to be unique. `author` is `sivan` or `her`: hers renders with a
-gold seal instead of kumkum, so if there's something she wrote to him worth
-including, it drops in and looks right without any code change.
+`title` is what appears next to the signature on the opened letter, so it wants
+to be short and it wants to mean something. `author` is `sivan` or `her`: hers
+renders with a gold seal instead of kumkum, so if there is ever something she
+wrote to me worth including, it drops in and looks right with no code change.
+
+**Line breaks matter here.** These are poems, so a single `
+` inside the JSON
+string is a line break I meant, and `
+
+` starts a new stanza. The section
+renders them exactly that way.
 
 Newest last. The section sorts by `createdAt` anyway, but keeping the file in
 order makes it readable.

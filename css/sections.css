@@ -1162,9 +1162,33 @@
 .letter-card[hidden] { display: none; }
 .letter-card.is-open { opacity: 1; transform: none; }
 
+/* Title and signature on one line, with the title carrying the weight. */
 .letter-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: center;
+  gap: var(--s-2) var(--s-3);
+  margin: 0;
   text-align: center;
-  color: var(--moon-faint);
+}
+
+.letter-card__title {
+  font-family: var(--font-body);
+  font-size: clamp(1.05rem, 3.6vw, 1.3rem);
+  font-style: italic;
+  line-height: 1.2;
+  color: var(--moon);
+  text-shadow: 0 0 18px rgba(201, 162, 75, 0.28);
+}
+
+/* The signature sits after the title, quieter, and separated by a middot so the
+   two read as one line rather than two competing labels. */
+.letter-card__by { color: var(--moon-faint); }
+.letter-card__by::before {
+  content: '·';
+  margin-right: var(--s-3);
+  color: var(--gold-veil);
 }
 
 /* Letters run long, so this scrolls. pan-y rather than none, because here the
@@ -1187,19 +1211,23 @@
   margin-block: auto;
   display: flex;
   flex-direction: column;
-  /* Prose spacing, not verse spacing: roughly a blank line between paragraphs
-     instead of the poem's 24px gap stacked on 1.75 leading, which made the
-     letters read as a list of separate thoughts. */
-  gap: 0.85em;
+  /* One clear blank line between stanzas. The lines inside a stanza are set
+     tight by the leading, so the gap is what separates one thought from the
+     next. */
+  gap: 1.15em;
 }
 
+/* These are poems now, so the line breaks are hers and the leading has to give
+   them room. Centred rather than ragged left, because a short verse line looks
+   stranded against a left edge. */
 .letter-card__para {
   margin: 0;
   max-width: none;
   font-family: var(--font-body);
-  font-size: clamp(0.95rem, 3.2vw, 1.1rem);
-  line-height: 1.62;
-  text-align: left;
+  font-size: clamp(0.98rem, 3.3vw, 1.12rem);
+  font-style: italic;
+  line-height: 1.75;
+  text-align: center;
   text-wrap: pretty;
   color: var(--moon-dim);
 }
