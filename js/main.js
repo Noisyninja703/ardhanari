@@ -439,48 +439,34 @@ function buildSectionNav() {
 }
 
 /* --- Zoom ----------------------------------------------------------------
-   Pinch zoom used to break the site completely. Every section is exactly one
-   screen tall, scrolling is locked, and travel happens by scrolling the document
-   programmatically. Zoom in and the visual viewport becomes a small window onto
-   a layout that has not changed size, and with the scroller locked there is no
-   way to reach the rest of it. A reload does not help either, because the
-   browser remembers the scale, so the only escape was pinching back to almost
-   exactly 1.
+   Zoom is locked off. Every section is exactly one screen, scrolling is locked
+   and travel is programmatic, so a zoomed visual viewport becomes a small window
+   onto a layout that has not changed size: positioning, travel and the moons all
+   come apart, and a reload does not help because the browser remembers the scale.
 
-   Blocking zoom would have been the easy fix and it is the wrong one. Being able
-   to enlarge text is an accessibility requirement, and iOS has ignored
-   user-scalable=no for years precisely because sites kept doing this.
+   I tried making the site adapt to being zoomed instead, unlocking the scroller
+   so she could pan around. It did not hold up on a real phone, so this is the
+   blunt version, and it is the right trade for a page that is one screen per
+   section by design.
 
-   So zoom is allowed and the paging gets out of its way: while she is zoomed in
-   the document scrolls normally so she can pan wherever she likes, and when she
-   comes back to 1 the lock returns and the section she is on is squared up
-   again. */
-function watchZoom() {
-  const vv = window.visualViewport;
-  if (!vv) return;
-
-  const root = document.documentElement;
-  let wasZoomed = false;
-
-  function sync() {
-    /* A little slack: pinch gestures settle on 1.0001 and similar, and toggling
-       the scroll lock on that would be worse than the bug. */
-    const zoomed = vv.scale > 1.05;
-    if (zoomed === wasZoomed) return;
-    wasZoomed = zoomed;
-    root.classList.toggle('is-zoomed', zoomed);
-
-    /* Coming back to normal: put her back on a whole section, since she has
-       almost certainly drifted off the grid while panning around. */
-    if (!zoomed) {
-      const here = allSections.find((s) => s.id === currentId);
-      here?.scrollIntoView({ behavior: 'auto', block: 'start' });
-    }
+   The meta viewport handles Android. iOS has ignored user-scalable since iOS 10,
+   so pinch has to be refused by hand there. */
+function lockZoom() {
+  /* WebKit's own pinch events. Cancelling gesturestart is what actually stops a
+     pinch on iOS. */
+  for (const type of ['gesturestart', 'gesturechange', 'gestureend']) {
+    document.addEventListener(type, (e) => e.preventDefault(), { passive: false });
   }
 
-  vv.addEventListener('resize', sync, { passive: true });
-  vv.addEventListener('scroll', sync, { passive: true });
-  sync();
+  /* And the general case: any second finger is a pinch, whatever the browser
+     calls it. Not passive, because preventing it is the entire point. */
+  document.addEventListener(
+    'touchmove',
+    (e) => {
+      if (e.touches.length > 1) e.preventDefault();
+    },
+    { passive: false }
+  );
 }
 
 function wireTravelKeys() {
@@ -701,7 +687,7 @@ function boot() {
 
   document.documentElement.classList.add('is-paged');
   wireTravelKeys();
-  watchZoom();
+  lockZoom();
 
   attachPointerGlow(document.querySelector('.pointer-glow'));
   initParticles(document.getElementById('particles'));

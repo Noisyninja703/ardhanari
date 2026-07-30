@@ -2,7 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <!-- Zoom is locked: the layout is one screen per section, and a zoomed visual
+       viewport takes it apart. maximum-scale and user-scalable cover Android;
+       iOS ignores them, so lockZoom() in main.js refuses the pinch by hand. -->
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
   <meta name="color-scheme" content="dark">
   <meta name="theme-color" content="#0A0612">
 

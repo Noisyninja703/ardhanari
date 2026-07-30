@@ -32,7 +32,12 @@
   /* One fluid scale, authored at 390px and opening up to 1440px.
      Mobile and desktop share the ratio, no separate mobile scale. */
   --t-hero:  clamp(2.75rem, 1.6rem + 6.2vw, 6.5rem);
-  --t-title: clamp(1.9rem,  1.3rem + 3.2vw, 3.6rem);
+  /* The heading band is a fixed 15% of the screen, and the two longest headings
+     wrap to two lines, so the type has to be capped against the height as well as
+     the width or it overflows and collides with the label above it. At 320x568
+     the band is 66px and the old size needed 71px. The dvh term is what stops
+     that: two lines at 1.15 leading always fit inside 15%. */
+  --t-title: clamp(1.25rem, min(1.3rem + 3.2vw, 4.6dvh), 3.6rem);
   --t-verse: clamp(1.125rem, 1.02rem + 0.55vw, 1.5rem);
   --t-body:  clamp(1rem,    0.96rem + 0.2vw,  1.125rem);
   --t-util:  0.6875rem;  /* 11px, fixed. Utility text should not grow. */

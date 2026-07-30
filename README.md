@@ -277,14 +277,14 @@ nothing is transformed or faked. It simply is not user scrollable, and the class
 that does it is added by JavaScript so the page stays an ordinary scrolling
 document if the script never runs.
 
-**Zoom is allowed, and paging gets out of its way.** Pinching used to break the
-site: a zoomed visual viewport is a small window onto a layout that has not
-changed size, and with scrolling locked there was no way to reach the rest of it,
-which a reload did not fix because the browser remembers the scale. While she is
-zoomed in the document scrolls normally so she can pan anywhere, and when she
-returns to normal the lock comes back and the section she is on is squared up
-again. Double-tap-to-zoom is off on the things she taps, since that is never what
-she meant by tapping a letter twice.
+**Zoom is locked.** Pinching broke the site: a zoomed visual viewport is a small
+window onto a layout that has not changed size, and with scrolling locked there
+was no way to reach the rest of it, which a reload did not fix because the browser
+remembers the scale. I tried letting her pan while zoomed instead and it was worse
+on a real phone, so the site simply does not zoom now. The viewport meta handles
+Android, and `lockZoom()` in `js/main.js` refuses the pinch by hand because iOS
+ignores the meta. Double-tap-to-zoom is off everywhere too, since that is never
+what she meant by tapping a letter twice.
 
 **Sections she has not reached are not in the document at all**, so the page ends
 at whatever she has finished. That is what stops her scrolling past an unsolved

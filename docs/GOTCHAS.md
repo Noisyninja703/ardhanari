@@ -37,23 +37,38 @@ after the puzzle was solved and `touch-action` was back to `auto`. Measured:
 0px of movement over the panel versus 844px over the heading, same gesture.
 Never put it on anything that isn't the scroller.
 
-**Pinch zoom broke the entire site, and blocking zoom is not the fix.** Sections
-are exactly one screen, scrolling is locked, and travel is programmatic. Zoom in
-and the visual viewport becomes a small window onto a layout that has not changed
-size, so with the scroller locked there is no way to reach the rest of it. A
-reload does not help, because the browser remembers the scale: the only escape was
-pinching back to almost exactly 1. `user-scalable=no` would have hidden it, but
-enlarging text is an accessibility requirement and iOS has ignored that attribute
-for years precisely because sites kept doing this. Instead `main.js` watches
-`visualViewport.scale` and adds `is-zoomed` past 1.05, which lifts the scroll lock
-and turns snapping off so she can pan freely; coming back to 1 restores both and
-squares her up on a whole section. Verified with `Emulation.setPageScaleFactor`.
+**Pinch zoom broke the entire site, so zoom is locked.** Sections are exactly one
+screen, scrolling is locked, and travel is programmatic. Zoom in and the visual
+viewport becomes a small window onto a layout that has not changed size, so with
+the scroller locked there is no way to reach the rest of it. A reload does not
+help, because the browser remembers the scale: the only escape was pinching back
+to almost exactly 1.
+
+I tried to accommodate it first, lifting the scroll lock while zoomed so she could
+pan around. That failed on a real phone: double-tap still magnified, and the extra
+`is-zoomed` layout path cut headings off the top of the screen. Two ways to get
+into a broken state is worse than none, so the answer is that the site does not
+zoom. `maximum-scale=1, user-scalable=no` in the viewport meta covers Android, and
+because iOS has ignored those for years, `lockZoom()` in `main.js` also
+`preventDefault`s the WebKit `gesture*` events and any `touchmove` carrying more
+than one touch, both with `{ passive: false }` or the calls are ignored. The
+accessibility cost is real, and the mitigation is that nothing on the page needs
+magnifying: the type scales with the viewport and the whole thing is one column.
 
 **Double-tap-to-zoom is not something she ever meant.** Tapping a letter or a
-star twice quickly is open-then-close, not a request to magnify. Every tappable
-control takes `touch-action: manipulation`, which keeps panning and pinch zoom and
-drops only the double-tap gesture. Drag surfaces already set `none`, which covers
-them.
+star twice quickly is open-then-close, not a request to magnify. This is set once
+as `touch-action: manipulation` on `body` rather than per control, which was the
+first mistake: taps landing on a verse or on the background were never covered, so
+the gesture was still live across most of the screen. `touch-action` intersects
+down the tree, so drag surfaces still get their `none` and the letter body still
+gets its `pan-y`.
+
+**The heading band is 15% of the screen and two-line headings did not fit it.**
+"The Stars I Follow to You" needed 71px inside a 66px band at 320x568, so it
+overflowed upward into the phase label. A width-only `clamp()` cannot know this,
+because the constraint is the height. `--t-title` caps against `dvh` as well:
+`clamp(1.25rem, min(1.3rem + 3.2vw, 4.6dvh), 3.6rem)`. Measured every section at
+six viewport sizes; worst clearance is now 6px.
 
 **A sideways drag triggers Chrome's swipe-to-go-back.** A horizontal wipe
 starting near the screen edge navigated clean off the page mid-puzzle. Guarded

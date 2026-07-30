@@ -28,15 +28,8 @@ html {
      The class is added by JS so the page is still readable and scrollable if
      the script never runs.
 
-     The lock lifts while she is zoomed in. A zoomed visual viewport is a small
-     window onto a layout that has not changed size, and with the scroller locked
-     there is no way to reach the rest of it: that is what made pinching feel like
-     it had broken the whole site. main.js adds is-zoomed, and paging steps aside
-     until she comes back to normal. */
-  &.is-paged:not(.is-zoomed) { overflow: hidden; }
-
-  /* Snapping fights panning, so it stands down while zoomed too. */
-  &.is-zoomed { scroll-snap-type: none; }
+     Zoom is locked off rather than adapted to. See lockZoom() in main.js. */
+  &.is-paged { overflow: hidden; }
 
   /* Must be on the ROOT element, not body: overscroll-behavior only
      propagates to the viewport from the root, so setting it on body did
@@ -87,21 +80,15 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Everything she taps. `manipulation` keeps panning and pinch zoom, which she is
-   welcome to, and drops double-tap-to-zoom, which she never meant: tapping a
-   letter or a star twice in quick succession is how you open one and then close
-   it, not a request to magnify the page. The surfaces above already set
-   touch-action: none, which covers them. */
-.section-nav__step,
-.moon-meter__dot,
-.lens-toggle,
-.skip,
-.reset,
-.letter-card__close,
-.promise-card__close,
-.sky__promise {
-  touch-action: manipulation;
-}
+/* Double-tap-to-zoom, gone everywhere rather than only on the controls. Putting
+   `manipulation` on a handful of buttons was not enough: a double tap lands on a
+   verse or on empty background just as easily, which is why it kept happening.
+
+   On the whole page it drops the double-tap gesture and keeps panning, and
+   because touch-action intersects down the tree the surfaces that need something
+   stricter still get it. The ash panel stays `none`, and the open letter's body
+   stays `pan-y` so a long poem still scrolls. */
+body { touch-action: manipulation; }
 
 /* --- Type roles ---------------------------------------------------------- */
 
@@ -118,6 +105,9 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   font-size: var(--t-title);
   line-height: 1.15;
   font-weight: 400;
+  /* Two short lines rather than one long one and one orphan, which matters for
+     the headings that wrap. */
+  text-wrap: balance;
 }
 
 .t-verse {
