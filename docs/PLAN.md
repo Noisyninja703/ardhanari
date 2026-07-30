@@ -3,7 +3,7 @@
 **Deadline: 1 August.** All seven sections are built and the poem is walkable
 end to end. Nothing left is structural.
 
-From here the highest-value work is words and photographs, not code.
+From here the highest-value work is words, not code.
 
 ---
 
@@ -49,17 +49,19 @@ Things to know before changing it:
   section is. Keep each `lensSecret` short enough for two lines at phone width,
   around 60 characters.
 
-### 3. ◓ Nakshatra — the constellation · BUILT, needs photos
+### 3. ◓ Nakshatra — the promises · BUILT
 
 `js/puzzles/constellation.js`. Lives in the puzzle system because that's how
 sections get built and unsealed, but it calls `solve()` on arrival rather than
 gating anything.
 
-- **Drop photos at `assets/img/nakshatra/1.webp` … `6.webp`** and write the six
-  captions in `content.js`. Missing files are handled, so it works without them.
-- Panning and pinch-zoom from the original plan were dropped. They were a
-  landscape-era idea; the field now fits the poem band, which avoids fighting
-  the page scroll for gestures.
+Six stars, each a promise, wired by an asterism. **No photographs and no assets
+at all**, so this section needs nothing but words. It was a photo gallery of
+memories; it became promises because they tie to the myth instead of sitting
+beside it, and because two of them answer sections she has already read.
+
+- Rewrite the six `promises` in `content.js`. `at` is `[x%, y%]` and the order
+  is the order the constellation line is drawn in.
 - A section whose `content.js` entry has a `hint` but **no `skipLabel`** gets
   standing guidance instead of a puzzle hint: shown on arrival and never
   cleared. That's how "Touch a star." survives a section that solves itself.
@@ -105,7 +107,8 @@ arguably a better gift than a rushed everything.
 ## Ship checklist
 
 1. Fill in the real copy (see below). This is the highest-value work left.
-2. Add the photos: `assets/img/ash.webp` and the constellation set, as WebP.
+2. Add the ash photo at `assets/img/ash.webp`, as WebP. It's the only image the
+   site wants.
 3. Run all six suites in `tests/`. Screenshot and *look*.
 4. Test on a real phone. LAN won't work on the work laptop — use Chrome USB
    port forwarding (README).
@@ -121,7 +124,6 @@ arguably a better gift than a rushed everything.
 
 ## Open questions for Sivan
 
-- Constellation shape: her initial, or a date?
 - Sound: yes or no? It's the easiest thing to cut.
 - Anything he'd rather write himself than have written for him.
 
@@ -135,9 +137,11 @@ about Shiva, not about Maniksha.
 
 1. How they met — one or two concrete images from it, not a summary.
 2. 3–5 dates that matter.
-3. Six photos for the constellation, each with a line about what was happening.
-4. Two or three inside jokes.
-5. Any Hindu or family references she'd love to see done properly.
-6. **The letters themselves.** Five placeholders sit in `data/letters.json`;
+3. Two or three inside jokes.
+4. Any Hindu or family references she'd love to see done properly.
+5. **The letters themselves.** Five placeholders sit in `data/letters.json`;
    anything he has actually written to her beats all of them.
-7. Whether her name or a date should shape the constellation.
+6. **The six promises** in the Nakshatra section. Mine are a starting point.
+   Alongside the letters this is the most personal writing on the site, and a
+   promise he would not actually keep has no business being up there.
+7. One photo for the ash section, if he wants one there.

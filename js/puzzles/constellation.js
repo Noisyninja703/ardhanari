@@ -7,12 +7,10 @@
    one is unsealed, but it calls solve() when she arrives rather than making her
    earn it.
 
-   A slow field of stars. Six of them are photographs. Tapping one opens it.
-   A missing photo file is not a failure: the star and its line still work, the
-   same way the ash section's photo does.
+   A slow field of stars. Six of them are promises. Tapping one opens it.
    ========================================================================== */
 
-const AMBIENT = 46;   /* how many plain stars sit behind the memories */
+const AMBIENT = 46;   /* how many plain stars sit behind the promises */
 
 export default function create({ section, body, data, solved: preSolved = false, solve }) {
   const field = document.createElement('div');
@@ -37,11 +35,11 @@ export default function create({ section, body, data, solved: preSolved = false,
     drift.append(star);
   }
 
-  /* --- The lines between the memories -----------------------------------
+  /* --- The lines between the promises -----------------------------------
      Drawn before the stars so they sit behind them, and in the order the
-     memories are listed, so the shape reads as one asterism. */
+     promises are listed, so the shape reads as one asterism. */
 
-  const memories = data.memories ?? [];
+  const promises = data.promises ?? [];
   const svgNS = 'http://www.w3.org/2000/svg';
   const svg = document.createElementNS(svgNS, 'svg');
   svg.setAttribute('class', 'sky__lines');
@@ -49,56 +47,48 @@ export default function create({ section, body, data, solved: preSolved = false,
   svg.setAttribute('preserveAspectRatio', 'none');
   svg.setAttribute('aria-hidden', 'true');
 
-  if (memories.length > 1) {
+  if (promises.length > 1) {
     const line = document.createElementNS(svgNS, 'polyline');
-    line.setAttribute('points', memories.map((m) => `${m.at[0]},${m.at[1]}`).join(' '));
+    line.setAttribute('points', promises.map((m) => `${m.at[0]},${m.at[1]}`).join(' '));
     svg.append(line);
   }
 
   field.append(svg, drift);
 
-  /* --- The card a memory opens into -------------------------------------- */
+  /* --- The card a promise opens into ------------------------------------- */
 
   const card = document.createElement('div');
-  card.className = 'memory glass';
+  card.className = 'promise-card glass';
   card.hidden = true;
 
-  const cardImg = document.createElement('img');
-  cardImg.className = 'memory__photo';
-  cardImg.loading = 'lazy';
-  cardImg.decoding = 'async';
-
-  const cardLine = document.createElement('p');
-  cardLine.className = 'memory__line t-verse';
+  const cardText = document.createElement('p');
+  cardText.className = 'promise-card__text';
 
   const close = document.createElement('button');
   close.type = 'button';
-  close.className = 'memory__close t-util';
+  close.className = 'promise-card__close t-util';
   close.textContent = 'Close';
 
-  card.append(cardImg, cardLine, close);
+  card.append(cardText, close);
 
   let openStar = null;
 
-  function openMemory(memory, star) {
-    cardLine.textContent = memory.line ?? '';
-
-    /* Only show the frame if there's actually a picture in it. */
-    if (memory.src) {
-      cardImg.hidden = false;
-      cardImg.src = memory.src;
-      cardImg.alt = memory.alt ?? '';
-    } else {
-      cardImg.hidden = true;
-    }
+  function openPromise(promise, star) {
+    cardText.textContent = promise.text ?? '';
+    /* Sweeps in like the headings do, so a promise arrives rather than
+       appearing. New text each time, so there's a class to rewind. */
+    cardText.classList.remove('sweep', 'is-swept');
+    cardText.classList.add('sweep');
 
     card.hidden = false;
     /* Next frame, so the transition has a start state to run from. */
-    requestAnimationFrame(() => card.classList.add('is-open'));
+    requestAnimationFrame(() => {
+      card.classList.add('is-open');
+      cardText.classList.add('is-swept');
+    });
 
-    /* The glass steps aside while something is open over the page. It would
-       otherwise sit on top of the photograph, and reading a memory through a
-       lens is not the point of the lens. */
+    /* The glass steps aside while something is open over the page. Reading a
+       promise through a magnifier is not what the lens is for. */
     document.documentElement.classList.add('lens-busy');
 
     openStar?.classList.remove('is-open');
@@ -108,7 +98,7 @@ export default function create({ section, body, data, solved: preSolved = false,
     close.focus({ preventScroll: true });
   }
 
-  function closeMemory() {
+  function closePromise() {
     document.documentElement.classList.remove('lens-busy');
     card.classList.remove('is-open');
     openStar?.setAttribute('aria-expanded', 'false');
@@ -122,36 +112,36 @@ export default function create({ section, body, data, solved: preSolved = false,
     returnTo?.focus({ preventScroll: true });
   }
 
-  cardImg.addEventListener('error', () => { cardImg.hidden = true; });
-  close.addEventListener('click', closeMemory);
+  close.addEventListener('click', closePromise);
 
-  /* --- Memory stars ------------------------------------------------------ */
+  /* --- Promise stars ----------------------------------------------------- */
 
-  for (const memory of memories) {
+  promises.forEach((promise, i) => {
     const star = document.createElement('button');
     star.type = 'button';
-    star.className = 'sky__memory';
-    star.style.left = `${memory.at[0]}%`;
-    star.style.top = `${memory.at[1]}%`;
+    star.className = 'sky__promise';
+    star.style.left = `${promise.at[0]}%`;
+    star.style.top = `${promise.at[1]}%`;
     star.setAttribute('aria-expanded', 'false');
-    star.setAttribute('aria-label', memory.line ? `Memory: ${memory.line}` : 'A memory');
+    /* Not the promise itself: opening it is the whole gesture, and reading six
+       of them off the star labels would spend the section before she starts. */
+    star.setAttribute('aria-label', `A promise, ${i + 1} of ${promises.length}. Open it.`);
     star.addEventListener('click', () => {
-      if (openStar === star) closeMemory();
-      else openMemory(memory, star);
+      if (openStar === star) closePromise();
+      else openPromise(promise, star);
     });
     field.append(star);
-  }
+  });
 
   body.append(field);
 
   /* The card belongs to the section, not the star field, so it can fill the
-     screen. Inside the field it was confined to the poem band and a photograph
-     had a third of a screen to live in. The CSS adds back the padding that
-     keeps it clear of the moon meter. */
+     screen and sit above the chrome. Inside the field it was confined to the
+     poem band. */
   section.append(card);
 
   function onKey(e) {
-    if (e.key === 'Escape' && openStar) closeMemory();
+    if (e.key === 'Escape' && openStar) closePromise();
   }
   window.addEventListener('keydown', onKey);
 
@@ -181,7 +171,7 @@ export default function create({ section, body, data, solved: preSolved = false,
   return {
     destroy() {
       io.disconnect();
-      /* The keydown listener stays: Escape has to keep closing memory cards
+      /* The keydown listener stays: Escape has to keep closing promise cards
          after the section is marked solved, which happens the moment she
          arrives. */
     },

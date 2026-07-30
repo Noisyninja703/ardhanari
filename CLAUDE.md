@@ -27,11 +27,11 @@ layout and gesture traps, and they are all written down there.
 ## Current state
 
 **All seven sections are built.** The poem is walkable end to end. What's left
-is content and the letters' write-back half, not structure.
+is words, not structure.
 
-The first five are reviewed and Sivan is happy with them. Nakshatra runs on
-`[PLACEHOLDER]` photos and captions, and Purnima on placeholder letters, so both
-need content rather than code.
+The first five are reviewed and Sivan is happy with them. Nakshatra and Purnima
+run on placeholder writing (six promises and five letters), so what they need is
+words rather than code. The only image the site wants is `assets/img/ash.webp`.
 
 **Settled: the letters are pre-written only.** No database, no sync, no
 composer, and she does not write back through the site. Don't reintroduce it.
@@ -47,7 +47,7 @@ quietly has nothing to find.
 | ◐ Ardhanarishvara | One Body, Divided | Drag the two torn halves together | Done |
 | ◑ Tapasya | She Did the Waiting | Tend a flame to keep the verse writing itself | Done, awaiting review |
 | ◒ Trinetra | The Third Eye | Drag glass over hidden text | Done, awaiting review |
-| ◓ Nakshatra | The Sky We Made | Tap photo-stars in a constellation | Built, needs photos |
+| ◓ Nakshatra | The Stars I Follow to You | Tap stars to open promises | Built, needs his promises |
 | ○ Purnima | Everything I Wrote Down | Drift and open folded letters | Built, needs letters |
 
 Nothing is pushed. The repo is private on purpose — Pages needs it public, and
@@ -125,8 +125,8 @@ localStorage.removeItem('ardh:unlocked'); location.reload();
 
 The layout is built with `[PLACEHOLDER]` copy in `js/content.js`. The writing
 is currently mine and it's about Shiva, not about Maniksha. The full list is
-at the bottom of [docs/PLAN.md](docs/PLAN.md) — photos, dates, inside jokes,
-and anything he's already written to her. **Ask for these.** They matter more
+at the bottom of [docs/PLAN.md](docs/PLAN.md) — the six promises, the letters,
+dates, inside jokes, and anything he's already written to her. **Ask for these.** They matter more
 than any remaining feature.
 
 ## Working with Sivan

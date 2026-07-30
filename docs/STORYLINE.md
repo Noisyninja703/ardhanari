@@ -143,23 +143,42 @@ rather than in pure CSS.
 most personal writing on the site, because it's the part she has to go looking
 for.
 
-### ◓ Nakshatra — "The Sky We Made" · built, needs photos
+### ◓ Nakshatra — "The Stars I Follow to You" · built
 
 The breather. **Nothing to solve**, because five gated sections in a row would
 be a chore rather than a gift. It opens the moment she arrives.
 
-A slow field of ambient stars, and six brighter ones that are photographs, wired
-together by a faint asterism. Tapping a star opens a card with the photo and one
-line. **No verse in this section on purpose:** the memories are the writing.
+A slow field of ambient stars, and six brighter ones wired together by a faint
+asterism. **Each of those six is a promise.** Tapping one opens it full screen,
+alone, with nothing else on the page.
 
-Only the ambient stars drift. The memory stars stay put, because she has to be
+Not memories, and not photographs. The promises are measured against what
+Shiva's devotion actually consists of rather than what it looks like from
+outside: staying through the ash years, waiting without making the waiting a
+debt, guarding her without owning her, carrying her whatever happens.
+
+Two of them deliberately answer earlier sections, so by the time she reaches
+this sky she has already read the myth they come from:
+
+> That if the worst ever comes, I will carry you the way he carried her. Not as
+> grief. As clothing.
+
+answers Bhasma, and
+
+> That your name sits beside mine in everything. Never after it.
+
+answers Ardhanarishvara. That's the payoff of putting this section sixth: the
+promises only land because the myth has already done the work.
+
+The star labels deliberately say only "A promise, 3 of 6", never the text.
+Opening one is the whole gesture, and six promises readable off the labels would
+spend the section before she starts.
+
+Only the ambient stars drift. The promise stars stay put, because she has to be
 able to aim at them, and a moving target is a worse gift.
 
-**Blocked on Sivan.** The six memories in `content.js` are `[PLACEHOLDER]`
-captions pointing at `assets/img/nakshatra/1.webp` through `6.webp`. A missing
-file is handled, so the section works today and gets its meaning later. The
-constellation currently reads as a rising line; if a shape drawn from her name
-or a date is wanted, it's six pairs of coordinates in the `memories` array.
+**These are Sivan's to rewrite.** They should sound like him, and a promise he
+would not actually keep has no business being up there.
 
 ### ○ Purnima — "Everything I Wrote Down" · built
 

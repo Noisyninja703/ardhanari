@@ -164,33 +164,57 @@ export const SECTIONS = [
     tithi: 'Nakshatra',
     devanagari: 'नक्षत्र',
     puzzle: 'constellation',
-    heading: 'The Sky We\'ll Make',
+    heading: 'The Stars I Follow to You',
 
     /* No verse here on purpose. This section is the breather: five gated
        sections in a row would be a chore, so the reward is that there's nothing
-       to solve. The memories below carry the words. */
+       to solve. The promises below carry the words. */
     verses: [],
 
-    /* Each memory is a star. Tapping one opens it.
+    /* Each star is a promise. Tapping one opens it.
+
+       Measured against what Shiva's devotion actually consists of rather than
+       what it looks like from outside: staying through the ash years, waiting
+       without making the waiting a debt, guarding her without owning her, and
+       carrying her whatever happens. Two of them deliberately answer earlier
+       sections, so by the time she reaches this sky she has already read the
+       myth they come from.
 
        `at` is [x%, y%] within the field, and the order below is the order the
        constellation lines are drawn in, so it reads as one shape rather than
-       scattered dots. A missing photo file is fine: the star and its line still
-       work, exactly like the ash section's photo.
+       scattered dots. Six is the number the shape is drawn for.
 
-       [PLACEHOLDER] Waiting on Sivan: real photos, and one line each about what
-       was actually happening. Six is the number the shape is drawn for. */
-    memories: [
-      { at: [18, 74], src: 'assets/img/nakshatra/1.webp', alt: '[DESCRIBE THIS PHOTO]', line: '[THE NIGHT WE MET]' },
-      { at: [33, 46], src: 'assets/img/nakshatra/2.webp', alt: '[DESCRIBE THIS PHOTO]', line: '[A DATE THAT MATTERS]' },
-      { at: [49, 60], src: 'assets/img/nakshatra/3.webp', alt: '[DESCRIBE THIS PHOTO]', line: '[SOMETHING ONLY YOU TWO KNOW]' },
-      { at: [64, 31], src: 'assets/img/nakshatra/4.webp', alt: '[DESCRIBE THIS PHOTO]', line: '[A PLACE YOU BOTH LOVE]' },
-      { at: [79, 48], src: 'assets/img/nakshatra/5.webp', alt: '[DESCRIBE THIS PHOTO]', line: '[AN ORDINARY DAY YOU REMEMBER]' },
-      { at: [89, 19], src: 'assets/img/nakshatra/6.webp', alt: '[DESCRIBE THIS PHOTO]', line: '[WHERE YOU ARE NOW]' },
+       These are Sivan's to rewrite. They should sound like him, and a promise
+       he would not actually keep has no business being up there. */
+    promises: [
+      {
+        at: [18, 74],
+        text: 'That I will not need you at your best to stay. Ash or moonlight, it is the same to me.',
+      },
+      {
+        at: [33, 46],
+        text: 'That when you need time, I will wait, and never once hand you the bill for it.',
+      },
+      {
+        at: [49, 60],
+        text: 'That I will stand between you and whatever is coming, and never between you and what you want.',
+      },
+      {
+        at: [64, 31],
+        text: 'That I will keep looking at you properly, and say what I see, even when silence would be easier.',
+      },
+      {
+        at: [79, 48],
+        text: 'That your name sits beside mine in everything. Never after it.',
+      },
+      {
+        at: [89, 19],
+        text: 'That if the worst ever comes, I will carry you the way he carried her. Not as grief. As clothing.',
+      },
     ],
 
     hint: 'Touch a star.',
-    lensSecret: 'None of these were the beginning. I only noticed them later.',
+    lensSecret: 'I did not choose these because they were the easy ones to promise.',
   },
 
   {
