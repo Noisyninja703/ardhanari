@@ -37,6 +37,24 @@ after the puzzle was solved and `touch-action` was back to `auto`. Measured:
 0px of movement over the panel versus 844px over the heading, same gesture.
 Never put it on anything that isn't the scroller.
 
+**Pinch zoom broke the entire site, and blocking zoom is not the fix.** Sections
+are exactly one screen, scrolling is locked, and travel is programmatic. Zoom in
+and the visual viewport becomes a small window onto a layout that has not changed
+size, so with the scroller locked there is no way to reach the rest of it. A
+reload does not help, because the browser remembers the scale: the only escape was
+pinching back to almost exactly 1. `user-scalable=no` would have hidden it, but
+enlarging text is an accessibility requirement and iOS has ignored that attribute
+for years precisely because sites kept doing this. Instead `main.js` watches
+`visualViewport.scale` and adds `is-zoomed` past 1.05, which lifts the scroll lock
+and turns snapping off so she can pan freely; coming back to 1 restores both and
+squares her up on a whole section. Verified with `Emulation.setPageScaleFactor`.
+
+**Double-tap-to-zoom is not something she ever meant.** Tapping a letter or a
+star twice quickly is open-then-close, not a request to magnify. Every tappable
+control takes `touch-action: manipulation`, which keeps panning and pinch zoom and
+drops only the double-tap gesture. Drag surfaces already set `none`, which covers
+them.
+
 **A sideways drag triggers Chrome's swipe-to-go-back.** A horizontal wipe
 starting near the screen edge navigated clean off the page mid-puzzle. Guarded
 by `overscroll-behavior: none` on `html`, which is the *only* reason that

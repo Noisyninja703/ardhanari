@@ -26,8 +26,17 @@ html {
      The document is still the scroller and is still scrolled programmatically:
      nothing is transformed, nothing is faked, it simply isn't user-scrollable.
      The class is added by JS so the page is still readable and scrollable if
-     the script never runs. */
-  &.is-paged { overflow: hidden; }
+     the script never runs.
+
+     The lock lifts while she is zoomed in. A zoomed visual viewport is a small
+     window onto a layout that has not changed size, and with the scroller locked
+     there is no way to reach the rest of it: that is what made pinching feel like
+     it had broken the whole site. main.js adds is-zoomed, and paging steps aside
+     until she comes back to normal. */
+  &.is-paged:not(.is-zoomed) { overflow: hidden; }
+
+  /* Snapping fights panning, so it stands down while zoomed too. */
+  &.is-zoomed { scroll-snap-type: none; }
 
   /* Must be on the ROOT element, not body: overscroll-behavior only
      propagates to the viewport from the root, so setting it on body did
@@ -76,6 +85,22 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   user-select: none;
   -webkit-touch-callout: none;
   -webkit-tap-highlight-color: transparent;
+}
+
+/* Everything she taps. `manipulation` keeps panning and pinch zoom, which she is
+   welcome to, and drops double-tap-to-zoom, which she never meant: tapping a
+   letter or a star twice in quick succession is how you open one and then close
+   it, not a request to magnify the page. The surfaces above already set
+   touch-action: none, which covers them. */
+.section-nav__step,
+.moon-meter__dot,
+.lens-toggle,
+.skip,
+.reset,
+.letter-card__close,
+.promise-card__close,
+.sky__promise {
+  touch-action: manipulation;
 }
 
 /* --- Type roles ---------------------------------------------------------- */
