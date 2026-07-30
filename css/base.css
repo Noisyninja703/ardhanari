@@ -58,6 +58,26 @@ h1, h2, h3, p, figure, blockquote { margin: 0; }
 img, video, canvas, svg { display: block; max-width: 100%; }
 button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
 
+/* --- Things she holds ----------------------------------------------------
+   Every surface that gets pressed, held or dragged. A long press on any of
+   these otherwise raises the text selection callout and the magnifier on a
+   phone, which is exactly what happens while tending the flame: hold it long
+   enough to write the verse and the selection UI appears over the top of it.
+   None of these contain text she would ever want to select. */
+.spark,
+.flame,
+.wipe,
+.halves,
+.halves__panel,
+.lens,
+.letter,
+.sky__memory {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
 /* --- Type roles ---------------------------------------------------------- */
 
 .t-hero {

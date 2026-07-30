@@ -164,7 +164,7 @@ export const SECTIONS = [
     tithi: 'Nakshatra',
     devanagari: 'नक्षत्र',
     puzzle: 'constellation',
-    heading: 'The Sky We Made',
+    heading: 'The Sky We\'ll Make',
 
     /* No verse here on purpose. This section is the breather: five gated
        sections in a row would be a chore, so the reward is that there's nothing

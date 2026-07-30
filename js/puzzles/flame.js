@@ -103,6 +103,12 @@ export default function create({ section, body, data, solved: preSolved = false,
   /* --- Typing ------------------------------------------------------------ */
 
   function writeChars(n) {
+    /* The hint has done its job the moment the first character lands, and the
+       verse grows down into the band it occupies. Marking the section rather
+       than hiding the element directly means the hint timers can't bring it
+       back if she leaves and returns mid-verse. */
+    section.classList.add('is-writing');
+
     for (let i = 0; i < n; i++) {
       const p = paragraphs[line];
       if (!p) { finish(); return; }

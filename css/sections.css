@@ -1205,6 +1205,14 @@
   transition: opacity var(--d-mid) var(--ease-soft);
 }
 .hint.is-showing { opacity: 1; animation: hint-breathe 4s var(--ease-soft) infinite alternate; }
+
+/* Once a verse starts writing itself, the hint has done its job and the verse
+   is growing down towards the band it sits in. Higher specificity than
+   .hint.is-showing on purpose, so it wins wherever the timers are up to. */
+.section.is-writing .hint {
+  opacity: 0;
+  animation: none;
+}
 @keyframes hint-breathe {
   from { opacity: 0.45; }
   to   { opacity: 1; }

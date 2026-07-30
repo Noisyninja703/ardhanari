@@ -46,6 +46,7 @@ export default function create({ section, body, solved: preSolved = false, solve
   let done = preSolved;
   let raf = null;
   let lastTs = 0;
+  let parked = false;   /* are the hidden lines' masks currently shoved off screen */
 
   /* Start over this section's poem, so it's found rather than hunted for. */
   function centreOnSection() {
@@ -71,6 +72,18 @@ export default function create({ section, body, solved: preSolved = false, solve
       if (r.bottom < -RADIUS || r.top > window.innerHeight + RADIUS) continue;
       el.style.setProperty('--mx', `${x - r.left}px`);
       el.style.setProperty('--my', `${y - r.top}px`);
+    }
+  }
+
+  /* Shove every mask back off screen. Without this, putting the glass away
+     simply stopped updating the masks, so whatever window was open at that
+     moment stayed open and the hidden line under it remained readable with no
+     lens in sight. Every one of them, not just the visible ones: a line
+     scrolled past keeps its stale position otherwise. */
+  function parkSecrets() {
+    for (const el of document.querySelectorAll('.secret')) {
+      el.style.setProperty('--mx', '-9999px');
+      el.style.setProperty('--my', '-9999px');
     }
   }
 
@@ -104,10 +117,20 @@ export default function create({ section, body, solved: preSolved = false, solve
        memory is open. The hidden lines' masks stay parked off screen, so
        nothing anywhere on the page can be read through a lens that isn't
        there. */
-    if (!arrived || root.classList.contains('lens-off') || root.classList.contains('lens-busy')) {
+    const inHand = arrived
+      && !root.classList.contains('lens-off')
+      && !root.classList.contains('lens-busy');
+
+    if (!inHand) {
+      /* Park once on the way out rather than every frame. */
+      if (!parked) {
+        parkSecrets();
+        parked = true;
+      }
       raf = requestAnimationFrame(tick);
       return;
     }
+    parked = false;
 
     writePosition();
     updateSecrets();
