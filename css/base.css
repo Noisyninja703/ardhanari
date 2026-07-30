@@ -108,6 +108,13 @@ body { touch-action: manipulation; }
   /* Two short lines rather than one long one and one orphan, which matters for
      the headings that wrap. */
   text-wrap: balance;
+  /* The sweep mask clips to this element's border box, and the box is only as
+     wide as the text's advance width. The last glyph's ink and the whole text
+     haze reach past that, so the final letter was being sliced down its right
+     edge and the glow was cut into a flat rectangle. The padding is mask room:
+     it widens the box the mask clips to without moving the text, which is
+     centred. Do not remove it thinking it is dead space. */
+  padding-inline: 0.5em;
 }
 
 .t-verse {

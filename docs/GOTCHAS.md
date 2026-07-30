@@ -63,6 +63,24 @@ the gesture was still live across most of the screen. `touch-action` intersects
 down the tree, so drag surfaces still get their `none` and the letter body still
 gets its `pan-y`.
 
+**A mask clips to the border box, which sliced the last letter off headings.**
+This one looked impossible: titles were cut at the *end of the final letter*,
+and short ones like "The Ash Years" were cut as badly as long ones, so it clearly
+was not about running out of width. The cause is that `.t-title` carries the
+sweep mask, and a mask clips to the element's border box. That box is only as
+wide as the text's advance width, while the last glyph's ink and the whole
+`text-shadow` haze reach past it, so the right side of the final letter was
+sliced and the glow was chopped into a flat-edged rectangle. `overflow` was
+`visible` the whole time, which is why nothing about the overflow chain
+explained it. Fixed with `padding-inline: 0.5em` on the heading, which widens
+the box the mask clips to without moving the text, since it is centred.
+
+Two things nearly hid this. `Range.getBoundingClientRect()` reports the
+*advance* width, not the ink extent, so it measured the overhang as exactly 0px.
+And a clipped `page.screenshot({clip})` returned a stale composited frame,
+showing the first section's heading for every section while the DOM said
+otherwise. Screenshot the element handle instead, and go and look at the image.
+
 **The heading band is 15% of the screen and two-line headings did not fit it.**
 "The Stars I Follow to You" needed 71px inside a 66px band at 320x568, so it
 overflowed upward into the phase label. A width-only `clamp()` cannot know this,
