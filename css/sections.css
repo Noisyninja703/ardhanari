@@ -1,5 +1,5 @@
 /* ==========================================================================
-   sections.css — per-section layout and the persistent chrome
+   sections.css: per-section layout and the persistent chrome
    Authored at 390px wide first. Every min-width query below is an
    enhancement, never a fix.
    ========================================================================== */
@@ -7,7 +7,7 @@
 /* --- Sealing -------------------------------------------------------------
    A section stays out of the document until the one before it is solved.
    Because the page simply ends at the frontier, she physically cannot scroll
-   past an unsolved puzzle — no scroll maths, no hijacking the wheel, and
+   past an unsolved puzzle, no scroll maths, no hijacking the wheel, and
    scrolling back up through solved sections still works normally. */
 /* Two classes deliberately: `.section--sealed` alone has the same specificity
    as `.section`, and since the shell rule below sets `display: grid` it would
@@ -19,7 +19,7 @@
    causes the classic jumping-gap bug. */
 /* Every section is exactly one screen tall and divides that screen into five
    proportional bands. Because the rows are percentages of the device's own
-   height, a segment fits on any screen without tuning — which is what the
+   height, a segment fits on any screen without tuning, which is what the
    previous content-driven layout could not guarantee.
 
            10%   tithi
@@ -41,8 +41,7 @@
      and bottom edges so this clip never shows as a seam. */
   overflow: clip;
   /* Deliberately NOT isolated. `isolation: isolate` makes each section a
-     stacking context, which traps its text at the section's own paint level —
-     the fixed exposure vignette then covers the poem instead of sitting behind
+     stacking context, which traps its text at the section's own paint level, the fixed exposure vignette then covers the poem instead of sitting behind
      it, and the whole page reads as uniformly dimmed. */
   /* One segment per screen: scrolling settles on a section rather than
      stopping halfway between two. */
@@ -57,8 +56,7 @@
   z-index: var(--z-content);
   display: grid;
   /* An explicit full-width column. Without it the single column is sized to
-     its content, and anything using width: 100% — every puzzle surface —
-     resolves against zero and collapses. */
+     its content, and anything using width: 100%, every puzzle surface, resolves against zero and collapses. */
   grid-template-columns: minmax(0, 1fr);
   place-content: center;
   justify-items: center;
@@ -77,7 +75,7 @@
 
    justify-items must be stretch, not the inherited centre: puzzles size
    themselves with width/height 100%, and against a content-sized column that
-   resolves to zero — the halves panel came out 0px wide. */
+   resolves to zero, the halves panel came out 0px wide. */
 .section__body {
   align-content: stretch;
   justify-items: stretch;
@@ -85,7 +83,7 @@
 }
 
 /* The tithi label: lunar phase glyph plus its name. This is the structural
-   device — the moon encodes the progression, so we never number sections. */
+   device, the moon encodes the progression, so we never number sections. */
 .tithi {
   display: flex;
   align-items: baseline;
@@ -142,7 +140,7 @@
    It breathes visibly from the start. The previous version was a 6px dot at
    opacity 0 with a glow too faint to see, which on a phone made the section
    look like an empty black screen with no way in. The puzzle is holding
-   still near it — not finding it in the dark. */
+   still near it, not finding it in the dark. */
 .spark {
   position: relative;
   /* The poem band stretches its children so puzzle surfaces can fill it; the
@@ -222,8 +220,7 @@
 /* The poem in the void is withheld until the spark ignites.
 
    Listed explicitly rather than as "every child except the spark": the hint
-   and the skip link are also children, and they own their own visibility —
-   the hint has to be visible *while* unsolved, and both must disappear after.
+   and the skip link are also children, and they own their own visibility, the hint has to be visible *while* unsolved, and both must disappear after.
    A blanket rule fought both of those and left them on screen afterwards.
 
    Set in CSS rather than by JS because the puzzle is a dynamic import, so a
@@ -243,7 +240,7 @@
 }
 
 /* "Keep going": appears once a section is solved, telling her the next one is
-   open. Every section gets one, not just the first — it's the reward signal
+   open. Every section gets one, not just the first, it's the reward signal
    that replaced auto-scrolling her onward. */
 .scroll-cue {
   display: grid;
@@ -285,7 +282,7 @@
 
 .bhasma { background: var(--void); }
 
-/* The wipe surface. touch-action: none is load-bearing — without it the
+/* The wipe surface. touch-action: none is load-bearing, without it the
    browser claims the gesture and scrolls the page mid-wipe, which is the
    single most common way an interaction like this dies on a phone. */
 .wipe {
@@ -302,7 +299,7 @@
      Released the moment it's solved, below.
 
      No overscroll-behavior here. On a non-scrollable element it doesn't stop
-     pull-to-refresh — it stops the scroll from *chaining* out to the page, so
+     pull-to-refresh, it stops the scroll from *chaining* out to the page, so
      a finger starting anywhere on this panel couldn't scroll at all, even
      after the puzzle was solved and touch-action was back to auto. It belongs
      on the root element, where base.css sets it. */
@@ -363,7 +360,7 @@
      browser claims it and scrolls instead of moving the panels. Released the
      moment it's solved, below, so it can never block scrolling afterwards.
 
-     No overscroll-behavior — see the note on .wipe; on a non-scrollable
+     No overscroll-behavior, see the note on .wipe; on a non-scrollable
      element it blocks scroll chaining and silently kills scrolling over the
      whole area. */
   touch-action: none;
@@ -374,7 +371,7 @@
   position: absolute;
   display: grid;
   /* align only. justify is set per side below so the fragments sit against
-     the seam and close into one readable line — place-content: center would
+     the seam and close into one readable line, place-content: center would
      centre each fragment in its own half and they'd never touch. */
   align-content: center;
   padding: var(--s-4);
@@ -509,7 +506,7 @@
   }
 }
 
-/* Only animate on release and on keyboard steps — never mid-drag, or the
+/* Only animate on release and on keyboard steps, never mid-drag, or the
    panels lag behind the finger and it feels broken. */
 .halves.is-settling .halves__panel { transition: transform var(--d-mid) var(--ease-out); }
 
@@ -1304,7 +1301,7 @@
 
 /* --- Moon meter ----------------------------------------------------------
    Fixed chrome. Waxes as she unlocks sections and doubles as the nav.
-   44px minimum hit target on every dot — non-negotiable on touch. */
+   44px minimum hit target on every dot, non-negotiable on touch. */
 /* --- The bottom chrome ---------------------------------------------------
    One fixed strip holding the travel arrows and the moons, so a single reserve
    (--chrome-h) keeps every section's content clear of both. */

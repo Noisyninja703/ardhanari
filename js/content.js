@@ -1,9 +1,9 @@
 /* ==========================================================================
-   content.js — every word on the site lives here.
+   content.js: every word on the site lives here.
    Edit this file to change the writing. You never need to touch layout
    or puzzle code to rewrite a verse.
 
-   Anything wrapped in [BRACKETS] is a placeholder waiting on Sivan.
+   Anything wrapped in [BRACKETS] is a placeholder I still need to fill in.
    ========================================================================== */
 
 /* Fill these in and they propagate everywhere. */
@@ -13,7 +13,7 @@ export const HER = {
   petName: 'Meri jaan',
 };
 
-/* Prefer the pet name where there is one — it's warmer than the formal one. */
+/* Prefer the pet name where there is one, it's warmer than the formal one. */
 export const CALL_HER = HER.petName || HER.name;
 
 /* Who signed a letter. Keys match the `author` field in data/letters.json, so
@@ -36,10 +36,10 @@ export const SITE = {
    Order here is the order on the page. `id` is the DOM id and the
    localStorage key for unlock state, so don't rename one without the other.
 
-   phase   — the moon glyph shown in the tithi label and the moon meter
-   tithi   — the Sanskrit name of the phase, transliterated
-   devanagari — decorative, rendered aria-hidden as background texture
-   puzzle  — module name in js/puzzles/, or null for a section with no gate
+   phase, the moon glyph shown in the tithi label and the moon meter
+   tithi, the Sanskrit name of the phase, transliterated
+   devanagari, decorative, rendered aria-hidden as background texture
+   puzzle, module name in js/puzzles/, or null for a section with no gate
    ------------------------------------------------------------------------ */
 
 export const SECTIONS = [
@@ -188,8 +188,8 @@ export const SECTIONS = [
        unwritten "I promise that". Nothing on screen completes that stem, so the
        lines have to stand up on their own.
 
-       These are Sivan's to rewrite. They should sound like him, and a promise
-       he would not actually keep has no business being up there. */
+       I still want to rewrite these in my own words. They have to sound like me,
+       and a promise I would not actually keep has no business being up there. */
     promises: [
       {
         at: [18, 74],

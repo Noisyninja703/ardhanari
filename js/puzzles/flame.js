@@ -1,5 +1,5 @@
 /* ==========================================================================
-   puzzles/flame.js — Tapasya
+   puzzles/flame.js: Tapasya
 
    One small flame. The verse types itself only while she keeps a pointer or a
    finger near it; drift away and the flame dims and the words stop. The
@@ -190,8 +190,8 @@ export default function create({ section, body, data, solved: preSolved = false,
     if (done || e.pointerType !== 'touch') return;
     /* Touch has to land on the flame itself, not merely near it. The flame is
        the only element here with touch-action: none, so a touch anywhere else
-       is a scroll waiting to happen — lighting it from 200px away just meant
-       the flame flared and then died as the page moved under her. */
+       is a scroll waiting to happen. Lighting it from 200px away just meant the
+       flame flared and then died as the page moved under her. */
     if (flame.contains(e.target)) setWarm(true);
   }
 

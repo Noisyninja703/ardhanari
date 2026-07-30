@@ -1,5 +1,5 @@
 /* ==========================================================================
-   tokens.css — the single source of truth
+   tokens.css: the single source of truth
    Nothing in this file does layout. If you want to change how the site
    feels, change it here and nowhere else.
    ========================================================================== */
@@ -30,7 +30,7 @@
   --font-util:    'Jost', system-ui, -apple-system, sans-serif;
 
   /* One fluid scale, authored at 390px and opening up to 1440px.
-     Mobile and desktop share the ratio — no separate mobile scale. */
+     Mobile and desktop share the ratio, no separate mobile scale. */
   --t-hero:  clamp(2.75rem, 1.6rem + 6.2vw, 6.5rem);
   --t-title: clamp(1.9rem,  1.3rem + 3.2vw, 3.6rem);
   --t-verse: clamp(1.125rem, 1.02rem + 0.55vw, 1.5rem);

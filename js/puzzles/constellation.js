@@ -1,5 +1,5 @@
 /* ==========================================================================
-   puzzles/constellation.js — Nakshatra
+   puzzles/constellation.js: Nakshatra
 
    The breather. There is nothing to solve here: five gated sections in a row
    would be a chore rather than a gift, so this one just opens. It still lives

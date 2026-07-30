@@ -1,5 +1,5 @@
 /* ==========================================================================
-   main.js — builds the page from content.js, owns unlock state, and hands
+   main.js: builds the page from content.js, owns unlock state, and hands
    each section to its puzzle module.
 
    main.js knows nothing about how any individual puzzle works. Every puzzle
@@ -11,7 +11,7 @@
        }
 
    It calls solve() when the gate is passed. That's the whole interface.
-   If a puzzle throws, we catch it and unlock the section instead — a bug
+   If a puzzle throws, we catch it and unlock the section instead, a bug
    in one interaction must never cost her a verse.
    ========================================================================== */
 
@@ -22,7 +22,7 @@ import { initParticles, setPreset } from './particles.js';
 const STORE_KEY = 'ardh:unlocked';
 
 /* Timers start when the section fills most of the screen, not when a sliver
-   of it appears — so 3s means 3s of actually looking at it. */
+   of it appears, so 3s means 3s of actually looking at it. */
 const HINT_DELAY = 3000;
 const SKIP_DELAY = 15000;
 
@@ -96,8 +96,7 @@ function buildSection(data, index) {
   section.dataset.puzzle = data.puzzle || '';
   section.setAttribute('aria-labelledby', `${data.id}-heading`);
 
-  /* Two mist layers at different parallax speeds. The void gets none —
-     absolute black is the whole point of that section. */
+  /* Two mist layers at different parallax speeds. The void gets none, absolute black is the whole point of that section. */
   if (data.id !== 'amavasya') {
     const cool = el('div', 'mist mist--cool');
     const warm = el('div', 'mist mist--warm');
@@ -117,7 +116,7 @@ function buildSection(data, index) {
   const footer = el('div', 'section__row section__footer');
 
   /* Tithi label: the moon glyph plus the phase name. This is the structural
-     device — the moon carries the progression, so nothing is numbered. It and
+     device, the moon carries the progression, so nothing is numbered. It and
      the heading sweep in once she's a little way into the section. */
   const tithi = el('div', 'tithi sweep');
   tithi.style.setProperty('--i', '0');
@@ -146,7 +145,7 @@ function buildSection(data, index) {
     body.append(verses);
   }
 
-  /* Hint, skip and the onward cue all share the prompt band — none of them is
+  /* Hint, skip and the onward cue all share the prompt band, none of them is
      ever wanted at the same moment as another. */
   if (data.puzzle) {
     const hint = el('p', 'hint t-util', data.hint || '');
@@ -156,7 +155,7 @@ function buildSection(data, index) {
 
     /* A section with no skipLabel has nothing to be stuck on, so it gets no way
        past and its hint is standing guidance rather than a nudge: it appears on
-       arrival and stays. Nakshatra is the case — nothing to solve, but she does
+       arrival and stays. Nakshatra is the case, nothing to solve, but she does
        need telling that the stars can be touched. */
     if (data.skipLabel) {
       const skip = el('button', 'skip t-util', data.skipLabel);
@@ -204,7 +203,7 @@ function buildSection(data, index) {
   }
 
   /* Devanagari footer. Sweeps in when the section reaches full view, so it
-     doubles as the signal that she's arrived — it sits at the very bottom of
+     doubles as the signal that she's arrived, it sits at the very bottom of
      the section, so seeing it means the section fills the screen.
      aria-hidden: a screen reader should not try to pronounce ornament. */
   if (data.devanagari) {
@@ -256,8 +255,8 @@ async function mountPuzzle(section) {
   mounted.add(section);
 
   /* Already solved on a previous visit, or she's asked for less motion.
-     The puzzle still mounts — it owns visuals like the ash-section photo
-     that she should see either way — but with `solved: true` it skips the
+     The puzzle still mounts, it owns visuals like the ash-section photo
+     that she should see either way, but with `solved: true` it skips the
      gate and shows everything immediately. */
   const preSolved = unlocked.has(section.id) || prefersReducedMotion();
   if (preSolved) markSolved(section, { silent: true });
@@ -585,7 +584,7 @@ function observeReveals(root) {
 }
 
 /* Headings and tithi labels sweep in once she's a little way into the
-   section — past them, but before the bottom of it. The negative bottom
+   section, past them, but before the bottom of it. The negative bottom
    margin is what delays it until they've scrolled up the screen a bit. */
 function observeSweeps(root) {
   const io = new IntersectionObserver(
@@ -704,8 +703,7 @@ function boot() {
     else mountIO.observe(section);
   });
 
-  /* The seam is invisible in the void and appears once she's through it —
-     one being, before division. */
+  /* The seam is invisible in the void and appears once she's through it, one being, before division. */
   /* The page's seam does not exist until she rejoins the halves. It's the
      thing she made, not scenery that was always there, so it's born at that
      moment: it flares at the centre, grows out to full height, and stays gold
@@ -717,7 +715,7 @@ function boot() {
     seam.style.setProperty('--seam-strength', '1');
     seam.classList.add('is-joined');
     /* Skip the birth animation when it was already earned on a previous
-       visit — she shouldn't watch it hatch again on every reload. */
+       visit, she shouldn't watch it hatch again on every reload. */
     if (animate) seam.classList.add('is-born');
   }
 

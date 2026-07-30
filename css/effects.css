@@ -1,5 +1,5 @@
 /* ==========================================================================
-   effects.css — the atmosphere: grain, seam, glass, mist, glow
+   effects.css: the atmosphere. Grain, seam, glass, mist, glow
    ========================================================================== */
 
 /* --- Particles -----------------------------------------------------------
@@ -96,7 +96,7 @@
   100% { opacity: 0;    transform: scale(2.6); }
 }
 
-/* The two tinted halves. Deliberately weak — they colour the air, they are
+/* The two tinted halves. Deliberately weak, they colour the air, they are
    not blocks of paint. */
 .seam::before,
 .seam::after {
@@ -206,7 +206,7 @@
   will-change: transform, opacity;
 
   /* The sections clip their overflow, which used to cut the mist off dead at
-     each boundary and leave a visible horizontal band — that was the harsh
+     each boundary and leave a visible horizontal band, that was the harsh
      seam between segments. Fading the mist out well before the edge means
      adjacent sections blend into each other instead. */
   --mist-fade: linear-gradient(
@@ -337,7 +337,7 @@
    needing @property support.
 
    The mask is 300% wide and travels from one end to the other, so the final
-   state is the fully opaque third — text ends at full opacity everywhere and
+   state is the fully opaque third, text ends at full opacity everywhere and
    stays completely legible. The previous version finished mid-gradient, which
    left part of every line permanently dimmed and hard to read. */
 .sweep {

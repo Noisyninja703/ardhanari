@@ -1,5 +1,5 @@
 /* ==========================================================================
-   puzzles/halves.js — Ardhanarishvara
+   puzzles/halves.js: Ardhanarishvara
 
    The viewport's centre is torn open. Two panels hold two fragments of one
    verse, pulled apart, unreadable alone. She drags them back together; they
@@ -7,7 +7,7 @@
    completes as a single line.
 
    Dragging either half moves BOTH, mirrored. You cannot bring one half back
-   without the other, which is the entire point of the form — and it halves
+   without the other, which is the entire point of the form, and it halves
    the work.
 
    The split is vertical and the drag is horizontal, at every width. The seam

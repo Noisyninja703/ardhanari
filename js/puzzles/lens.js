@@ -1,5 +1,5 @@
 /* ==========================================================================
-   puzzles/lens.js — Trinetra
+   puzzles/lens.js: Trinetra
 
    A piece of glass she drags around the screen. Lines that are invisible to
    the naked eye are readable through it, and once she's earned it the lens

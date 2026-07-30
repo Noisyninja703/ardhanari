@@ -5,7 +5,7 @@
     python serve.py 3000       # any other port
 
 Prints both a localhost URL and a LAN URL. Open the LAN one on your phone
-(same wifi) to test touch properly — the puzzles behave differently with a
+(same wifi) to test touch properly, the puzzles behave differently with a
 finger than with a cursor, so this is not optional.
 
 Why not just `python -m http.server`? Two reasons:
@@ -32,7 +32,7 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 DEFAULT_PORT = 8000
 
 # Pin the types that matter. On Windows these are read from the registry and
-# are wrong often enough to waste an afternoon — a module served as
+# are wrong often enough to waste an afternoon, a module served as
 # text/plain is rejected outright by the browser.
 mimetypes.add_type("text/javascript", ".js")
 mimetypes.add_type("text/javascript", ".mjs")
@@ -49,7 +49,7 @@ def lan_ip():
     """This machine's address on the local network.
 
     Opens a UDP socket toward a public address and asks the OS which local
-    interface it would use. Nothing is actually sent — it's just the
+    interface it would use. Nothing is actually sent, it's just the
     cleanest way to find the right interface when a machine has several
     (wifi, ethernet, VPN, WSL, Docker all show up otherwise).
     """

@@ -1,5 +1,5 @@
 /* ==========================================================================
-   puzzles/spark.js — Amavasya
+   puzzles/spark.js: Amavasya
 
    The section looks empty. Moving the pointer reveals a faint glow that
    follows it; hold still near the spark and it ignites, blooming into the
@@ -20,7 +20,7 @@ export default function create({ section, body, solved = false, solve }) {
      revealed by .is-solved, so there's nothing to hide here. */
 
   /* The spark is a button so it's focusable and announced. It goes in the poem
-     band, which is where the light belongs — the section's own rows are fixed
+     band, which is where the light belongs, the section's own rows are fixed
      proportions of the screen and must not gain extra children. */
   const spark = document.createElement('button');
   spark.type = 'button';
@@ -82,8 +82,7 @@ export default function create({ section, body, solved = false, solve }) {
     const near = distance < NEAR_PX;
     spark.classList.toggle('is-near', near);
 
-    /* Any real movement restarts the clock. Small jitter is forgiven —
-       nobody can hold a trackpad perfectly still. */
+    /* Any real movement restarts the clock. Small jitter is forgiven, nobody can hold a trackpad perfectly still. */
     if (moved > JITTER_PX) cancelHold();
     if (near) beginHold();
     else cancelHold();
@@ -117,7 +116,7 @@ export default function create({ section, body, solved = false, solve }) {
   }
 
   /* A direct click or Enter/Space lights it immediately. If she's found the
-     one thing on a black screen, she's solved it — don't make her wait. */
+     one thing on a black screen, she's solved it, don't make her wait. */
   spark.addEventListener('click', ignite);
   spark.addEventListener('focus', onFocus);
   spark.addEventListener('blur', onBlur);
@@ -127,7 +126,7 @@ export default function create({ section, body, solved = false, solve }) {
   window.addEventListener('pointerup', onPointerUp, { passive: true });
   window.addEventListener('pointercancel', onPointerUp, { passive: true });
 
-  /* On touch, tell her what to do — there's no cursor to discover with. */
+  /* On touch, tell her what to do, there's no cursor to discover with. */
   if (isTouch) {
     spark.classList.add('is-near');
   }

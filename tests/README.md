@@ -1,7 +1,7 @@
 # tests
 
 Browser-driven checks. They drive a real Chrome, actually solve the puzzles,
-and assert on measured geometry and canvas pixels — not on the DOM alone.
+and assert on measured geometry and canvas pixels, not on the DOM alone.
 **This matters:** several bugs in this project shipped green because a test
 asserted a class was applied while the thing it controlled was visually dead.
 Where a check can measure pixels or rectangles instead of classes, it does.
@@ -27,8 +27,8 @@ dev-only tool that deliberately lives outside that promise, which is why
 
 Overrides:
 
-- `SITE_URL` — full URL if you're serving on another port
-- `CHROME_PATH` — Chrome binary if it isn't at the default Windows location
+- `SITE_URL`, full URL if you're serving on another port
+- `CHROME_PATH`. Chrome binary if it isn't at the default Windows location
 
 ## The suites
 
@@ -39,7 +39,7 @@ Overrides:
 | `atmosphere.mjs` | 10 | Exposure ramps 0 → ⅓ → ⅔ → 1, stacking order, particles visible at both zero and full exposure. |
 | `crossfade.mjs` | 4 | Samples canvas lit-pixel count every 50ms across a section change; fails if the field ever blinks out. |
 | `ashgestures.mjs` | 7 | The ash panel owns gestures while unsolved (diagonal wipe works, no scrolling) and releases them once solved. |
-| `land.mjs` | — | Prints landscape geometry at 844×390. Landscape isn't a supported layout; this only proves it degrades rather than breaks. |
+| `land.mjs` |, | Prints landscape geometry at 844×390. Landscape isn't a supported layout; this only proves it degrades rather than breaks. |
 
 91 assertions total. All passing as of the last commit.
 
@@ -56,5 +56,5 @@ Two habits worth keeping:
 Known quirk: with `isMobile`/`hasTouch` emulation, puppeteer's synthetic touch
 coordinates don't always land where the CSS rect says they should. If a drag
 test fails, check `document.elementFromPoint` and what the event target
-actually was before assuming the product is broken — but treat a gap that a
+actually was before assuming the product is broken, but treat a gap that a
 real finger could miss as a real bug, because one of them was.

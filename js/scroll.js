@@ -1,5 +1,5 @@
 /* ==========================================================================
-   scroll.js — one RAF loop drives every parallax transform on the page.
+   scroll.js: one RAF loop drives every parallax transform on the page.
 
    The mistake this file exists to prevent: seven sections each attaching
    their own scroll listener and each writing transforms. That thrashes
@@ -57,7 +57,7 @@ function render() {
   for (const layer of layers) {
     const rect = layer.section.getBoundingClientRect();
 
-    /* Skip anything comfortably offscreen — no point writing transforms
+    /* Skip anything comfortably offscreen, no point writing transforms
        to elements nobody can see. */
     if (rect.bottom < -viewportH * 0.5 || rect.top > viewportH * 1.5) continue;
 

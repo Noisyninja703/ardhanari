@@ -1,5 +1,5 @@
 /* ==========================================================================
-   puzzles/letters.js — Purnima
+   puzzles/letters.js: Purnima
 
    The full moon, and the last section. Every letter drifts in the dark as a
    folded piece of paper. She can push them around, and opening one unfolds it

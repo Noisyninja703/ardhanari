@@ -11,8 +11,7 @@ Three separate bugs shipped with a full passing suite:
 
 - The ash sat **under** the verse (`z-index` on `.wipe__verse`), so the puzzle
   "worked" and there was nothing to wipe.
-- The section rendered **in the wrong order** — Devanagari above the heading —
-  because the spark took a grid row.
+- The section rendered **in the wrong order**. Devanagari above the heading, because the spark took a grid row.
 - Sealing did **nothing**, while the test asserting the class was applied
   passed happily.
 
@@ -27,7 +26,7 @@ measure mechanisms (a class exists).
 
 **`overscroll-behavior` must go on the ROOT element.** It only propagates to
 the viewport from `html`. It was on `body` for several commits, where it does
-nothing — so pull-to-refresh was never actually guarded despite a comment
+nothing, so pull-to-refresh was never actually guarded despite a comment
 claiming it was.
 
 **`overscroll-behavior` on a non-scrollable element blocks scroll chaining.**
@@ -40,7 +39,7 @@ Never put it on anything that isn't the scroller.
 
 **A sideways drag triggers Chrome's swipe-to-go-back.** A horizontal wipe
 starting near the screen edge navigated clean off the page mid-puzzle. Guarded
-by `overscroll-behavior: none` on `html` — which is the *only* reason that
+by `overscroll-behavior: none` on `html`, which is the *only* reason that
 declaration exists.
 
 **`touch-action` policy for puzzle surfaces.** `none` while unsolved so the
@@ -58,7 +57,7 @@ feels like the page fighting you. The cost of `none` is that she can't scroll
 deliberate, accepted trade.
 
 **Drag targets must be forgiving.** The halves puzzle was originally draggable
-only on its two text panels, which sit ~114px apart at rest — a touch in the
+only on its two text panels, which sit ~114px apart at rest, a touch in the
 gap between them did nothing. The whole band is the drag surface now, with the
 direction taken from which side of the middle the drag starts.
 
@@ -74,7 +73,7 @@ relying on order.
 
 **A bare `1fr` track has a min-content floor**, so tall content grows the
 container past its intended height. Use `minmax(0, 1fr)`. (This was *not*, in
-the end, the cause of the overflow it was blamed for — the content genuinely
+the end, the cause of the overflow it was blamed for, the content genuinely
 was taller than the space. Measure before concluding.)
 
 **A grid's auto column is content-sized, so `width: 100%` children collapse to
@@ -85,7 +84,7 @@ mysteriously has no width, this is why.
 
 **`place-content: center` sets `justify-content`, which beats
 `justify-items`.** It silently defeated the alignment that makes the two torn
-halves *meet* — the payoff of the signature section simply didn't exist.
+halves *meet*, the payoff of the signature section simply didn't exist.
 
 **`isolation: isolate` on a section traps its content below fixed overlays.**
 It made each section a stacking context, so the fixed exposure vignette painted
@@ -95,7 +94,7 @@ dimmed. Sections must not be isolated.
 **`overflow: clip` on `.section` is load-bearing.** The mist layers are
 deliberately oversized (`inset: -20%`); without the clip they extend the
 document sideways. They're masked to fade before the top and bottom edges so
-the clip never shows as a seam — that mask *is* the fix for the harsh
+the clip never shows as a seam, that mask *is* the fix for the harsh
 boundaries between segments.
 
 **`--column` must never be wider than the padded width.** It was `min(92vw,
@@ -128,12 +127,12 @@ on the solid third.
 
 **Cross-fade means both fields alive at once.** Fading a canvas to zero,
 swapping its contents, and fading back in leaves a visible gap with nothing on
-screen — it reads as a blink. `particles.js` keeps multiple layers with
+screen, it reads as a blink. `particles.js` keeps multiple layers with
 independent fade weights and draws them in the same frame. It caps at three
 layers, because fast scrolling would otherwise stack one field per section.
 
 **Sub-pixel particles are invisible.** 0.4–1.3px radii at alpha 0.08 produced
-about 100 lit pixels across a whole phone screen — technically drawing,
+about 100 lit pixels across a whole phone screen, technically drawing,
 practically absent. Sizes and alphas are now well clear of sub-pixel and each
 particle gets a cheap second arc as a halo. ~4000 lit pixels now.
 
@@ -161,7 +160,7 @@ them on screen after solving. List what you mean.
 ## Progress state
 
 **Solved progress persists in `localStorage`**, and so does everything derived
-from it — backdrop dimming, lit moons, the "keep going" cue. A finished run
+from it, backdrop dimming, lit moons, the "keep going" cue. A finished run
 makes the site look permanently at maximum exposure, which reads as a bug and
 isn't. Reset:
 
@@ -191,8 +190,8 @@ any test must solve puzzles **in order** or the later sections won't exist.
 **LAN testing is impossible on this machine.** Group Policy sets the private
 firewall profile to `BlockInbound` *and* reports `LocalFirewallRules: N/A
 (GPO-store only)`, so a rule allowing Python through would be ignored even with
-admin rights — and notifications are suppressed, so no prompt ever appears.
-Sivan is not an admin. Use Chrome USB port forwarding instead
+admin rights, and notifications are suppressed, so no prompt ever appears.
+I am not a local admin on it either. Use Chrome USB port forwarding instead
 (`chrome://inspect` → Port forwarding); see the README. iPhone has no
 equivalent.
 

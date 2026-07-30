@@ -1,8 +1,8 @@
 /* ==========================================================================
-   puzzles/ash.js — Bhasma, the ash years
+   puzzles/ash.js: Bhasma, the ash years
 
    The verse is buried under ash. She wipes it away with a finger or the
-   cursor. Ash creeps back at the edges so it never fully clears — the
+   cursor. Ash creeps back at the edges so it never fully clears, the
    point is not to win, it's that clearing it takes effort and it always
    returns a little.
 
@@ -16,7 +16,7 @@
      blobs and then feathered at the border, so it reads as a drift of dust
      rather than a grey rectangle.
    - touch-action is none while there's ash left (set in CSS), so the panel
-     owns the whole gesture — wiping is diagonal and scribbly, and letting the
+     owns the whole gesture, wiping is diagonal and scribbly, and letting the
      scroller take the vertical component made it feel like it was fighting
      her. It's released to auto the moment the section is solved, so the area
      never blocks scrolling afterwards.
@@ -164,7 +164,7 @@ export default function create({ body, data, solved: preSolved = false, solve })
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
     /* A resize repaints the ash, so previously cleared ground is covered
-       again. Reset progress to match what she can actually see — telling
+       again. Reset progress to match what she can actually see, telling
        her she's 90% done while showing full ash would be a lie. */
     cleared = new Array(GRID * GRID).fill(false);
     if (solved) {
@@ -176,7 +176,7 @@ export default function create({ body, data, solved: preSolved = false, solve })
   }
 
   /* The feathered border has no ash on it, so those cells must not count
-     against her — otherwise the last of the progress is spent scrubbing
+     against her, otherwise the last of the progress is spent scrubbing
      empty corners to reach the threshold. Progress should only measure ash
      that's actually there. */
   function markFeatherCleared() {
@@ -245,7 +245,7 @@ export default function create({ body, data, solved: preSolved = false, solve })
   }
 
   /* Ash used to creep back at the edges on a timer. It read as sporadic and
-     harsh — random dark patches appearing while she worked — so it's gone.
+     harsh, random dark patches appearing while she worked, so it's gone.
      What she clears stays cleared.
 
      --- Input ------------------------------------------------------------
@@ -262,7 +262,7 @@ export default function create({ body, data, solved: preSolved = false, solve })
   }
 
   function brushSize(e) {
-    /* Coarse pointers get a bigger brush — a fingertip is not a cursor. */
+    /* Coarse pointers get a bigger brush, a fingertip is not a cursor. */
     const touch = e.pointerType === 'touch';
     return touch ? BRUSH_MAX : BRUSH_MIN;
   }
@@ -299,7 +299,7 @@ export default function create({ body, data, solved: preSolved = false, solve })
     prev = null;
   }
 
-  /* Hovering with a mouse also brushes lightly — discoverable without
+  /* Hovering with a mouse also brushes lightly, discoverable without
      needing to guess that you're meant to press. */
   function onHover(e) {
     if (drawing || solved || e.pointerType === 'touch') return;

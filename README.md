@@ -1,9 +1,9 @@
 # ardhanari
 
-For Maniksha, from Sivan. 1 August.
+For Maniksha. 1 August.
 
 A scrollable celestial love letter. Seven phases of the moon, from the void to
-the full, built on **Ardhanarishvara** — Shiva and Parvati as one body split
+the full, built on **Ardhanarishvara**. Shiva and Parvati as one body split
 down the middle. Each section gates its verse behind a small interaction.
 
 Live at <https://noisyninja703.github.io/ardhanari/> once the repo is public.
@@ -44,7 +44,7 @@ It prints two URLs:
 ```
 
 `serve.py` sends no-cache headers on everything, so a hard-reload is never
-needed — which matters more than it sounds, because phone browsers cache
+needed, which matters more than it sounds, because phone browsers cache
 aggressively and you'll otherwise waste time convinced a change didn't apply.
 
 ---
@@ -65,8 +65,7 @@ Firewall Policy      BlockInbound,AllowOutbound
 LocalFirewallRules   N/A (GPO-store only)
 ```
 
-All inbound connections are blocked, and local firewall rules are disabled —
-so a rule allowing Python through would be *ignored even if created with
+All inbound connections are blocked, and local firewall rules are disabled, so a rule allowing Python through would be *ignored even if created with
 admin rights*. Notifications are suppressed too, which is why no "Allow
 Python?" prompt ever appears. There is no local fix. `serve.py` detects this
 and says so on startup.
@@ -75,7 +74,7 @@ and says so on startup.
 
 This tunnels the phone's `localhost` to this machine over the USB cable. No
 inbound connection, no firewall rule, no admin, and nothing exposed to the
-network — strictly better than the LAN approach even on an unlocked machine.
+network, strictly better than the LAN approach even on an unlocked machine.
 
 1. On the phone: Settings → About phone → tap *Build number* seven times to
    enable Developer options. Then Developer options → **USB debugging** on.
@@ -93,12 +92,12 @@ That `localhost` is the phone's own localhost, forwarded down the cable. It
 only works while Chrome is open on the laptop and the cable is connected.
 
 Bonus: the phone's page appears under `chrome://inspect` with an **inspect**
-link, giving you real DevTools — console, elements, the works — against the
+link, giving you real DevTools, console, elements, the works, against the
 actual phone. Better than anything the LAN approach offers.
 
 ### On an iPhone
 
-There's no equivalent — Safari's Web Inspector debugs a page but can't forward
+There's no equivalent. Safari's Web Inspector debugs a page but can't forward
 ports. Options, roughly best first:
 
 - Serve from a personal (non-work) machine on your home wifi. `serve.py` works
@@ -114,9 +113,9 @@ ports. Options, roughly best first:
 Solved puzzles are remembered, which also means the backdrop dimming
 (`--exposure`) and the lit moons start where you left them. If the site looks
 darker than you expect, or the "keep going" cue is already showing, you're
-seeing a finished run — reset and reload.
+seeing a finished run, reset and reload.
 
-**Reset your progress** (solved puzzles are remembered) — in the browser console:
+**Reset your progress** (solved puzzles are remembered), in the browser console:
 
 ```js
 localStorage.removeItem('ardh:unlocked'); location.reload();
@@ -127,11 +126,11 @@ localStorage.removeItem('ardh:unlocked'); location.reload();
 ## Deploy to GitHub Pages
 
 Pages serves static files straight from the repo. There's no build step and no
-Action needed for the site itself — what's in the repo is what gets served.
+Action needed for the site itself, what's in the repo is what gets served.
 
 **The repo has to be public** for Pages to work on a free account, and once
 it's public the site is on the open internet. That's why it stays private
-until it's finished — test locally with `serve.py` until then. `noindex` is
+until it's finished, test locally with `serve.py` until then. `noindex` is
 set in `index.html` so search engines won't list it, but that's politeness,
 not privacy: anyone with the URL can open it. Don't put anything in here you
 wouldn't want a stranger reading.
@@ -144,13 +143,13 @@ wouldn't want a stranger reading.
    `https://noisyninja703.github.io/ardhanari/`.
 
 Every push to `main` republishes automatically. If a change doesn't show up,
-it's almost always browser cache — hard-reload with `Ctrl+Shift+R`.
+it's almost always browser cache, hard-reload with `Ctrl+Shift+R`.
 
 ### Test on the live URL, not just locally
 
 Paths behave differently once the site is served from a subfolder
 (`/ardhanari/`). All paths here are **relative** (`css/tokens.css`, not
-`/css/tokens.css`) precisely so this works — if you ever add a leading slash,
+`/css/tokens.css`) precisely so this works, if you ever add a leading slash,
 it will work locally and break on Pages.
 
 ---
@@ -176,7 +175,7 @@ js/
 
 ### To change the writing
 
-Edit `js/content.js`. Nothing else. Verses are data — layout reads them.
+Edit `js/content.js`. Nothing else. Verses are data, layout reads them.
 
 ### To add a photo to the ash section
 
@@ -198,7 +197,7 @@ export default function create({ section, data, solved, solve }) {
 ```
 
 `main.js` knows nothing about how any puzzle works. If one throws, it's caught
-and the section unlocks instead — a bug in an interaction must never cost a
+and the section unlocks instead, a bug in an interaction must never cost a
 verse.
 
 ---
@@ -215,7 +214,7 @@ width via `--column` in `css/tokens.css`:
 
 On a phone that's the full width; on a wide monitor it stays a tall centred
 column rather than spreading out. That's what preserves the pacing of the
-vertical scroll — a poem that goes wide stops feeling like a poem.
+vertical scroll, a poem that goes wide stops feeling like a poem.
 
 Practical consequence: **to change how wide the site feels, change that one
 value.** Everything else follows. If you find yourself reaching for a
@@ -232,8 +231,8 @@ value.** Everything else follows. If you find yourself reaching for a
   puzzle.
 - **Hints appear after 8s** of being on screen; an explicit way past the puzzle
   appears at 25s. She never gets stuck.
-- **`dvh` not `vh`** — mobile browser chrome collapses on scroll and `100vh`
+- **`dvh` not `vh`**, mobile browser chrome collapses on scroll and `100vh`
   causes sections to jump.
 - **`touch-action: none`** on drag surfaces, or the browser steals the gesture
   and scrolls the page mid-wipe.
-- **`noindex`** — this is a present, not a portfolio piece.
+- **`noindex`**, this is a present, not a portfolio piece.

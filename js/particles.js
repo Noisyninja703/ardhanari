@@ -1,5 +1,5 @@
 /* ==========================================================================
-   particles.js — one canvas, one loop, per-section presets.
+   particles.js: one canvas, one loop, per-section presets.
 
    Deliberately one shared canvas rather than one per section: seven canvases
    each running their own RAF is how you cook a phone.
@@ -7,7 +7,7 @@
    Presets cross-fade properly: when the section changes, the outgoing field
    keeps running and fades out while the incoming one fades in over the top,
    both drawn in the same frame. An earlier version faded the whole canvas to
-   zero, swapped the field, then faded back in — which left a visible moment
+   zero, swapped the field, then faded back in, which left a visible moment
    with no particles at all, and read as a blink rather than a transition.
    ========================================================================== */
 
@@ -18,7 +18,7 @@ const FADE_MS = 900;
 
 /* Sizes and alphas are deliberately well clear of sub-pixel. An earlier pass
    used 0.4-1.3px at alpha 0.08 and the result was technically drawing and
-   practically invisible — a few dozen lit pixels on a whole phone screen.
+   practically invisible, a few dozen lit pixels on a whole phone screen.
    `halo` adds a soft second pass around each particle so they read as points
    of light rather than dots. */
 const PRESETS = {
@@ -70,7 +70,7 @@ let w = 0;
 let h = 0;
 
 /* Each layer is one preset's field of particles plus its own fade weight.
-   More than one can be alive at a time — that's what makes the cross-fade
+   More than one can be alive at a time, that's what makes the cross-fade
    work. Oldest first, so the incoming field draws over the outgoing one. */
 let layers = [];
 let current = PRESETS.none;
@@ -204,7 +204,7 @@ function frame(ts) {
   requestAnimationFrame(frame);
 }
 
-/* Reduced motion still gets a sky — it just doesn't move. One frame, drawn
+/* Reduced motion still gets a sky, it just doesn't move. One frame, drawn
    once, is the difference between respecting the preference and removing the
    atmosphere from the page. */
 function renderStatic() {
@@ -276,7 +276,7 @@ export function setPreset(name) {
   for (const layer of layers) layer.target = 0;
 
   if (next.count > 0) {
-    /* Reduced motion gets no fade — it arrives already at full strength. */
+    /* Reduced motion gets no fade, it arrives already at full strength. */
     layers.push(makeLayer(next, prefersReducedMotion() ? 1 : 0));
   }
 
