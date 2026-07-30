@@ -37,7 +37,7 @@ project are `prefers-reduced-motion` and `hover: none`, both accessibility.
 Width is one token:
 
 ```css
---column: min(92vw, 34rem);
+--column: min(100%, 34rem);
 ```
 
 Full width on a phone; a tall centred column on a monitor rather than spreading
@@ -56,7 +56,7 @@ Every section is exactly `100dvh`, divided into proportional bands:
 │        "keep going")         │
 │  15%   Devanagari footer     │
 └──────────────────────────────┘
-   + --chrome-h reserved below for the fixed moons
+   + --chrome-h reserved below for the arrows and the moons
 ```
 
 Percentages of the device's own height, so a segment fits any screen without
