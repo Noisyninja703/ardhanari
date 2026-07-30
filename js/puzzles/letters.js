@@ -14,6 +14,7 @@
    ========================================================================== */
 
 import { AUTHORS } from '../content.js';
+import { restartSweep } from '../sweep.js';
 
 const SOURCE = 'data/letters.json';
 const TAP_SLOP = 7;        /* px of movement still counted as a tap, not a drag */
@@ -237,8 +238,6 @@ export default function create({ section, body, data, solved: preSolved = false,
     function open(letter) {
       metaTitle.textContent = letter.title ?? '';
       metaBy.textContent = `${who(letter.author)}, ${when(letter.createdAt)}`;
-      /* Reused between letters, so its sweep has to be rewound by hand. */
-      meta.classList.remove('is-swept');
 
       /* Paragraphs, not innerHTML: the body is data and must never be parsed
          as markup. Once she can write her own letters this is the line that
@@ -266,11 +265,15 @@ export default function create({ section, body, data, solved: preSolved = false,
       prose.replaceChildren(...paragraphs);
       bodyEl.scrollTop = 0;
 
-      /* Next frame, so each mask has a start position to travel from. The nodes
-         are new on every open, so there's no stale animation to rewind. */
+      /* Next frame, so each mask has a start position to travel from, and the
+         card is displayed by then so the animations can actually run.
+
+         restartSweep rather than a plain class add: the meta line is reused
+         between letters, and re-adding a class the element already had leaves it
+         frozen on the last frame of the previous run. */
       requestAnimationFrame(() => {
-        meta.classList.add('is-swept');
-        for (const p of paragraphs) p.classList.add('is-swept');
+        restartSweep(meta);
+        for (const p of paragraphs) restartSweep(p);
       });
 
       root.hidden = false;

@@ -120,6 +120,18 @@ before inventing a `z-index`.
 
 ## Animation and canvas
 
+**Re-adding a class does not restart a CSS animation.** Style recalculation is
+lazy, so removing `is-swept` and adding it straight back gets coalesced into no
+change at all: the browser never sees `animation-name` go away, and with
+`forwards` fill the element sits on the last frame of the previous run forever.
+Reopening a letter left its title dark and reopening a promise left the whole card
+dark, while the letter's stanzas were fine because they are rebuilt as new nodes
+each time. Proved it rather than guessed it: the naive remove-then-add leaves
+`getAnimations()[0].playState === 'finished'`, and cancel plus a forced flush
+leaves it `'running'`. Use `restartSweep()` from `js/sweep.js`, and do not delete
+the `void el.offsetWidth` line in it, which looks like it does nothing and is the
+entire fix.
+
 **A mask sweep must finish on the opaque part of the mask.** The first version
 ended mid-gradient, leaving part of every line permanently semi-transparent and
 hard to read. The mask is 300% wide and travels the full distance so it lands

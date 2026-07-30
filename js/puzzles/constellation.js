@@ -10,6 +10,8 @@
    A slow field of stars. Six of them are promises. Tapping one opens it.
    ========================================================================== */
 
+import { restartSweep } from '../sweep.js';
+
 const AMBIENT = 46;   /* how many plain stars sit behind the promises */
 
 export default function create({ section, body, data, solved: preSolved = false, solve }) {
@@ -62,7 +64,7 @@ export default function create({ section, body, data, solved: preSolved = false,
   card.hidden = true;
 
   const cardText = document.createElement('p');
-  cardText.className = 'promise-card__text';
+  cardText.className = 'promise-card__text sweep';
 
   const close = document.createElement('button');
   close.type = 'button';
@@ -75,16 +77,14 @@ export default function create({ section, body, data, solved: preSolved = false,
 
   function openPromise(promise, star) {
     cardText.textContent = promise.text ?? '';
-    /* Sweeps in like the headings do, so a promise arrives rather than
-       appearing. New text each time, so there's a class to rewind. */
-    cardText.classList.remove('sweep', 'is-swept');
-    cardText.classList.add('sweep');
 
     card.hidden = false;
     /* Next frame, so the transition has a start state to run from. */
     requestAnimationFrame(() => {
       card.classList.add('is-open');
-      cardText.classList.add('is-swept');
+      /* The same card element is reused for all six promises, so its sweep has
+         to be genuinely restarted rather than re-classed. */
+      restartSweep(cardText);
     });
 
     /* The glass steps aside while something is open over the page. Reading a
