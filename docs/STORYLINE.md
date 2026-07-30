@@ -160,12 +160,12 @@ debt, guarding her without owning her, carrying her whatever happens.
 Two of them deliberately answer earlier sections, so by the time she reaches
 this sky she has already read the myth they come from:
 
-> That if the worst ever comes, I will carry you the way he carried her. Not as
+> If the worst ever comes, I will carry you the way he carried her. Not as
 > grief. As clothing.
 
 answers Bhasma, and
 
-> That your name sits beside mine in everything. Never after it.
+> Your name goes beside mine in everything. Never after it.
 
 answers Ardhanarishvara. That's the payoff of putting this section sixth: the
 promises only land because the myth has already done the work.
@@ -176,6 +176,10 @@ spend the section before she starts.
 
 Only the ambient stars drift. The promise stars stay put, because she has to be
 able to aim at them, and a moving target is a worse gift.
+
+Each one is a vow spoken straight to her, not a clause hanging off an unwritten
+"I promise that". Nothing on screen completes that stem, so the lines have to
+stand up alone.
 
 **These are Sivan's to rewrite.** They should sound like him, and a promise he
 would not actually keep has no business being up there.

@@ -184,32 +184,36 @@ export const SECTIONS = [
        constellation lines are drawn in, so it reads as one shape rather than
        scattered dots. Six is the number the shape is drawn for.
 
+       Written as vows spoken straight to her rather than clauses hanging off an
+       unwritten "I promise that". Nothing on screen completes that stem, so the
+       lines have to stand up on their own.
+
        These are Sivan's to rewrite. They should sound like him, and a promise
        he would not actually keep has no business being up there. */
     promises: [
       {
         at: [18, 74],
-        text: 'That I will not need you at your best to stay. Ash or moonlight, it is the same to me.',
+        text: 'I will never need you at your best to stay. Ash or moonlight, I am not going anywhere.',
       },
       {
         at: [33, 46],
-        text: 'That when you need time, I will wait, and never once hand you the bill for it.',
+        text: 'When you need time, take it. I will be here, and I will never hand you the bill for it.',
       },
       {
         at: [49, 60],
-        text: 'That I will stand between you and whatever is coming, and never between you and what you want.',
+        text: 'I will stand between you and whatever is coming. Never between you and what you want.',
       },
       {
         at: [64, 31],
-        text: 'That I will keep looking at you properly, and say what I see, even when silence would be easier.',
+        text: 'I will keep looking at you properly, and tell you what I see, even when silence would be easier.',
       },
       {
         at: [79, 48],
-        text: 'That your name sits beside mine in everything. Never after it.',
+        text: 'Your name goes beside mine in everything. Never after it.',
       },
       {
         at: [89, 19],
-        text: 'That if the worst ever comes, I will carry you the way he carried her. Not as grief. As clothing.',
+        text: 'If the worst ever comes, I will carry you the way he carried her. Not as grief. As clothing.',
       },
     ],
 
